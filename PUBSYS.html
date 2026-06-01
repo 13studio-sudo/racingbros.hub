@@ -883,7 +883,7 @@ textarea.txt-in{overflow:hidden;min-height:28px}
        per-tab via the TAB SETTINGS modal. -->
   <div class="dp-sec">
     <div class="dp-lbl">INFO</div>
-    <div class="dp-info" id="dp-info">PUBSYS v0.3.9</div>
+    <div class="dp-info" id="dp-info">PUBSYS v0.4.0</div>
   </div>
 </div>
 
@@ -897,12 +897,23 @@ textarea.txt-in{overflow:hidden;min-height:28px}
         <select id="te-size">
           <option value="a4">A4 (210 × 297 mm)</option>
           <option value="letter">Letter (216 × 279 mm)</option>
+          <option value="1080x1350">1080 × 1350 px</option>
+          <option value="1080x1920">1080 × 1920 px</option>
+          <option value="1200x1200">1200 × 1200 px</option>
           <option value="custom">Custom</option>
         </select>
       </div>
       <div class="fr fr2 hidden" id="te-cust">
-        <div class="fr"><label>Width mm</label><input type="number" id="te-w" value="210"></div>
-        <div class="fr"><label>Height mm</label><input type="number" id="te-h" value="297"></div>
+        <div class="fr"><label>Width</label><input type="number" id="te-w" value="210"></div>
+        <div class="fr"><label>Height</label><input type="number" id="te-h" value="297"></div>
+        <!-- v0.4.0: unit selector for Custom sizes (mirrors the NEW modal). -->
+        <div class="fr"><label>Units</label>
+          <select id="te-unit">
+            <option value="mm" selected>mm</option>
+            <option value="inch">inch</option>
+            <option value="px">px</option>
+          </select>
+        </div>
       </div>
       <div class="fr"><label>Resolution</label>
         <select id="te-res">
@@ -989,12 +1000,24 @@ textarea.txt-in{overflow:hidden;min-height:28px}
         <select id="nm-size">
           <option value="a4">A4 (210 × 297 mm)</option>
           <option value="letter" selected>Letter (216 × 279 mm)</option>
+          <option value="1080x1350">1080 × 1350 px</option>
+          <option value="1080x1920">1080 × 1920 px</option>
+          <option value="1200x1200">1200 × 1200 px</option>
           <option value="custom">Custom</option>
         </select>
       </div>
       <div class="fr fr2 hidden" id="nm-cust">
-        <div class="fr"><label>Width mm</label><input type="number" id="nm-w" value="210"></div>
-        <div class="fr"><label>Height mm</label><input type="number" id="nm-h" value="297"></div>
+        <div class="fr"><label>Width</label><input type="number" id="nm-w" value="210"></div>
+        <div class="fr"><label>Height</label><input type="number" id="nm-h" value="297"></div>
+        <!-- v0.4.0: unit selector for Custom sizes. mm stays the default so
+             existing muscle memory (210×297) still means A4. -->
+        <div class="fr"><label>Units</label>
+          <select id="nm-unit">
+            <option value="mm" selected>mm</option>
+            <option value="inch">inch</option>
+            <option value="px">px</option>
+          </select>
+        </div>
       </div>
       <div class="fr"><label>Resolution</label>
         <select id="nm-res">
@@ -1051,12 +1074,74 @@ textarea.txt-in{overflow:hidden;min-height:28px}
             <div class="tpl-sq-name">TABLE B</div>
             <div class="tpl-sq-sub">A4 · DIGITAL</div>
           </button>
-          <div class="tpl-sq tpl-sq-empty"></div>
-          <div class="tpl-sq tpl-sq-empty"></div>
-          <div class="tpl-sq tpl-sq-empty"></div>
-          <div class="tpl-sq tpl-sq-empty"></div>
-          <div class="tpl-sq tpl-sq-empty"></div>
-          <div class="tpl-sq tpl-sq-empty"></div>
+          <!-- v0.4.0: six pixel-native frame templates replacing the empty
+               placeholder slots. Icons echo each format's aspect + frame. -->
+          <button type="button" class="tpl-sq" data-tpl="p1350a">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 20 25" width="18" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="1" y="1" width="18" height="23"/>
+                <rect x="3" y="3" width="14" height="19"/>
+                <rect x="3" y="19" width="14" height="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">PORTRAIT A</div>
+            <div class="tpl-sq-sub">1080×1350 · DIGITAL</div>
+          </button>
+          <button type="button" class="tpl-sq" data-tpl="p1350b">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 20 25" width="18" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="1" y="1" width="18" height="23"/>
+                <rect x="3" y="3" width="14" height="19"/>
+                <rect x="3" y="3" width="14" height="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">PORTRAIT B</div>
+            <div class="tpl-sq-sub">1080×1350 · DIGITAL</div>
+          </button>
+          <button type="button" class="tpl-sq" data-tpl="p1920a">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 14 25" width="13" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="1" y="1" width="12" height="23"/>
+                <rect x="3" y="3" width="8" height="19"/>
+                <rect x="3" y="19" width="8" height="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">STORY A</div>
+            <div class="tpl-sq-sub">1080×1920 · DIGITAL</div>
+          </button>
+          <button type="button" class="tpl-sq" data-tpl="sq1200a">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="2" y="2" width="20" height="20"/>
+                <rect x="4" y="4" width="16" height="16"/>
+                <rect x="9" y="17" width="6" height="2" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">SQUARE A</div>
+            <div class="tpl-sq-sub">1200×1200 · DIGITAL</div>
+          </button>
+          <button type="button" class="tpl-sq" data-tpl="sq1200b">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="2" y="2" width="20" height="20"/>
+                <rect x="4" y="4" width="16" height="16"/>
+                <rect x="4" y="16" width="16" height="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">SQUARE B</div>
+            <div class="tpl-sq-sub">1200×1200 · DIGITAL</div>
+          </button>
+          <button type="button" class="tpl-sq" data-tpl="sq1200c">
+            <div class="tpl-sq-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3">
+                <rect x="2" y="2" width="20" height="20"/>
+                <rect x="4" y="4" width="16" height="16"/>
+                <rect x="4" y="5" width="16" height="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="tpl-sq-name">SQUARE C</div>
+            <div class="tpl-sq-sub">1200×1200 · DIGITAL</div>
+          </button>
         </div>
       </div>
     </div>
@@ -1070,11 +1155,29 @@ textarea.txt-in{overflow:hidden;min-height:28px}
 <script>
 'use strict';
 /* ══════════════════════════════════════════════════════════
-   PUBSYS v0.3.9
+   PUBSYS v0.4.0
 ══════════════════════════════════════════════════════════ */
 const $  = id => document.getElementById(id);
-const SIZES = {a4:{w:794,h:1123,label:'A4'}, letter:{w:816,h:1056,label:'Letter'}};
+/* v0.4.0: SIZES values are pixel dimensions at the Digital (96dpi) base;
+   DPI[res] scales them up for preview/print. A4/Letter were derived from
+   physical mm. The three new entries are pixel-NATIVE social/square formats
+   (IG portrait 4:5, story 9:16, square 1:1) — at Digital they map 1:1 to the
+   stated pixels, which is why their templates always open at Digital. */
+const SIZES = {
+  a4:{w:794,h:1123,label:'A4'},
+  letter:{w:816,h:1056,label:'Letter'},
+  '1080x1350':{w:1080,h:1350,label:'1080×1350'},
+  '1080x1920':{w:1080,h:1920,label:'1080×1920'},
+  '1200x1200':{w:1200,h:1200,label:'1200×1200'},
+};
 const DPI   = {digital:1, preview:1.5625, print:3.125};
+/* v0.4.0: pixel-native formats. Selecting one snaps Resolution to Digital
+   (96dpi) since preview/print scaling would inflate a fixed-pixel asset away
+   from its intended dimensions. Used by both NEW and TAB SETTINGS size pickers. */
+const PX_FORMATS = new Set(['1080x1350','1080x1920','1200x1200']);
+/* v0.4.0: Custom-size unit → px-per-unit at the Digital base. mm keeps the
+   long-standing 96/25.4 factor; inch is exactly 96; px is identity. */
+const CUNITS = {mm:96/25.4, inch:96, px:1};
 /* ══ EMBEDDED BARLOW CONDENSED (base64 woff2, weights 400/600/700) ══
    Bundled so SVG/PNG exports render with the SAME condensed font the
    live PUBSYS preview uses. Rationale: an SVG loaded as an <img> for
@@ -2108,6 +2211,9 @@ function addTab(opts={}){
   const id  = newTabId();
   const tab = { id, name:opts.name||'Page', type:opts.type||'layout',
     fmt:opts.fmt||'a4', res:opts.res||'digital', cw:opts.cw||210, ch:opts.ch||297,
+    /* v0.4.0: custom-size unit (mm default keeps every pre-0.4.0 tab/pack
+       byte-identical in behaviour). Only meaningful when fmt==='custom'. */
+    cunit:opts.cunit||'mm',
     /* v0.3.1: templates may suppress the default source boxes that
        buildLayoutTC normally seeds. The flag rides on the tab object so
        it's visible inside buildTC → buildLayoutTC. */
@@ -2156,7 +2262,10 @@ function activateTab(id){
 }
 
 function fmtLabel(tab){
-  return tab.fmt==='custom'?`${tab.cw}×${tab.ch}`:tab.fmt.toUpperCase();
+  if(tab.fmt==='custom') return `${tab.cw}×${tab.ch}${(tab.cunit||'mm').toUpperCase()}`;
+  /* v0.4.0: px-native formats already read as e.g. 1080×1350; just uppercase
+     the key (the 'x' becomes 'X'), which is fine for the compact tab pill. */
+  return (SIZES[tab.fmt]?SIZES[tab.fmt].label:tab.fmt).toUpperCase();
 }
 
 function renderTabBar(){
@@ -2189,20 +2298,24 @@ function openTabEdit(id){
   const fmtVal=tab.fmt==='custom'?'custom':tab.fmt;
   $('te-size').value=fmtVal;
   $('te-cust').classList.toggle('hidden',fmtVal!=='custom');
-  if(tab.fmt==='custom'){$('te-w').value=tab.cw||210;$('te-h').value=tab.ch||297;}
+  if(tab.fmt==='custom'){$('te-w').value=tab.cw||210;$('te-h').value=tab.ch||297;$('te-unit').value=tab.cunit||'mm';}
   $('te-res').value=tab.res||'digital';
   $('tab-edit-modal').classList.add('open');
 }
 $('te-close').addEventListener('click',()=>$('tab-edit-modal').classList.remove('open'));
 $('te-cancel').addEventListener('click',()=>$('tab-edit-modal').classList.remove('open'));
 $('tab-edit-modal').addEventListener('click',e=>{if(e.target===$('tab-edit-modal'))$('tab-edit-modal').classList.remove('open');});
-$('te-size').addEventListener('change',function(){$('te-cust').classList.toggle('hidden',this.value!=='custom');});
+$('te-size').addEventListener('change',function(){
+  $('te-cust').classList.toggle('hidden',this.value!=='custom');
+  /* v0.4.0: picking a pixel-native format forces Digital (96dpi). */
+  if(PX_FORMATS.has(this.value)) $('te-res').value='digital';
+});
 $('te-apply').addEventListener('click',()=>{
   const tab=state.tabs.find(t=>t.id===_teTabId); if(!tab) return;
   tab.name=$('te-name').value.trim()||tab.name;
   tab.fmt=$('te-size').value;
   tab.res=$('te-res').value;
-  if(tab.fmt==='custom'){tab.cw=parseInt($('te-w').value)||210;tab.ch=parseInt($('te-h').value)||297;}
+  if(tab.fmt==='custom'){tab.cw=parseInt($('te-w').value)||210;tab.ch=parseInt($('te-h').value)||297;tab.cunit=$('te-unit').value;}
   if(tab.type==='layout'||tab.type==='hybrid') applyCV('cv-'+tab.id,tab);
   syncRes(tab.res); updateSizeLbl(tab); renderTabBar(); updateDevInfo();
   $('tab-edit-modal').classList.remove('open');
@@ -2645,7 +2758,8 @@ function buildLayoutTC(tab){
 function applyCV(cvId,tab){
   const cv=$(cvId); if(!cv) return;
   const base=tab.fmt==='custom'
-    ?{w:Math.round(tab.cw*3.7795),h:Math.round(tab.ch*3.7795)}
+    ?{w:Math.round(tab.cw*(CUNITS[tab.cunit]||CUNITS.mm)),
+       h:Math.round(tab.ch*(CUNITS[tab.cunit]||CUNITS.mm))}
     :(SIZES[tab.fmt]||SIZES.a4);
   const s=DPI[tab.res]||1;
   cv.style.width=Math.round(base.w*s)+'px';
@@ -6516,7 +6630,7 @@ function refreshCelsForSource(bid,newSrc){
 /* ══ PUBSYS PROJECT PACK — EXPORT / IMPORT (.zip) ══
    Pack format (manifest.json + images/ folder):
    {
-     pubsysFormat:1, version:'0.3.9',
+     pubsysFormat:1, version:'0.4.0',
      tab:{ name, type, fmt, res, cw, ch },
      sources:[ { mode:'image'|'text', image?:filename, bgTransp?, label?, ... } ],
      cels:[ { type:'image'|'text', x,y,w,h,z, image?:filename, label?, ... } ]
@@ -6731,8 +6845,8 @@ async function buildLayoutZipBlob(tabId){
   }
 
   const manifest={
-    pubsysFormat:1, version:'0.3.9',
-    tab:{ name:tab.name, type:tab.type, fmt:tab.fmt, res:tab.res, cw:tab.cw, ch:tab.ch },
+    pubsysFormat:1, version:'0.4.0',
+    tab:{ name:tab.name, type:tab.type, fmt:tab.fmt, res:tab.res, cw:tab.cw, ch:tab.ch, cunit:tab.cunit },
     sources, cels
   };
   zip.file('manifest.json',JSON.stringify(manifest,null,2));
@@ -7275,6 +7389,7 @@ async function importLayoutZip(tabId,file){
       tab.res =manifest.tab.res ||tab.res;
       tab.cw  =manifest.tab.cw  ||tab.cw;
       tab.ch  =manifest.tab.ch  ||tab.ch;
+      tab.cunit=manifest.tab.cunit||tab.cunit||'mm';  // v0.4.0
       applyCV('cv-'+tabId,tab);
       syncRes(tab.res); updateSizeLbl(tab); renderTabBar(); updateDevInfo();
     }
@@ -8487,21 +8602,41 @@ const TEMPLATES={
       const ed=$('t2e-'+newTab.id);
       if(ed){ ed.value=TAB3_CSV; renderTable(newTab.id); }
     },120)},
+  /* v0.4.0: six pixel-native frame templates. type:'layout' (free design
+     canvas, no table), res:'digital' so the canvas equals the stated pixels.
+     apply places the matching inlined SVG full-page + locked via the shared
+     placeTemplateOnTab. The TPL_* consts are declared later in the file but
+     only read inside these deferred callbacks, so there's no TDZ hazard. */
+  p1350a:  {name:'PORTRAIT A', type:'layout', fmt:'1080x1350', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1080x1350_A_B64, '1080x1350'),120)},
+  p1350b:  {name:'PORTRAIT B', type:'layout', fmt:'1080x1350', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1080x1350_B_B64, '1080x1350'),120)},
+  p1920a:  {name:'STORY A',    type:'layout', fmt:'1080x1920', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1080x1920_A_B64, '1080x1920'),120)},
+  sq1200a: {name:'SQUARE A',   type:'layout', fmt:'1200x1200', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1200x1200_A_B64, '1200x1200'),120)},
+  sq1200b: {name:'SQUARE B',   type:'layout', fmt:'1200x1200', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1200x1200_B_B64, '1200x1200'),120)},
+  sq1200c: {name:'SQUARE C',   type:'layout', fmt:'1200x1200', res:'digital',
+    apply:(t)=>setTimeout(()=>placeTemplateOnTab(t, TPL_1200x1200_C_B64, '1200x1200'),120)},
 };
 
-/* Reusable letter-template placer — extracted from init so the ONE PAGER
-   template can recreate the same setup PAGE 6 had. Mirrors the original
-   PAGE 6 logic exactly (full-page VEC cel at z-index 0, marked as TEMPLATE
-   for LAYERS-panel labelling if that ever returns). */
-function placeLetterTemplateOnTab(tab){
+/* Reusable template placer — full-page VEC cel at z-index 0, locked,
+   tagged as TEMPLATE for the LAYERS panel. Originally letter-only (extracted
+   from the PAGE 6 setup); v0.4.0 generalized it to accept any inlined base64
+   SVG so the social/square templates share one code path with ONE PAGER.
+   The cel is sized to the tab's current canvas (native px × DPI), and since
+   each template's viewBox matches its size's aspect, ensureSvgSized's
+   xMidYMid-meet fill lands pixel-true. */
+function placeTemplateOnTab(tab, b64, fallbackFmt='letter'){
   try{
     const cv=$('cv-'+tab.id);
     if(!cv) return;
-    const url=decodeLetterTemplateUrl();
+    const url=decodeTemplateUrl(b64);
     let W=parseInt(cv.style.width)||0;
     let H=parseInt(cv.style.height)||0;
     if(!W||!H){
-      const base=SIZES[tab.fmt]||SIZES.letter;
+      const base=SIZES[tab.fmt]||SIZES[fallbackFmt]||SIZES.letter;
       const s=DPI[tab.res]||1;
       W=Math.round(base.w*s);
       H=Math.round(base.h*s);
@@ -8510,19 +8645,21 @@ function placeLetterTemplateOnTab(tab){
     cel.dataset.isTemplate='1';
     cel.dataset.layerName='TEMPLATE';
     /* v0.3.8: the TEMPLATE is locked by default. It's the full-page
-       frame on every ONE PAGER and the user almost never wants to
-       drag/resize it accidentally. Unlock from the LAYERS panel if
-       you actually do need to move it. dataset.locked='1' is the
-       same flag the lock button toggles and what buildLayoutZipBlob
-       round-trips, so re-imports preserve the locked state. */
+       frame and the user almost never wants to drag/resize it
+       accidentally. Unlock from the LAYERS panel if you actually do
+       need to move it. dataset.locked='1' is the same flag the lock
+       button toggles and what buildLayoutZipBlob round-trips, so
+       re-imports preserve the locked state. */
     cel.dataset.locked='1';
     cel.style.left='0px';
     cel.style.top='0px';
     cel.style.width=W+'px';
     cel.style.height=H+'px';
     cel.style.zIndex='0';
-  }catch(e){ console.warn('ONE PAGER template placement failed:',e); }
+  }catch(e){ console.warn('Template placement failed:',e); }
 }
+/* Back-compat wrapper — all existing call sites (init + ONE PAGER) still work. */
+function placeLetterTemplateOnTab(tab){ placeTemplateOnTab(tab, LETTER_TEMPLATE_SVG_B64, 'letter'); }
 
 function openModal(){
   $('nm-name').value='Page '+(state.tabs.length+1);
@@ -8535,6 +8672,7 @@ function openModal(){
   $('nm-size').value='letter';
   $('nm-res').value='print';
   $('nm-cust').classList.add('hidden');
+  $('nm-unit').value='mm';  // v0.4.0: don't sticky-remember the last unit
   /* Reset template selection too (v0.3) */
   nmTemplate=null;
   document.querySelectorAll('#nm-tpls .tpl-sq').forEach(b=>b.classList.remove('act'));
@@ -8546,7 +8684,11 @@ $('btn-screenshots')?.addEventListener('click',exportScreenshots);
 $('nm-close').addEventListener('click',()=>$('new-modal').classList.remove('open'));
 $('nm-cancel').addEventListener('click',()=>$('new-modal').classList.remove('open'));
 $('new-modal').addEventListener('click',e=>{ if(e.target===$('new-modal'))$('new-modal').classList.remove('open'); });
-$('nm-size').addEventListener('change',function(){$('nm-cust').classList.toggle('hidden',this.value!=='custom');});
+$('nm-size').addEventListener('change',function(){
+  $('nm-cust').classList.toggle('hidden',this.value!=='custom');
+  /* v0.4.0: picking a pixel-native format forces Digital (96dpi). */
+  if(PX_FORMATS.has(this.value)) $('nm-res').value='digital';
+});
 document.querySelectorAll('.type-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{ nmType=btn.dataset.type;
     document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('active',b===btn)); });
@@ -8584,11 +8726,12 @@ $('nm-create').addEventListener('click',()=>{
   const name=$('nm-name').value||'Page';
   const fmt=$('nm-size').value, res=$('nm-res').value;
   const cw=parseInt($('nm-w').value)||210, ch=parseInt($('nm-h').value)||297;
+  const cunit=$('nm-unit').value||'mm';  // v0.4.0
   /* v0.3.1: pass the template's noDefaultSources flag through addTab so
      buildLayoutTC can suppress its three default source boxes (ONE PAGER
      uses this to ship with an empty SOURCES panel). */
   const tplOpts=nmTemplate&&TEMPLATES[nmTemplate]?TEMPLATES[nmTemplate]:{};
-  const newTab=addTab({name,type:nmType,fmt,res,cw,ch,
+  const newTab=addTab({name,type:nmType,fmt,res,cw,ch,cunit,
     noDefaultSources:!!tplOpts.noDefaultSources});
   $('new-modal').classList.remove('open');
   /* If a template was picked, run its content-seeding step against the
@@ -9073,6 +9216,743 @@ const LETTER_TEMPLATE_SVG_B64 =
   'LjAxLS4wMS0uMDEtLjAzLS4wMy0uMDUtLjA2LjAzLDAsLjA1LDAsLjA3LDAsLjczLDAsMS40NSwwLDIuMTgsMCwuMDQsMCwuMDYu' +
   'MDEuMDguMDYuMDguMjUuMTQuNS4xNy43Ni4wMy4yOS4wNC41NywwLC44NloiLz4KICAgIDwvZz4KICA8L2c+CiAgPHJlY3QgY2xh' +
   'c3M9ImNscy0zIiB4PSIxNS41IiB5PSIxNS41IiB3aWR0aD0iNTgxIiBoZWlnaHQ9Ijc2MSIvPgo8L3N2Zz4=';
+/* ══ v0.4.0: SOCIAL / SQUARE TEMPLATE SVGs (base64) ══
+   Six print-ready frame templates supplied as Adobe-exported SVGs,
+   inlined the same way LETTER_TEMPLATE_SVG_B64 is so the file stays
+   fully self-contained. Each is viewBox-only; ensureSvgSized() injects
+   100%/100% on decode so they fill their (aspect-matched) cel. Decoded
+   + placed full-page + locked by placeTemplateOnTab via the TEMPLATES
+   registry entries below. Pixel-native sizes → always Digital (96dpi). */
+const TPL_1080x1350_A_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDgwIDEzNTAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MSB7CiAgICAgICAgZmlsbDogI2Q3' +
+  'MjgyZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHBhdGggZD0iTTEwNjYuNSwxMzM2LjVIMTMuNVYxMy41aDEwNTN2MTMy' +
+  'M1pNMzAuNSwxMzE5LjVoMTAxOVYzMC41SDMwLjV2MTI4OVoiLz4KICA8cmVjdCB4PSIyMiIgeT0iMTE2MC4xMyIgd2lkdGg9IjEwMzYiIGhl' +
+  'aWdodD0iMTY3Ljg3Ii8+CiAgPGc+CiAgICA8Zz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTQ2Mi43MiwxMjMzLjk0Yy42OSwwLDEu' +
+  'MDMuMzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0LDMuNjdjLS4yOC41MS0uNy45NC0xLjI4LDEuMy0uNTcuMzUtMS4xLjUz' +
+  'LTEuNTkuNTNoLTkuMTZjLS43MSwwLTEuMDYtLjMxLTEuMDYtLjkyLDAtLjI4LjA5LS41OS4yNi0uOTFsMS4wNy0xLjg0Yy4xOC0uMzMuMjYt' +
+  'LjYzLjI2LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42LjU0LS41Ni4zNS0xLC43OC0xLjMsMS4yOWwtOC41' +
+  'LDE0LjY0Yy0uMjguNTItLjcuOTYtMS4yOCwxLjMxLS41Ny4zNi0xLjA5LjU0LTEuNTguNTRoLTkuMTVjLS43MSwwLTEuMDctLjMtMS4wNy0u' +
+  'OTIsMC0uMjcuMDktLjU4LjI3LS45Mmw5LjU0LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0' +
+  'aDI1LjY4WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNDk1LjA1LDEyMzMuOTRjLjY5LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4' +
+  'LS4wOS41OS0uMjcuOTJsLTkuNTQsMTYuNDljLS4yOC41MS0uNzEuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41NC0xLjU4LjU0aC0yNS42NmMt' +
+  'LjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDQuMjQtNy4zNGMuMzEtLjUuNzQtLjk0LDEuMjktMS4yOS41Ny0u' +
+  'MzYsMS4xLS41NCwxLjYxLS41NGgxMi44M2MuNTEsMCwxLjA1LS4xOCwxLjYxLS41My41Ni0uMzYsMS0uNzgsMS4zLTEuM2wyLjExLTMuNjVj' +
+  'LjE2LS4zMy4yNC0uNjQuMjQtLjkyLDAtLjYyLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wMy4xOC0xLjU5LjU0cy0uOTkuOC0xLjI5LDEu' +
+  'MzFsLTEuMDcsMS44NGMtLjI4LjUtLjcxLjkzLTEuMjgsMS4yOC0uNTguMzYtMS4xMS41My0xLjU5LjUzaC05LjE5Yy0uNzIsMC0xLjA3LS4z' +
+  'MS0xLjA3LS45MiwwLS4yOC4wOS0uNTkuMjctLjkxbDIuMTMtMy42N2MuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU3LS4zNiwxLjExLS41NCwx' +
+  'LjYyLS41NGgyNS42OFpNNDc2LjY0LDEyNDYuNzhjLjE4LS4zMy4yNy0uNjQuMjctLjkyLDAtLjYxLS4zNS0uOTItMS4wNy0uOTItLjUxLDAt' +
+  'MS4wNC4xOS0xLjYuNTQtLjU2LjM1LS45OC43OS0xLjI2LDEuM2wtMi4xNCwzLjY3Yy0uMTguMzQtLjI2LjY0LS4yNi45MiwwLC42MS4zNC45' +
+  'MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDIuMTMtMy42N2gwWiIvPgogICAgICA8cGF0' +
+  'aCBjbGFzcz0ic3QwIiBkPSJNNTEzLjc5LDEyNDEuMjhjLS43MSwwLTEuMDctLjMxLTEuMDctLjkyLDAtLjI4LjA5LS41OS4yNy0uOTFsMS4w' +
+  'Ny0xLjg0Yy4xOC0uMzMuMjctLjYzLjI3LS45MSwwLS42MS0uMzUtLjkyLTEuMDMtLjkyLS41LDAtMS4wNC4xOC0xLjYuNTQtLjU2LjM1LS45' +
+  'OS43OS0xLjMsMS4zbC03LjQxLDEyLjgzYy0uMTguMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNC45MiwxLjAzLjkyLjUxLDAsMS4wNi0uMTgs' +
+  'MS42Mi0uNTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDMuMTctNS40OWMuMzEtLjUxLjc0LS45NSwxLjMtMS4zLjU2LS4zNiwxLjEtLjU0LDEu' +
+  'Ni0uNTRoOS4xNmMuNzIsMCwxLjA3LjMxLDEuMDcuOTIsMCwuMjktLjEuNTktLjMuOTFsLTQuMjQsNy4zNGMtLjI3LjUxLS43Ljk1LTEuMjcs' +
+  'MS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjZjLS43MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI2LS45Mmw5LjU1' +
+  'LTE2LjQ5Yy4yNy0uNS43LS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRoMjUuNjVjLjY4LDAsMS4wNC4zMSwxLjA0Ljky' +
+  'LDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43Ljk0LTEuMjcsMS4zLS41Ny4zNS0xLjEuNTMtMS41OS41M2gtOS4x' +
+  'NnYtLjAyWiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTIyLjIyLDEyNTQuMWMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4y' +
+  'Ny4wOS0uNTguMjYtLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRoOS4xNmMu' +
+  'NjgsMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NCwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI4LDEuMy0uNTcu' +
+  'MzUtMS4xLjU0LTEuNTkuNTRoLTkuMTYuMDFaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01NzUuMzUsMTIzMy45NGMuNjksMCwx' +
+  'LjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NSwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI3LDEuMy0uNTguMzUtMS4x' +
+  'LjU0LTEuNTkuNTRoLTkuMTdjLS43MSwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3LS45Mmw4LjQ4LTE0LjY2Yy4xOC0uMzMu' +
+  'MjctLjYzLjI3LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42MS41NC0uNTYuMzUtLjk5Ljc5LTEuMywxLjNs' +
+  'LTguNDgsMTQuNjVjLS4yNy41MS0uNy45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTkuMTZjLS43MiwwLTEuMDctLjMtMS4w' +
+  'Ny0uOTIsMC0uMjcuMDktLjU4LjI2LS45Mmw5LjU0LTE2LjQ5Yy4yNy0uNS43LS45NCwxLjI3LTEuMy41OC0uMzYsMS4xMi0uNTQsMS42My0u' +
+  'NTRoMjUuNjdaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01ODMuNywxMjU4LjQ5Yy0uMTUtLjI3LS4yMy0uNjQtLjIzLTEuMDcs' +
+  'MC0uNjQuMTYtMS4yMS40Ni0xLjcyLjEzLS4yNS4xOS0uNDkuMTktLjcyLDAtLjU5LS4zNy0uODgtMS4xMS0uODhoLTEyLjgzYy0uNzEsMC0x' +
+  'LjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNy0uOTJsOS41NS0xNi40OWMuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU3LS4zNiwxLjEx' +
+  'LS41NCwxLjYyLS41NGgyNS42NWMuNjksMCwxLjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtMi4xNCwzLjY3Yy0uMjguNTEt' +
+  'LjcxLjk0LTEuMjcsMS4zLS41OC4zNi0xLjEuNTMtMS41OC41M2gtOS4xN2MtLjcxLDAtMS4wNy0uMzEtMS4wNy0uOTIsMC0uMjguMDktLjU5' +
+  'LjI3LS45MWwxLjA1LTEuODRjLjE5LS4zMy4yOC0uNjQuMjgtLjkxLDAtLjYxLS4zNC0uOTItMS4wNC0uOTItLjUsMC0xLjA0LjE4LTEuNi41' +
+  'NC0uNTUuMzUtLjk5Ljc4LTEuMywxLjI5bC03LjQsMTIuODNjLS4xOC4zNC0uMjcuNjQtLjI3LjkyLDAsLjYxLjM0LjkyLDEuMDMuOTIuNTEs' +
+  'MCwxLjA1LS4xOCwxLjYyLS41My41Ny0uMzYuOTktLjc5LDEuMjctMS4zbDMuMTctNS41Yy4zMS0uNS43NC0uOTQsMS4zMS0xLjI5LjU2LS4z' +
+  'NiwxLjA5LS41NCwxLjYtLjU0aDkuMTZjLjcxLDAsMS4wNy4zMSwxLjA3LjkyLDAsLjI5LS4xLjU5LS4zMS45MWwtMTIuNCwyMS41NGMtLjM4' +
+  'LjY2LS43OSwxLTEuMjMsMS0uMjIsMC0uNC0uMTMtLjUzLS4zOGwtNS4wOC04LjZoLjAxWiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBk' +
+  'PSJNNjQwLjE5LDEyMzMuOTRjLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTkuNTUsMTYuNDljLS4yOC41MS0u' +
+  'NzEuOTUtMS4yNywxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NWMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTgu' +
+  'MjctLjkxbDE3Ljc0LTMwLjY5Yy4zOC0uNjYuNzgtLjk5LDEuMTktLjk5LjI0LDAsLjQyLjExLjU3LjM0bDUuMDgsOC42M2MuMTUuMjUuMjMu' +
+  'NjEuMjMsMS4wNCwwLC42NC0uMTUsMS4yMi0uNDYsMS43NS0uMTYuMjYtLjIzLjQ5LS4yMy43MywwLC41OS4zNy44NywxLjE0Ljg3aDEyLjgy' +
+  'di0uMDJaTTYyNy4wNiwxMjM3LjZjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wNC0uOTItLjUsMC0xLjA0LjE4LTEu' +
+  'Ni41NC0uNTYuMzUtLjk5Ljc5LTEuMywxLjNsLTcuNCwxMi44M2MtLjE4LjMzLS4yNy42My0uMjcuOTEsMCwuNjEuMzUuOTIsMS4wMy45Mi41' +
+  'MSwwLDEuMDUtLjE4LDEuNjItLjUzLjU3LS4zNiwxLS43OSwxLjI4LTEuM2w3LjQtMTIuODNoMFoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0' +
+  'MCIgZD0iTTY3My4zLDEyMzMuOTRjLjY5LDAsMS4wMi4zMSwxLjAyLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUx' +
+  'LS43Ljk0LTEuMjgsMS4zLS41Ny4zNS0xLjExLjUzLTEuNi41M2gtOS4xNWMtLjcyLDAtMS4wNy0uMzEtMS4wNy0uOTIsMC0uMjguMDktLjU5' +
+  'LjI3LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNi0uNjMuMjYtLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNC4xOC0xLjYx' +
+  'LjU0LS41Ni4zNS0uOTkuNzgtMS4yOSwxLjI5bC04LjUsMTQuNjRjLS4yOS41Mi0uNy45Ni0xLjI4LDEuMzEtLjU3LjM2LTEuMS41NC0xLjU4' +
+  'LjU0aC05LjE1Yy0uNzEsMC0xLjA2LS4zLTEuMDYtLjkyLDAtLjI3LjA4LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjgtLjUuNy0uOTQsMS4y' +
+  'OC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1LjY4WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNzA1LjI0LDEyMzMu' +
+  'OTRjLjY4LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTkuNTQsMTYuNDljLS4yOS41MS0uNzIuOTUtMS4yOCwxLjMt' +
+  'LjU4LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NWMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkxbDkuNTQtMTYu' +
+  'NDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41OC0uMzYsMS4xMi0uNTQsMS42Mi0uNTRoMjUuNjZaTTY5Mi4xLDEyMzcuNmMuMTgtLjMzLjI3' +
+  'LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjA0LjE4LTEuNTkuNTQtLjU2LjM1LS45OS43OS0xLjMxLDEuM2wt' +
+  'Ny40LDEyLjgzYy0uMTcuMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTgtLjM2' +
+  'LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M2gwWiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNzI0LjkzLDEyNDEuMjhjLS43MSww' +
+  'LTEuMDYtLjMxLTEuMDYtLjkyLDAtLjI4LjA4LS41OS4yNy0uOTFsMS4wNi0xLjg0Yy4xOC0uMzMuMjctLjYzLjI3LS45MSwwLS42MS0uMzUt' +
+  'LjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42MS41NC0uNTYuMzUtLjk5Ljc4LTEuMywxLjI5bC0yLjEzLDMuNjVjLS4xOC4zNC0uMjcu' +
+  'NjUtLjI3LjkzLDAsLjYxLjM2LjkyLDEuMDYuOTJoMTIuODNjLjcxLDAsMS4wNy4zMSwxLjA3LjkyLDAsLjI5LS4xMS41OS0uMzEuOTFsLTQu' +
+  'MjQsNy4zNGMtLjI3LjUxLS43Ljk1LTEuMjgsMS4zLS41Ny4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjVjLS43MSwwLTEuMDctLjMtMS4wNy0u' +
+  'OTIsMC0uMjcuMS0uNTguMjctLjkybDIuMTQtMy42NmMuMjgtLjUxLjcxLS45NCwxLjI4LTEuMy41OC0uMzUsMS4xMS0uNTMsMS42Mi0uNTNo' +
+  'OS4xNmMuNjksMCwxLjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtMS4wNywxLjgzYy0uMTcuMzQtLjI2LjY0LS4yNi45Miww' +
+  'LC42MS4zNS45MiwxLjA0LjkyLjUxLDAsMS4wNC0uMTgsMS42MS0uNTMuNTgtLjM2LDEuMDEtLjc5LDEuMjktMS4zbDIuMTQtMy42NmMuMTct' +
+  'LjMzLjI2LS42NC4yNi0uOTIsMC0uNjEtLjM1LS45Mi0xLjA2LS45MmgtMTIuODJjLS42OSwwLTEuMDQtLjI5LTEuMDQtLjkxLDAtLjI3LjA5' +
+  'LS41OC4yNy0uOTJsNC4yNC03LjMzYy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTgtLjM2LDEuMTEtLjU0LDEuNjMtLjU0aDI1LjY1Yy42OCww' +
+  'LDEuMDMuMzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI2LjkybC0yLjE0LDMuNjdjLS4yOC41MS0uNzEuOTQtMS4yOCwxLjMtLjU3LjM1LTEu' +
+  'MS41My0xLjU4LjUzaC05LjE3bC0uMDItLjAzWiIvPgogICAgPC9nPgogICAgPGc+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik00MDgu' +
+  'MiwxMjE2Ljc0djU0LjY0YzAsMy4zNy0yLjczLDYuMS02LjEsNi4xaC01NC42NGMtMy4zNywwLTYuMS0yLjczLTYuMS02LjF2LTU0LjY0YzAt' +
+  'My4zNywyLjczLTYuMSw2LjEtNi4xaDU0LjY0YzMuMzcsMCw2LjEsMi43Myw2LjEsNi4xaDBaTTQwNC4zNiwxMjQ0LjQ4Yy4yOC0uNDQuNC0u' +
+  'ODUuNC0xLjIsMC0uODEtLjQ0LTEuMjEtMS4zOS0xLjIxaC0xNi44M2MtLjI1LDAtLjQ1LS4wMy0uNjMtLjA3LS41NS0uMTUtLjgzLS41MS0u' +
+  'ODMtMS4wOCwwLS4yOS4wOS0uNjIuMjYtLjk1LjQtLjcuNjEtMS40Ny42MS0yLjMsMC0uNTctLjA5LTEuMDItLjI5LTEuMzVsLTQuNjMtNy44' +
+  'OWg4LjYxYy42NSwwLDEuMzctLjIzLDIuMTItLjcuNzYtLjQ2LDEuMzItMS4wMywxLjY5LTEuN2wyLjc2LTQuODNjLjI3LS40MS40LS44Mi40' +
+  'LTEuMiwwLS43OS0uNDUtMS4yLTEuMzktMS4yaC0zMy42NmMtLjY4LDAtMS4zOC4yNC0yLjExLjcxLS43My40Ni0xLjMsMS4wMy0xLjcxLDEu' +
+  'NjlsLTEyLjUyLDIxLjY1Yy0uMjQuNDQtLjM2Ljg0LS4zNiwxLjIsMCwuODEuNDUsMS4yMSwxLjM2LDEuMjFoMTIuMDFjLjY3LDAsMS4zOC0u' +
+  'MjMsMi4xNC0uNy43NS0uNDcsMS4zMS0xLjAzLDEuNjctMS43MWwxMS4xOC0xOS4yMmMuMzctLjY3LjkzLTEuMjMsMS42OC0xLjcxLjc0LS40' +
+  'NiwxLjQzLS42OSwyLjA2LS42OS45NSwwLDEuNDIuMzksMS40MiwxLjIsMCwuMzYtLjEyLjc2LS4zNywxLjJsLTEuMTksMi4wNGMtLjAzLjA2' +
+  'LS4wNy4xMy0uMTIuMTlsLTIzLjMyLDQwLjI1Yy0uMjMuNDQtLjM2LjgzLS4zNiwxLjIsMCwuODEuNDUsMS4yLDEuMzUsMS4yaDMzLjY1Yy42' +
+  'OCwwLDEuMzktLjIyLDIuMTYtLjY5LjczLS40NiwxLjMtMS4wNCwxLjY2LTEuNzFsMTIuNTItMjEuNjNoMFoiLz4KICAgICAgPHBhdGggY2xh' +
+  'c3M9InN0MSIgZD0iTTM4Ni41NCwxMjQ1LjY4YzAsLjM2LS4xMi43Ny0uMzUsMS4yMWwtOS43NywxNi44MmMtLjQxLjY2LS45NywxLjI0LTEu' +
+  'NzEsMS43LS43Mi40Ny0xLjQ0LjctMi4wOS43LS45NSwwLTEuNDItLjQtMS40Mi0xLjE5LDAtLjM3LjE2LS43Ny40My0xLjJsOS43NS0xNi44' +
+  'M2MuMzctLjY4LjkzLTEuMjQsMS42OS0xLjcyLjczLS40NSwxLjQzLS42OSwyLjA3LS42OS45MiwwLDEuNC40LDEuNCwxLjJaIi8+CiAgICAg' +
+  'IDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0zODguMDIsMTI2OC41MmgtMTUuNHYtMi40Yy42NSwwLDEuMzctLjIzLDIuMDktLjcuNzQtLjQ2LDEu' +
+  'My0xLjA0LDEuNzEtMS43bDkuNzctMTYuODJjLjIzLS40NC4zNS0uODUuMzUtMS4yMSwwLS44LS40OC0xLjItMS40LTEuMmwuNzctMi40OGMu' +
+  'MTguMDQuMzguMDcuNjMuMDdoMTYuODNjLjk1LDAsMS4zOS40LDEuMzksMS4yMSwwLC4zNS0uMTIuNzYtLjQsMS4ybC0xMi41MiwyMS42M2Mt' +
+  'LjM2LjY3LS45MywxLjI1LTEuNjYsMS43MS0uNzcuNDctMS40OC42OS0yLjE2LjY5WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJN' +
+  'Mzc4LjM4LDEyMjIuNDNjMC0uODEtLjQ3LTEuMi0xLjQyLTEuMnYtMi40M2gxOC4yNmMuOTQsMCwxLjM5LjQxLDEuMzksMS4yLDAsLjM4LS4x' +
+  'My43OS0uNCwxLjJsLTIuNzYsNC44M2MtLjM3LjY3LS45MywxLjI0LTEuNjksMS43LS43NS40Ny0xLjQ3LjctMi4xMi43aC04LjYxbDQuNjMs' +
+  'Ny44OWMuMi4zMy4yOS43OC4yOSwxLjM1LDAsLjgzLS4yMSwxLjYtLjYxLDIuMy0uMTcuMzMtLjI2LjY2LS4yNi45NSwwLC41Ny4yOC45My44' +
+  'MywxLjA4bC0uNzcsMi40OGMtLjY0LDAtMS4zNC4yNC0yLjA3LjY5LS43Ni40OC0xLjMyLDEuMDQtMS42OSwxLjcybC05Ljc1LDE2LjgzYy0u' +
+  'MjcuNDMtLjQzLjgzLS40MywxLjIsMCwuNzkuNDcsMS4xOSwxLjQyLDEuMTl2Mi40aC0xOC4yNWMtLjksMC0xLjM1LS4zOS0xLjM1LTEuMiww' +
+  'LS4zNy4xMy0uNzYuMzYtMS4ybDIzLjMyLTQwLjI1Yy4wNS0uMDYuMDktLjEzLjEyLS4xOWwxLjE5LTIuMDRjLjI1LS40NC4zNy0uODQuMzct' +
+  'MS4yaDBaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0zNzYuOTYsMTIxOC44MXYyLjQzYy0uNjMsMC0xLjMyLjIzLTIuMDYuNjkt' +
+  'Ljc1LjQ4LTEuMzEsMS4wNC0xLjY4LDEuNzFsLTExLjE4LDE5LjIyYy0uMzYuNjgtLjkyLDEuMjQtMS42NywxLjcxLS43Ni40Ny0xLjQ3Ljct' +
+  'Mi4xNC43aC0xMi4wMWMtLjkxLDAtMS4zNi0uNC0xLjM2LTEuMjEsMC0uMzYuMTItLjc2LjM2LTEuMmwxMi41Mi0yMS42NWMuNDEtLjY2Ljk4' +
+  'LTEuMjMsMS43MS0xLjY5LjczLS40NywxLjQzLS43MSwyLjExLS43MWgxNS40WiIvPgogICAgPC9nPgogIDwvZz4KPC9zdmc+';
+const TPL_1080x1350_B_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDgwIDEzNTAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MSB7CiAgICAgICAgZmlsbDogI2Q3' +
+  'MjgyZjsKICAgICAgfQoKICAgICAgLnN0MiB7CiAgICAgICAgZmlsbDogI2ZmMDAzYzsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+' +
+  'CiAgPHBhdGggZD0iTTQ2Ljg2LDQ1LjUzdjExMTQuNmg5ODdWNDUuNTNINDYuODZaTTEwMTQuODYsMTE0MS4xM0g2NS44NlY2NC41M2g5NDl2' +
+  'MTA3Ni42WiIvPgogIDxyZWN0IGNsYXNzPSJzdDIiIHg9IjY1Ljg2IiB5PSI2NC41MyIgd2lkdGg9Ijk0OSIgaGVpZ2h0PSIxMDQuNzEiLz4K' +
+  'ICA8Zz4KICAgIDxnPgogICAgICA8cGF0aCBkPSJNNDYyLjcyLDEyMzMuOTRjLjY5LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0u' +
+  'MjcuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43Ljk0LTEuMjgsMS4zLS41Ny4zNS0xLjEuNTMtMS41OS41M2gtOS4xNmMtLjcxLDAtMS4wNi0u' +
+  'MzEtMS4wNi0uOTIsMC0uMjguMDktLjU5LjI2LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNi0uNjMuMjYtLjkxLDAtLjYxLS4zNC0uOTItMS4w' +
+  'My0uOTItLjUxLDAtMS4wNS4xOC0xLjYuNTQtLjU2LjM1LTEsLjc4LTEuMywxLjI5bC04LjUsMTQuNjRjLS4yOC41Mi0uNy45Ni0xLjI4LDEu' +
+  'MzEtLjU3LjM2LTEuMDkuNTQtMS41OC41NGgtOS4xNWMtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDkuNTQt' +
+  'MTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRoMjUuNjhaIi8+CiAgICAgIDxwYXRoIGQ9Ik00' +
+  'OTUuMDUsMTIzMy45NGMuNjksMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NCwxNi40OWMtLjI4LjUxLS43MS45' +
+  'NS0xLjI4LDEuMy0uNTcuMzUtMS4xLjU0LTEuNTguNTRoLTI1LjY2Yy0uNzEsMC0xLjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNy0u' +
+  'OTJsNC4yNC03LjM0Yy4zMS0uNS43NC0uOTQsMS4yOS0xLjI5LjU3LS4zNiwxLjEtLjU0LDEuNjEtLjU0aDEyLjgzYy41MSwwLDEuMDUtLjE4' +
+  'LDEuNjEtLjUzLjU2LS4zNiwxLS43OCwxLjMtMS4zbDIuMTEtMy42NWMuMTYtLjMzLjI0LS42NC4yNC0uOTIsMC0uNjItLjM0LS45Mi0xLjAz' +
+  'LS45Mi0uNTEsMC0xLjAzLjE4LTEuNTkuNTRzLS45OS44LTEuMjksMS4zMWwtMS4wNywxLjg0Yy0uMjguNS0uNzEuOTMtMS4yOCwxLjI4LS41' +
+  'OC4zNi0xLjExLjUzLTEuNTkuNTNoLTkuMTljLS43MiwwLTEuMDctLjMxLTEuMDctLjkyLDAtLjI4LjA5LS41OS4yNy0uOTFsMi4xMy0zLjY3' +
+  'Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1LjY4Wk00NzYuNjQsMTI0Ni43OGMuMTgtLjMzLjI3' +
+  'LS42NC4yNy0uOTIsMC0uNjEtLjM1LS45Mi0xLjA3LS45Mi0uNTEsMC0xLjA0LjE5LTEuNi41NC0uNTYuMzUtLjk4Ljc5LTEuMjYsMS4zbC0y' +
+  'LjE0LDMuNjdjLS4xOC4zNC0uMjYuNjQtLjI2LjkyLDAsLjYxLjM0LjkyLDEuMDMuOTIuNTEsMCwxLjA1LS4xOCwxLjYyLS41My41Ny0uMzYs' +
+  'MS0uNzksMS4yOC0xLjNsMi4xMy0zLjY3aDBaIi8+CiAgICAgIDxwYXRoIGQ9Ik01MTMuNzksMTI0MS4yOGMtLjcxLDAtMS4wNy0uMzEtMS4w' +
+  'Ny0uOTIsMC0uMjguMDktLjU5LjI3LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wMy0uOTIt' +
+  'LjUsMC0xLjA0LjE4LTEuNi41NC0uNTYuMzUtLjk5Ljc5LTEuMywxLjNsLTcuNDEsMTIuODNjLS4xOC4zMy0uMjcuNjMtLjI3LjkxLDAsLjYx' +
+  'LjM0LjkyLDEuMDMuOTIuNTEsMCwxLjA2LS4xOCwxLjYyLS41My41Ny0uMzYsMS0uNzksMS4yOC0xLjNsMy4xNy01LjQ5Yy4zMS0uNTEuNzQt' +
+  'Ljk1LDEuMy0xLjMuNTYtLjM2LDEuMS0uNTQsMS42LS41NGg5LjE2Yy43MiwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMS41OS0uMy45MWwt' +
+  'NC4yNCw3LjM0Yy0uMjcuNTEtLjcuOTUtMS4yNywxLjMtLjU4LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NmMtLjcyLDAtMS4wNy0uMy0xLjA3' +
+  'LS45MiwwLS4yNy4wOS0uNTguMjYtLjkybDkuNTUtMTYuNDljLjI3LS41LjctLjk0LDEuMjgtMS4zLjU3LS4zNiwxLjExLS41NCwxLjYyLS41' +
+  'NGgyNS42NWMuNjgsMCwxLjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtMi4xNCwzLjY3Yy0uMjguNTEtLjcuOTQtMS4yNywx' +
+  'LjMtLjU3LjM1LTEuMS41My0xLjU5LjUzaC05LjE2di0uMDJaIi8+CiAgICAgIDxwYXRoIGQ9Ik01MjIuMjIsMTI1NC4xYy0uNzIsMC0xLjA3' +
+  'LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU3LS4zNiwxLjExLS41' +
+  'NCwxLjYyLS41NGg5LjE2Yy42OCwwLDEuMDMuMzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI3LjkybC05LjU0LDE2LjQ5Yy0uMjguNTEtLjcx' +
+  'Ljk1LTEuMjgsMS4zLS41Ny4zNS0xLjEuNTQtMS41OS41NGgtOS4xNi4wMVoiLz4KICAgICAgPHBhdGggZD0iTTU3NS4zNSwxMjMzLjk0Yy42' +
+  'OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC05LjU1LDE2LjQ5Yy0uMjguNTEtLjcxLjk1LTEuMjcsMS4zLS41OC4z' +
+  'NS0xLjEuNTQtMS41OS41NGgtOS4xN2MtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDguNDgtMTQuNjZjLjE4' +
+  'LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYxLjU0LS41Ni4zNS0uOTkuNzktMS4z' +
+  'LDEuM2wtOC40OCwxNC42NWMtLjI3LjUxLS43Ljk1LTEuMjcsMS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtOS4xNmMtLjcyLDAtMS4wNy0u' +
+  'My0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkybDkuNTQtMTYuNDljLjI3LS41LjctLjk0LDEuMjctMS4zLjU4LS4zNiwxLjEyLS41NCwx' +
+  'LjYzLS41NGgyNS42N1oiLz4KICAgICAgPHBhdGggZD0iTTU4My43LDEyNTguNDljLS4xNS0uMjctLjIzLS42NC0uMjMtMS4wNywwLS42NC4x' +
+  'Ni0xLjIxLjQ2LTEuNzIuMTMtLjI1LjE5LS40OS4xOS0uNzIsMC0uNTktLjM3LS44OC0xLjExLS44OGgtMTIuODNjLS43MSwwLTEuMDctLjMt' +
+  'MS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3LS45Mmw5LjU1LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEu' +
+  'NjItLjU0aDI1LjY1Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0LDMuNjdjLS4yOC41MS0uNzEuOTQt' +
+  'MS4yNywxLjMtLjU4LjM2LTEuMS41My0xLjU4LjUzaC05LjE3Yy0uNzEsMC0xLjA3LS4zMS0xLjA3LS45MiwwLS4yOC4wOS0uNTkuMjctLjkx' +
+  'bDEuMDUtMS44NGMuMTktLjMzLjI4LS42NC4yOC0uOTEsMC0uNjEtLjM0LS45Mi0xLjA0LS45Mi0uNSwwLTEuMDQuMTgtMS42LjU0LS41NS4z' +
+  'NS0uOTkuNzgtMS4zLDEuMjlsLTcuNCwxMi44M2MtLjE4LjM0LS4yNy42NC0uMjcuOTIsMCwuNjEuMzQuOTIsMS4wMy45Mi41MSwwLDEuMDUt' +
+  'LjE4LDEuNjItLjUzLjU3LS4zNi45OS0uNzksMS4yNy0xLjNsMy4xNy01LjVjLjMxLS41Ljc0LS45NCwxLjMxLTEuMjkuNTYtLjM2LDEuMDkt' +
+  'LjU0LDEuNi0uNTRoOS4xNmMuNzEsMCwxLjA3LjMxLDEuMDcuOTIsMCwuMjktLjEuNTktLjMxLjkxbC0xMi40LDIxLjU0Yy0uMzguNjYtLjc5' +
+  'LDEtMS4yMywxLS4yMiwwLS40LS4xMy0uNTMtLjM4bC01LjA4LTguNmguMDFaIi8+CiAgICAgIDxwYXRoIGQ9Ik02NDAuMTksMTIzMy45NGMu' +
+  'NjksMCwxLjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNi45MmwtOS41NSwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI3LDEuMy0uNTcu' +
+  'MzUtMS4xLjU0LTEuNTkuNTRoLTI1LjY1Yy0uNzIsMC0xLjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNy0uOTFsMTcuNzQtMzAuNjlj' +
+  'LjM4LS42Ni43OC0uOTksMS4xOS0uOTkuMjQsMCwuNDIuMTEuNTcuMzRsNS4wOCw4LjYzYy4xNS4yNS4yMy42MS4yMywxLjA0LDAsLjY0LS4x' +
+  'NSwxLjIyLS40NiwxLjc1LS4xNi4yNi0uMjMuNDktLjIzLjczLDAsLjU5LjM3Ljg3LDEuMTQuODdoMTIuODJ2LS4wMlpNNjI3LjA2LDEyMzcu' +
+  'NmMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjA0LS45Mi0uNSwwLTEuMDQuMTgtMS42LjU0LS41Ni4zNS0uOTkuNzkt' +
+  'MS4zLDEuM2wtNy40LDEyLjgzYy0uMTguMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0u' +
+  'NTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M2gwWiIvPgogICAgICA8cGF0aCBkPSJNNjczLjMsMTIzMy45NGMuNjksMCwxLjAy' +
+  'LjMxLDEuMDIuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtMi4xNCwzLjY3Yy0uMjguNTEtLjcuOTQtMS4yOCwxLjMtLjU3LjM1LTEuMTEuNTMt' +
+  'MS42LjUzaC05LjE1Yy0uNzIsMC0xLjA3LS4zMS0xLjA3LS45MiwwLS4yOC4wOS0uNTkuMjctLjkxbDEuMDctMS44NGMuMTgtLjMzLjI2LS42' +
+  'My4yNi0uOTEsMC0uNjEtLjM0LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjA0LjE4LTEuNjEuNTQtLjU2LjM1LS45OS43OC0xLjI5LDEuMjlsLTgu' +
+  'NSwxNC42NGMtLjI5LjUyLS43Ljk2LTEuMjgsMS4zMS0uNTcuMzYtMS4xLjU0LTEuNTguNTRoLTkuMTVjLS43MSwwLTEuMDYtLjMtMS4wNi0u' +
+  'OTIsMC0uMjcuMDgtLjU4LjI2LS45Mmw5LjU1LTE2LjQ5Yy4yOC0uNS43LS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRo' +
+  'MjUuNjhaIi8+CiAgICAgIDxwYXRoIGQ9Ik03MDUuMjQsMTIzMy45NGMuNjgsMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNi45' +
+  'MmwtOS41NCwxNi40OWMtLjI5LjUxLS43Mi45NS0xLjI4LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTI1LjY1Yy0uNzIsMC0xLjA3LS4z' +
+  'LTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNi0uOTFsOS41NC0xNi40OWMuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU4LS4zNiwxLjEyLS41NCwx' +
+  'LjYyLS41NGgyNS42NlpNNjkyLjEsMTIzNy42Yy4xOC0uMzMuMjctLjYzLjI3LS45MSwwLS42MS0uMzUtLjkyLTEuMDMtLjkyLS41MSwwLTEu' +
+  'MDQuMTgtMS41OS41NC0uNTYuMzUtLjk5Ljc5LTEuMzEsMS4zbC03LjQsMTIuODNjLS4xNy4zMy0uMjcuNjMtLjI3LjkxLDAsLjYxLjM1Ljky' +
+  'LDEuMDMuOTIuNTEsMCwxLjA1LS4xOCwxLjYyLS41My41OC0uMzYsMS0uNzksMS4yOC0xLjNsNy40LTEyLjgzaDBaIi8+CiAgICAgIDxwYXRo' +
+  'IGQ9Ik03MjQuOTMsMTI0MS4yOGMtLjcxLDAtMS4wNi0uMzEtMS4wNi0uOTIsMC0uMjguMDgtLjU5LjI3LS45MWwxLjA2LTEuODRjLjE4LS4z' +
+  'My4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYxLjU0LS41Ni4zNS0uOTkuNzgtMS4zLDEu' +
+  'MjlsLTIuMTMsMy42NWMtLjE4LjM0LS4yNy42NS0uMjcuOTMsMCwuNjEuMzYuOTIsMS4wNi45MmgxMi44M2MuNzEsMCwxLjA3LjMxLDEuMDcu' +
+  'OTIsMCwuMjktLjExLjU5LS4zMS45MWwtNC4yNCw3LjM0Yy0uMjcuNTEtLjcuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC0y' +
+  'NS42NWMtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4xLS41OC4yNy0uOTJsMi4xNC0zLjY2Yy4yOC0uNTEuNzEtLjk0LDEuMjgtMS4z' +
+  'LjU4LS4zNSwxLjExLS41MywxLjYyLS41M2g5LjE2Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0xLjA3LDEu' +
+  'ODNjLS4xNy4zNC0uMjYuNjQtLjI2LjkyLDAsLjYxLjM1LjkyLDEuMDQuOTIuNTEsMCwxLjA0LS4xOCwxLjYxLS41My41OC0uMzYsMS4wMS0u' +
+  'NzksMS4yOS0xLjNsMi4xNC0zLjY2Yy4xNy0uMzMuMjYtLjY0LjI2LS45MiwwLS42MS0uMzUtLjkyLTEuMDYtLjkyaC0xMi44MmMtLjY5LDAt' +
+  'MS4wNC0uMjktMS4wNC0uOTEsMC0uMjcuMDktLjU4LjI3LS45Mmw0LjI0LTcuMzNjLjI4LS41LjcxLS45NCwxLjI4LTEuMy41OC0uMzYsMS4x' +
+  'MS0uNTQsMS42My0uNTRoMjUuNjVjLjY4LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTIuMTQsMy42N2MtLjI4LjUx' +
+  'LS43MS45NC0xLjI4LDEuMy0uNTcuMzUtMS4xLjUzLTEuNTguNTNoLTkuMTdsLS4wMi0uMDNaIi8+CiAgICA8L2c+CiAgICA8Zz4KICAgICAg' +
+  'PHBhdGggY2xhc3M9InN0MSIgZD0iTTQwOC4yLDEyMTYuNzR2NTQuNjRjMCwzLjM3LTIuNzMsNi4xLTYuMSw2LjFoLTU0LjY0Yy0zLjM3LDAt' +
+  'Ni4xLTIuNzMtNi4xLTYuMXYtNTQuNjRjMC0zLjM3LDIuNzMtNi4xLDYuMS02LjFoNTQuNjRjMy4zNywwLDYuMSwyLjczLDYuMSw2LjFoMFpN' +
+  'NDA0LjM2LDEyNDQuNDhjLjI4LS40NC40LS44NS40LTEuMiwwLS44MS0uNDQtMS4yMS0xLjM5LTEuMjFoLTE2LjgzYy0uMjUsMC0uNDUtLjAz' +
+  'LS42My0uMDctLjU1LS4xNS0uODMtLjUxLS44My0xLjA4LDAtLjI5LjA5LS42Mi4yNi0uOTUuNC0uNy42MS0xLjQ3LjYxLTIuMywwLS41Ny0u' +
+  'MDktMS4wMi0uMjktMS4zNWwtNC42My03Ljg5aDguNjFjLjY1LDAsMS4zNy0uMjMsMi4xMi0uNy43Ni0uNDYsMS4zMi0xLjAzLDEuNjktMS43' +
+  'bDIuNzYtNC44M2MuMjctLjQxLjQtLjgyLjQtMS4yLDAtLjc5LS40NS0xLjItMS4zOS0xLjJoLTMzLjY2Yy0uNjgsMC0xLjM4LjI0LTIuMTEu' +
+  'NzEtLjczLjQ2LTEuMywxLjAzLTEuNzEsMS42OWwtMTIuNTIsMjEuNjVjLS4yNC40NC0uMzYuODQtLjM2LDEuMiwwLC44MS40NSwxLjIxLDEu' +
+  'MzYsMS4yMWgxMi4wMWMuNjcsMCwxLjM4LS4yMywyLjE0LS43Ljc1LS40NywxLjMxLTEuMDMsMS42Ny0xLjcxbDExLjE4LTE5LjIyYy4zNy0u' +
+  'NjcuOTMtMS4yMywxLjY4LTEuNzEuNzQtLjQ2LDEuNDMtLjY5LDIuMDYtLjY5Ljk1LDAsMS40Mi4zOSwxLjQyLDEuMiwwLC4zNi0uMTIuNzYt' +
+  'LjM3LDEuMmwtMS4xOSwyLjA0Yy0uMDMuMDYtLjA3LjEzLS4xMi4xOWwtMjMuMzIsNDAuMjVjLS4yMy40NC0uMzYuODMtLjM2LDEuMiwwLC44' +
+  'MS40NSwxLjIsMS4zNSwxLjJoMzMuNjVjLjY4LDAsMS4zOS0uMjIsMi4xNi0uNjkuNzMtLjQ2LDEuMy0xLjA0LDEuNjYtMS43MWwxMi41Mi0y' +
+  'MS42M2gwWiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMzg2LjU0LDEyNDUuNjhjMCwuMzYtLjEyLjc3LS4zNSwxLjIxbC05Ljc3' +
+  'LDE2LjgyYy0uNDEuNjYtLjk3LDEuMjQtMS43MSwxLjctLjcyLjQ3LTEuNDQuNy0yLjA5LjctLjk1LDAtMS40Mi0uNC0xLjQyLTEuMTksMC0u' +
+  'MzcuMTYtLjc3LjQzLTEuMmw5Ljc1LTE2LjgzYy4zNy0uNjguOTMtMS4yNCwxLjY5LTEuNzIuNzMtLjQ1LDEuNDMtLjY5LDIuMDctLjY5Ljky' +
+  'LDAsMS40LjQsMS40LDEuMloiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTM4OC4wMiwxMjY4LjUyaC0xNS40di0yLjRjLjY1LDAs' +
+  'MS4zNy0uMjMsMi4wOS0uNy43NC0uNDYsMS4zLTEuMDQsMS43MS0xLjdsOS43Ny0xNi44MmMuMjMtLjQ0LjM1LS44NS4zNS0xLjIxLDAtLjgt' +
+  'LjQ4LTEuMi0xLjQtMS4ybC43Ny0yLjQ4Yy4xOC4wNC4zOC4wNy42My4wN2gxNi44M2MuOTUsMCwxLjM5LjQsMS4zOSwxLjIxLDAsLjM1LS4x' +
+  'Mi43Ni0uNCwxLjJsLTEyLjUyLDIxLjYzYy0uMzYuNjctLjkzLDEuMjUtMS42NiwxLjcxLS43Ny40Ny0xLjQ4LjY5LTIuMTYuNjlaIi8+CiAg' +
+  'ICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0zNzguMzgsMTIyMi40M2MwLS44MS0uNDctMS4yLTEuNDItMS4ydi0yLjQzaDE4LjI2Yy45NCww' +
+  'LDEuMzkuNDEsMS4zOSwxLjIsMCwuMzgtLjEzLjc5LS40LDEuMmwtMi43Niw0LjgzYy0uMzcuNjctLjkzLDEuMjQtMS42OSwxLjctLjc1LjQ3' +
+  'LTEuNDcuNy0yLjEyLjdoLTguNjFsNC42Myw3Ljg5Yy4yLjMzLjI5Ljc4LjI5LDEuMzUsMCwuODMtLjIxLDEuNi0uNjEsMi4zLS4xNy4zMy0u' +
+  'MjYuNjYtLjI2Ljk1LDAsLjU3LjI4LjkzLjgzLDEuMDhsLS43NywyLjQ4Yy0uNjQsMC0xLjM0LjI0LTIuMDcuNjktLjc2LjQ4LTEuMzIsMS4w' +
+  'NC0xLjY5LDEuNzJsLTkuNzUsMTYuODNjLS4yNy40My0uNDMuODMtLjQzLDEuMiwwLC43OS40NywxLjE5LDEuNDIsMS4xOXYyLjRoLTE4LjI1' +
+  'Yy0uOSwwLTEuMzUtLjM5LTEuMzUtMS4yLDAtLjM3LjEzLS43Ni4zNi0xLjJsMjMuMzItNDAuMjVjLjA1LS4wNi4wOS0uMTMuMTItLjE5bDEu' +
+  'MTktMi4wNGMuMjUtLjQ0LjM3LS44NC4zNy0xLjJoMFoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTM3Ni45NiwxMjE4LjgxdjIu' +
+  'NDNjLS42MywwLTEuMzIuMjMtMi4wNi42OS0uNzUuNDgtMS4zMSwxLjA0LTEuNjgsMS43MWwtMTEuMTgsMTkuMjJjLS4zNi42OC0uOTIsMS4y' +
+  'NC0xLjY3LDEuNzEtLjc2LjQ3LTEuNDcuNy0yLjE0LjdoLTEyLjAxYy0uOTEsMC0xLjM2LS40LTEuMzYtMS4yMSwwLS4zNi4xMi0uNzYuMzYt' +
+  'MS4ybDEyLjUyLTIxLjY1Yy40MS0uNjYuOTgtMS4yMywxLjcxLTEuNjkuNzMtLjQ3LDEuNDMtLjcxLDIuMTEtLjcxaDE1LjRaIi8+CiAgICA8' +
+  'L2c+CiAgPC9nPgo8L3N2Zz4=';
+const TPL_1080x1920_A_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDgwIDE5MjAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MSB7CiAgICAgICAgZmlsbDogI2Q3' +
+  'MjgyZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHBvbHlnb24gcG9pbnRzPSIxMDYyIDE2NjkuNzQgMTA2MiAxOTAyIDE4' +
+  'IDE5MDIgMTggMTY2OS43NCAxNy4zOCAxNjY5Ljc0IDE3LjM4IDE5MDIuNDUgMTA2Mi41IDE5MDIuNDUgMTA2Mi41IDE2NjkuNzQgMTA2MiAx' +
+  'NjY5Ljc0Ii8+CiAgPHJlY3QgeD0iMTgiIHk9IjE2NjkuNzQiIHdpZHRoPSIxMDQ0IiBoZWlnaHQ9IjIzMi4yNiIvPgogIDxnPgogICAgPGc+' +
+  'CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00NTguMywxNzc1LjQ1Yy43MywwLDEuMDkuMzIsMS4wOS45NywwLC4zLS4xLjYyLS4yOC45' +
+  'NmwtMi4yNSwzLjg2Yy0uMjkuNTMtLjc0Ljk5LTEuMzUsMS4zNy0uNi4zNy0xLjE1LjU2LTEuNjcuNTZoLTkuNjRjLS43NSwwLTEuMTItLjMy' +
+  'LTEuMTItLjk3LDAtLjMuMDktLjYyLjI4LS45NmwxLjEzLTEuOTNjLjE5LS4zNC4yOC0uNjYuMjgtLjk2LDAtLjY0LS4zNi0uOTctMS4wOC0u' +
+  'OTctLjU0LDAtMS4xLjE5LTEuNjkuNTctLjU5LjM3LTEuMDUuODItMS4zNywxLjM2bC04Ljk0LDE1LjRjLS4yOS41NC0uNzQsMS4wMS0xLjM1' +
+  'LDEuMzgtLjYuMzgtMS4xNS41Ny0xLjY2LjU3aC05LjYyYy0uNzUsMC0xLjEyLS4zMi0xLjEyLS45NywwLS4yOS4wOS0uNjEuMjktLjk2bDEw' +
+  'LjAzLTE3LjM0Yy4zLS41My43NS0uOTksMS4zNS0xLjM2LjYtLjM4LDEuMTctLjU3LDEuNzEtLjU3aDI2Ljk4WiIvPgogICAgICA8cGF0aCBj' +
+  'bGFzcz0ic3QwIiBkPSJNNDkyLjMsMTc3NS40NWMuNzIsMCwxLjA4LjMyLDEuMDguOTcsMCwuMy0uMS42Mi0uMjkuOTZsLTEwLjA0LDE3LjM0' +
+  'Yy0uMjkuNTQtLjc0LDEtMS4zNSwxLjM3LS42LjM3LTEuMTYuNTYtMS42Ni41NmgtMjYuOTljLS43NSwwLTEuMTItLjMyLTEuMTItLjk3LDAt' +
+  'LjI5LjA5LS42MS4yOC0uOTZsNC40NS03LjcyYy4zMi0uNTMuNzctLjk5LDEuMzYtMS4zNi42LS4zOCwxLjE2LS41NywxLjY5LS41N2gxMy40' +
+  'OWMuNTQsMCwxLjEtLjE4LDEuNy0uNTUuNTktLjM4LDEuMDUtLjgyLDEuMzctMS4zNmwyLjIyLTMuODRjLjE3LS4zNS4yNS0uNjguMjUtLjk3' +
+  'LDAtLjY1LS4zNi0uOTctMS4wOC0uOTctLjUzLDAtMS4wOS4xOS0xLjY3LjU3LS41OS4zOC0xLjA0Ljg0LTEuMzUsMS4zOGwtMS4xMiwxLjkz' +
+  'Yy0uMy41My0uNzQuOTgtMS4zNCwxLjM1LS42MS4zOC0xLjE3LjU1LTEuNjcuNTVoLTkuNjdjLS43NSwwLTEuMTMtLjMyLTEuMTMtLjk3LDAt' +
+  'LjI5LjEtLjYyLjI5LS45NmwyLjI0LTMuODZjLjI5LS41My43NC0uOTksMS4zNS0xLjM2LjYtLjM4LDEuMTctLjU3LDEuNzEtLjU3aDI2Ljk4' +
+  'Wk00NzIuOTQsMTc4OC45NGMuMTktLjM1LjI5LS42Ny4yOS0uOTcsMC0uNjQtLjM3LS45Ny0xLjEzLS45Ny0uNTMsMC0xLjEuMi0xLjY4LjU3' +
+  'LS41OS4zNy0xLjAzLjgzLTEuMzIsMS4zNmwtMi4yNSwzLjg2Yy0uMTkuMzYtLjI4LjY3LS4yOC45NywwLC42NC4zNi45NiwxLjA4Ljk2LjU0' +
+  'LDAsMS4xMS0uMTksMS43MS0uNTYuNi0uMzgsMS4wNS0uODMsMS4zNS0xLjM3bDIuMjQtMy44NloiLz4KICAgICAgPHBhdGggY2xhc3M9InN0' +
+  'MCIgZD0iTTUxMiwxNzgzLjE2Yy0uNzQsMC0xLjEzLS4zMi0xLjEzLS45NywwLS4zLjEtLjYyLjI5LS45NmwxLjEyLTEuOTNjLjE5LS4zNC4y' +
+  'OC0uNjYuMjgtLjk2LDAtLjY0LS4zNi0uOTctMS4wOS0uOTctLjUzLDAtMS4xLjE5LTEuNjkuNTctLjU5LjM3LTEuMDQuODMtMS4zNiwxLjM3' +
+  'bC03Ljc5LDEzLjQ5Yy0uMTkuMzUtLjI5LjY2LS4yOS45NiwwLC42NC4zNi45NiwxLjA4Ljk2LjUzLDAsMS4xMS0uMTksMS43MS0uNTYuNi0u' +
+  'MzgsMS4wNS0uODMsMS4zNS0xLjM3bDMuMzMtNS43OGMuMzItLjU0Ljc4LTEsMS4zNy0xLjM3LjU5LS4zOCwxLjE1LS41NywxLjY5LS41N2g5' +
+  'LjYzYy43NSwwLDEuMTIuMzIsMS4xMi45NywwLC4zLS4xMS42Mi0uMzIuOTZsLTQuNDYsNy43MWMtLjI5LjU0LS43NCwxLTEuMzQsMS4zNy0u' +
+  'NjEuMzctMS4xNi41Ny0xLjY3LjU3aC0yNi45OGMtLjc1LDAtMS4xMy0uMzItMS4xMy0uOTcsMC0uMjkuMS0uNjEuMjctLjk2bDEwLjA1LTE3' +
+  'LjM0Yy4yOS0uNTMuNzQtLjk5LDEuMzUtMS4zNi42LS4zOCwxLjE3LS41NywxLjcxLS41N2gyNi45OGMuNzIsMCwxLjA5LjMyLDEuMDkuOTcs' +
+  'MCwuMy0uMS42Mi0uMjguOTZsLTIuMjUsMy44NmMtLjI5LjUzLS43NC45OS0xLjM0LDEuMzctLjYuMzctMS4xNi41Ni0xLjY3LjU2aC05LjYz' +
+  'WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTIwLjg2LDE3OTYuNjZjLS43NSwwLTEuMTItLjMyLTEuMTItLjk3LDAtLjI5LjEt' +
+  'LjYxLjI4LS45NmwxMC4wNC0xNy4zNGMuMjktLjUzLjc1LS45OSwxLjM1LTEuMzYuNi0uMzgsMS4xNy0uNTcsMS43MS0uNTdoOS42NGMuNzIs' +
+  'MCwxLjA4LjMyLDEuMDguOTcsMCwuMy0uMS42Mi0uMjguOTZsLTEwLjAzLDE3LjM0Yy0uMjkuNTQtLjc0LDEtMS4zNSwxLjM3LS42LjM3LTEu' +
+  'MTYuNTctMS42Ny41N2gtOS42NFoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTU3Ni43MywxNzc1LjQ1Yy43MiwwLDEuMDkuMzIs' +
+  'MS4wOS45NywwLC4zLS4wOS42Mi0uMjguOTZsLTEwLjA0LDE3LjM0Yy0uMjkuNTQtLjc0LDEtMS4zNCwxLjM3LS42MS4zNy0xLjE2LjU3LTEu' +
+  'NjcuNTdoLTkuNjRjLS43NSwwLTEuMTItLjMyLTEuMTItLjk3LDAtLjI5LjA5LS42MS4yOC0uOTZsOC45MS0xNS40MmMuMTktLjM0LjI4LS42' +
+  'Ni4yOC0uOTYsMC0uNjQtLjM2LS45Ny0xLjA4LS45Ny0uNTQsMC0xLjEuMTktMS42OS41Ny0uNTkuMzctMS4wNC44My0xLjM3LDEuMzdsLTgu' +
+  'OTIsMTUuNDFjLS4yOS41NC0uNzQsMS0xLjM0LDEuMzctLjYxLjM3LTEuMTYuNTctMS42Ny41N2gtOS42M2MtLjc1LDAtMS4xMi0uMzItMS4x' +
+  'Mi0uOTcsMC0uMjkuMDktLjYxLjI4LS45NmwxMC4wNC0xNy4zNGMuMjktLjUzLjc0LS45OSwxLjM0LTEuMzYuNjEtLjM4LDEuMTgtLjU3LDEu' +
+  'NzEtLjU3aDI2Ljk4WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTg1LjUyLDE4MDEuMjdjLS4xNi0uMjktLjI1LS42Ny0uMjUt' +
+  'MS4xMiwwLS42Ny4xNi0xLjI3LjQ5LTEuODEuMTMtLjI3LjItLjUyLjItLjc2LDAtLjYyLS4zOS0uOTItMS4xNi0uOTJoLTEzLjQ5Yy0uNzUs' +
+  'MC0xLjEzLS4zMi0xLjEzLS45NywwLS4yOS4xLS42MS4yOC0uOTZsMTAuMDQtMTcuMzRjLjI5LS41My43NS0uOTksMS4zNS0xLjM2LjYtLjM4' +
+  'LDEuMTctLjU3LDEuNzEtLjU3aDI2Ljk3Yy43MywwLDEuMS4zMiwxLjEuOTcsMCwuMy0uMS42Mi0uMjkuOTZsLTIuMjUsMy44NmMtLjI5LjUz' +
+  'LS43NC45OS0xLjM0LDEuMzctLjYxLjM3LTEuMTUuNTYtMS42Ni41NmgtOS42NGMtLjc1LDAtMS4xMy0uMzItMS4xMy0uOTcsMC0uMjkuMDkt' +
+  'LjYyLjI4LS45NmwxLjExLTEuOTNjLjItLjM0LjI5LS42Ny4yOS0uOTYsMC0uNjQtLjM1LS45Ny0xLjA5LS45Ny0uNTIsMC0xLjA5LjE5LTEu' +
+  'NjguNTctLjU4LjM3LTEuMDQuODItMS4zNiwxLjM2bC03Ljc5LDEzLjQ5Yy0uMTkuMzYtLjI4LjY3LS4yOC45NywwLC42NC4zNS45NiwxLjA4' +
+  'Ljk2LjU0LDAsMS4xLS4xOSwxLjcxLS41Ni42LS4zOCwxLjA0LS44NCwxLjM0LTEuMzdsMy4zMy01Ljc5Yy4zMy0uNTMuNzgtLjk5LDEuMzct' +
+  'MS4zNi41OS0uMzgsMS4xNS0uNTcsMS42OS0uNTdoOS42NGMuNzUsMCwxLjEzLjMyLDEuMTMuOTcsMCwuMy0uMTEuNjItLjMzLjk2bC0xMy4w' +
+  'NCwyMi42NWMtLjQuNy0uODMsMS4wNS0xLjI5LDEuMDUtLjIzLDAtLjQyLS4xNC0uNTUtLjRsLTUuMzQtOS4wNFoiLz4KICAgICAgPHBhdGgg' +
+  'Y2xhc3M9InN0MCIgZD0iTTY0NC45MiwxNzc1LjQ1Yy43MywwLDEuMDkuMzIsMS4wOS45NywwLC4zLS4wOS42Mi0uMjguOTZsLTEwLjA0LDE3' +
+  'LjM0Yy0uMjkuNTQtLjc0LDEtMS4zNCwxLjM3LS42LjM3LTEuMTUuNTYtMS42Ny41NmgtMjYuOThjLS43NiwwLTEuMTItLjMyLTEuMTItLjk3' +
+  'LDAtLjI5LjEtLjYxLjI4LS45NmwxOC42Ni0zMi4yOGMuNC0uNy44Mi0xLjA0LDEuMjUtMS4wNC4yNSwwLC40NC4xMi42LjM2bDUuMzQsOS4w' +
+  'N2MuMTYuMjcuMjQuNjQuMjQsMS4wOSwwLC42Ny0uMTYsMS4yOC0uNDgsMS44NS0uMTcuMjctLjI0LjUyLS4yNC43NiwwLC42Mi4zOS45Miwx' +
+  'LjIuOTJoMTMuNDhaTTYzMS4xMSwxNzc5LjMxYy4xOS0uMzQuMjktLjY2LjI5LS45NiwwLS42NC0uMzYtLjk3LTEuMS0uOTctLjUyLDAtMS4w' +
+  'OS4xOS0xLjY4LjU3LS41OS4zNy0xLjA0LjgzLTEuMzYsMS4zN2wtNy43OSwxMy40OWMtLjE5LjM1LS4yOS42Ni0uMjkuOTYsMCwuNjQuMzcu' +
+  'OTYsMS4wOS45Ni41NCwwLDEuMTEtLjE5LDEuNzEtLjU2LjYtLjM4LDEuMDUtLjgzLDEuMzQtMS4zN2w3Ljc5LTEzLjQ5WiIvPgogICAgICA8' +
+  'cGF0aCBjbGFzcz0ic3QwIiBkPSJNNjc5LjczLDE3NzUuNDVjLjcyLDAsMS4wOC4zMiwxLjA4Ljk3LDAsLjMtLjEuNjItLjI4Ljk2bC0yLjI1' +
+  'LDMuODZjLS4yOS41My0uNzQuOTktMS4zNCwxLjM3LS42LjM3LTEuMTYuNTYtMS42OC41NmgtOS42MmMtLjc1LDAtMS4xMy0uMzItMS4xMy0u' +
+  'OTcsMC0uMy4xLS42Mi4yOS0uOTZsMS4xMi0xLjkzYy4xOS0uMzQuMjgtLjY2LjI4LS45NiwwLS42NC0uMzYtLjk3LTEuMDktLjk3LS41Myww' +
+  'LTEuMDkuMTktMS42OS41Ny0uNTkuMzctMS4wNC44Mi0xLjM2LDEuMzZsLTguOTQsMTUuNGMtLjMuNTQtLjc0LDEuMDEtMS4zNSwxLjM4LS42' +
+  'LjM4LTEuMTUuNTctMS42Ni41N2gtOS42MmMtLjc1LDAtMS4xMS0uMzItMS4xMS0uOTcsMC0uMjkuMDktLjYxLjI3LS45NmwxMC4wNC0xNy4z' +
+  'NGMuMjktLjUzLjc0LS45OSwxLjM1LTEuMzYuNi0uMzgsMS4xNy0uNTcsMS43MS0uNTdoMjYuOThaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJz' +
+  'dDAiIGQ9Ik03MTMuMzIsMTc3NS40NWMuNzIsMCwxLjA4LjMyLDEuMDguOTcsMCwuMy0uMS42Mi0uMjguOTZsLTEwLjA0LDE3LjM0Yy0uMy41' +
+  'NC0uNzUsMS0xLjM1LDEuMzctLjYxLjM3LTEuMTYuNTYtMS42Ny41NmgtMjYuOThjLS43NSwwLTEuMTMtLjMyLTEuMTMtLjk3LDAtLjI5LjA5' +
+  'LS42MS4yOC0uOTZsMTAuMDQtMTcuMzRjLjMtLjUzLjc1LS45OSwxLjM1LTEuMzYuNjEtLjM4LDEuMTgtLjU3LDEuNzEtLjU3aDI2Ljk5Wk02' +
+  'OTkuNTEsMTc3OS4zMWMuMTktLjM0LjI4LS42Ni4yOC0uOTYsMC0uNjQtLjM2LS45Ny0xLjA4LS45Ny0uNTMsMC0xLjEuMTktMS42OC41Ny0u' +
+  'NTkuMzctMS4wNC44My0xLjM3LDEuMzdsLTcuNzksMTMuNDljLS4xOC4zNS0uMjguNjYtLjI4Ljk2LDAsLjY0LjM3Ljk2LDEuMDguOTYuNTQs' +
+  'MCwxLjEtLjE5LDEuNzEtLjU2LjYxLS4zOCwxLjA1LS44MywxLjM1LTEuMzdsNy43OS0xMy40OVoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0' +
+  'MCIgZD0iTTczNC4wMiwxNzgzLjE2Yy0uNzUsMC0xLjEyLS4zMi0xLjEyLS45NywwLS4zLjA4LS42Mi4yOC0uOTZsMS4xMi0xLjkzYy4xOS0u' +
+  'MzQuMjgtLjY2LjI4LS45NiwwLS42NC0uMzYtLjk3LTEuMDktLjk3LS41MywwLTEuMS4xOS0xLjY5LjU3LS41OS4zNy0xLjA0LjgyLTEuMzYs' +
+  'MS4zNmwtMi4yNCwzLjgzYy0uMTkuMzYtLjI5LjY4LS4yOS45OCwwLC42NC4zOC45NywxLjEyLjk3aDEzLjQ5Yy43NSwwLDEuMTMuMzIsMS4x' +
+  'My45NywwLC4zLS4xMi42Mi0uMzMuOTZsLTQuNDYsNy43MWMtLjI5LjU0LS43NCwxLTEuMzQsMS4zNy0uNi4zNy0xLjE2LjU3LTEuNjcuNTdo' +
+  'LTI2Ljk4Yy0uNzQsMC0xLjEzLS4zMi0xLjEzLS45NywwLS4yOS4xLS42MS4yOS0uOTZsMi4yNS0zLjg1Yy4zLS41My43NS0uOTksMS4zNS0x' +
+  'LjM3LjYxLS4zNywxLjE3LS41NiwxLjcxLS41Nmg5LjY0Yy43MywwLDEuMDkuMzMsMS4wOS45NywwLC4zLS4wOS42Mi0uMjkuOTdsLTEuMTMs' +
+  'MS45MmMtLjE4LjM2LS4yNy42Ny0uMjcuOTcsMCwuNjQuMzYuOTYsMS4wOS45Ni41MywwLDEuMS0uMTksMS42OS0uNTYuNjEtLjM4LDEuMDct' +
+  'LjgzLDEuMzYtMS4zN2wyLjI1LTMuODVjLjE4LS4zNS4yNy0uNjguMjctLjk3LDAtLjY0LS4zNy0uOTctMS4xMi0uOTdoLTEzLjQ4Yy0uNzMs' +
+  'MC0xLjA5LS4zMS0xLjA5LS45NiwwLS4yOS4xLS42MS4yOS0uOTdsNC40NS03LjcxYy4yOS0uNTMuNzQtLjk5LDEuMzQtMS4zNi42MS0uMzgs' +
+  'MS4xNy0uNTcsMS43MS0uNTdoMjYuOThjLjcyLDAsMS4wOC4zMiwxLjA4Ljk3LDAsLjMtLjEuNjItLjI4Ljk2bC0yLjI1LDMuODZjLS4yOS41' +
+  'My0uNzQuOTktMS4zNSwxLjM3LS42LjM3LTEuMTYuNTYtMS42Ni41NmgtOS42NFoiLz4KICAgIDwvZz4KICAgIDxnPgogICAgICA8cmVjdCBj' +
+  'bGFzcz0ic3QxIiB4PSIzMzAuNjgiIHk9IjE3NTAuOTUiIHdpZHRoPSI3MC4yOSIgaGVpZ2h0PSI3MC4yOSIgcng9IjYuNDEiIHJ5PSI2LjQx' +
+  'Ii8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0zOTUuODksMTc4NC4wMWgtMTcuN2MtLjI1LDAtLjQ3LS4wMy0uNjYtLjA4LS41OC0u' +
+  'MTYtLjg3LS41NC0uODctMS4xMywwLS4zMS4wOS0uNjYuMjctMSwuNDEtLjc0LjY0LTEuNTUuNjQtMi40MiwwLS41OS0uMS0xLjA3LS4zMS0x' +
+  'LjQybC00Ljg2LTguMjloOS4wNWMuNjksMCwxLjQ0LS4yNSwyLjIzLS43NC43OS0uNDgsMS4zOS0xLjA3LDEuNzctMS43OGwyLjktNS4wOGMu' +
+  'MjgtLjQzLjQyLS44Ni40Mi0xLjI2LDAtLjgzLS40OC0xLjI1LTEuNDctMS4yNWgtMzUuMzljLS43MSwwLTEuNDUuMjUtMi4yMi43NC0uNzcu' +
+  'NDgtMS4zNywxLjA4LTEuOCwxLjc3bC0xMy4xNiwyMi43N2MtLjI1LjQ2LS4zOC44OS0uMzgsMS4yNiwwLC44NS40NywxLjI3LDEuNDIsMS4y' +
+  'N2gxMi42M2MuNzEsMCwxLjQ1LS4yNSwyLjI0LS43NC43OS0uNSwxLjM5LTEuMDgsMS43Ni0xLjhsMTEuNzYtMjAuMjFjLjM5LS43Ljk3LTEu' +
+  'MjksMS43Ni0xLjc5Ljc4LS40OSwxLjUxLS43NCwyLjE3LS43NCwxLDAsMS40OS40MSwxLjQ5LDEuMjYsMCwuMzktLjEyLjgtLjM5LDEuMjZs' +
+  'LTEuMjUsMi4xNWMtLjAzLjA2LS4wOC4xMy0uMTIuMmwtMjQuNTIsNDIuMzJjLS4yNS40Ni0uMzguODgtLjM4LDEuMjYsMCwuODUuNDcsMS4y' +
+  'NiwxLjQxLDEuMjZoMzUuMzljLjcxLDAsMS40NS0uMjQsMi4yNi0uNzMuNzctLjQ5LDEuMzctMS4wOSwxLjc0LTEuOGwxMy4xNy0yMi43NGMu' +
+  'MjktLjQ2LjQyLS45LjQyLTEuMjYsMC0uODYtLjQ3LTEuMjctMS40Ny0xLjI3Wk0zNzcuODIsMTc4OS4wN2wtMTAuMjcsMTcuNjljLS40My43' +
+  'LTEuMDIsMS4zMS0xLjgsMS43OS0uNzUuNDktMS41Mi43NC0yLjIuNzQtMSwwLTEuNS0uNDItMS41LTEuMjUsMC0uMzkuMTctLjgxLjQ1LTEu' +
+  'MjZsMTAuMjYtMTcuNjljLjM5LS43Mi45OC0xLjMxLDEuNzctMS44MS43Ny0uNDgsMS41MS0uNzMsMi4xOC0uNzMuOTcsMCwxLjQ3LjQxLDEu' +
+  'NDcsMS4yNiwwLC4zOC0uMTIuOC0uMzcsMS4yNloiLz4KICAgIDwvZz4KICA8L2c+CiAgPHBhdGggZD0iTTEwNzAuNSwxOTEwLjVIOS41Vjku' +
+  'NWgxMDYxdjE5MDFaTTI2LjUsMTg5My41aDEwMjdWMjYuNUgyNi41djE4NjdaIi8+Cjwvc3ZnPg==';
+const TPL_1200x1200_A_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjAwIDEyMDAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MSB7CiAgICAgICAgZmlsbDogI2Q3' +
+  'MjgyZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGc+CiAgICA8cGF0aCBkPSJNNTIyLjM3LDEwNjMuMTljLjY5LDAsMS4w' +
+  'My4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43Ljk0LTEuMjgsMS4zLS41Ny4zNS0xLjEuNTMt' +
+  'MS41OS41M2gtOS4xNmMtLjcxLDAtMS4wNi0uMzEtMS4wNi0uOTIsMC0uMjguMDktLjU5LjI2LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNi0u' +
+  'NjMuMjYtLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYuNTQtLjU2LjM1LTEsLjc4LTEuMywxLjI5bC04LjUs' +
+  'MTQuNjRjLS4yOC41Mi0uNy45Ni0xLjI4LDEuMzEtLjU3LjM2LTEuMDkuNTQtMS41OC41NGgtOS4xNWMtLjcxLDAtMS4wNy0uMy0xLjA3LS45' +
+  'MiwwLS4yNy4wOS0uNTguMjctLjkybDkuNTQtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRo' +
+  'MjUuNjZaIi8+CiAgICA8cGF0aCBkPSJNNTU0LjcsMTA2My4xOWMuNjksMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45Mmwt' +
+  'OS41NCwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI4LDEuMy0uNTcuMzUtMS4xLjU0LTEuNTguNTRoLTI1LjY2Yy0uNzEsMC0xLjA3LS4zLTEu' +
+  'MDctLjkyLDAtLjI3LjA5LS41OC4yNy0uOTJsNC4yNC03LjM0Yy4zMS0uNS43NC0uOTQsMS4yOS0xLjI5LjU3LS4zNiwxLjEtLjU0LDEuNjEt' +
+  'LjU0aDEyLjgzYy41MSwwLDEuMDUtLjE4LDEuNjEtLjUzLjU2LS4zNiwxLS43OCwxLjMtMS4zbDIuMTEtMy42NWMuMTYtLjMzLjI0LS42NC4y' +
+  'NC0uOTIsMC0uNjItLjM0LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjAzLjE4LTEuNTkuNTQtLjU2LjM2LS45OS44LTEuMjksMS4zMWwtMS4wNywx' +
+  'Ljg0Yy0uMjguNS0uNzEuOTMtMS4yOCwxLjI4LS41OC4zNi0xLjExLjUzLTEuNTkuNTNoLTkuMTljLS43MiwwLTEuMDctLjMxLTEuMDctLjky' +
+  'LDAtLjI4LjA5LS41OS4yNy0uOTFsMi4xMy0zLjY3Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1' +
+  'LjY2Wk01MzYuMjgsMTA3Ni4wMmMuMTgtLjMzLjI3LS42NC4yNy0uOTIsMC0uNjEtLjM1LS45Mi0xLjA3LS45Mi0uNTEsMC0xLjA0LjE5LTEu' +
+  'Ni41NC0uNTYuMzUtLjk4Ljc5LTEuMjYsMS4zbC0yLjE0LDMuNjdjLS4xOC4zNC0uMjYuNjQtLjI2LjkyLDAsLjYxLjM0LjkyLDEuMDMuOTIu' +
+  'NTEsMCwxLjA1LS4xOCwxLjYyLS41My41Ny0uMzYsMS0uNzksMS4yOC0xLjNsMi4xMy0zLjY3WiIvPgogICAgPHBhdGggZD0iTTU3My40Mywx' +
+  'MDcwLjUzYy0uNzEsMC0xLjA3LS4zMS0xLjA3LS45MiwwLS4yOC4wOS0uNTkuMjctLjkxbDEuMDctMS44NGMuMTgtLjMzLjI3LS42My4yNy0u' +
+  'OTEsMC0uNjEtLjM1LS45Mi0xLjAzLS45Mi0uNSwwLTEuMDQuMTgtMS42LjU0LS41Ni4zNS0uOTkuNzktMS4zLDEuM2wtNy40MSwxMi44M2Mt' +
+  'LjE4LjMzLS4yNy42My0uMjcuOTEsMCwuNjEuMzQuOTIsMS4wMy45Mi41MSwwLDEuMDYtLjE4LDEuNjItLjUzLjU3LS4zNiwxLS43OSwxLjI4' +
+  'LTEuM2wzLjE3LTUuNDljLjMxLS41MS43NC0uOTUsMS4zLTEuMy41Ni0uMzYsMS4xLS41NCwxLjYtLjU0aDkuMTZjLjcyLDAsMS4wNy4zMSwx' +
+  'LjA3LjkyLDAsLjI5LS4xLjU5LS4zLjkxbC00LjI0LDcuMzRjLS4yNy41MS0uNy45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRo' +
+  'LTI1LjY2Yy0uNzIsMC0xLjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjctLjUuNy0uOTQsMS4yOC0x' +
+  'LjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1LjY1Yy42OCwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0' +
+  'LDMuNjdjLS4yOC41MS0uNy45NC0xLjI3LDEuMy0uNTcuMzUtMS4xLjUzLTEuNTkuNTNoLTkuMTZaIi8+CiAgICA8cGF0aCBkPSJNNTgxLjg2' +
+  'LDEwODMuMzZjLS43MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI2LS45Mmw5LjU1LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4y' +
+  'OC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDkuMTZjLjY4LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTku' +
+  'NTQsMTYuNDljLS4yOC41MS0uNzEuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC05LjE2WiIvPgogICAgPHBhdGggZD0iTTYz' +
+  'NC45OSwxMDYzLjE5Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC05LjU1LDE2LjQ5Yy0uMjguNTEtLjcxLjk1' +
+  'LTEuMjcsMS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtOS4xN2MtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjky' +
+  'bDguNDgtMTQuNjZjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYxLjU0LS41' +
+  'Ni4zNS0uOTkuNzktMS4zLDEuM2wtOC40OCwxNC42NWMtLjI3LjUxLS43Ljk1LTEuMjcsMS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtOS4x' +
+  'NmMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkybDkuNTQtMTYuNDljLjI3LS41LjctLjk0LDEuMjctMS4zLjU4' +
+  'LS4zNiwxLjEyLS41NCwxLjYzLS41NGgyNS42NVoiLz4KICAgIDxwYXRoIGQ9Ik02NDMuMzUsMTA4Ny43NWMtLjE1LS4yNy0uMjMtLjY0LS4y' +
+  'My0xLjA3LDAtLjY0LjE2LTEuMjEuNDYtMS43Mi4xMy0uMjUuMTktLjQ5LjE5LS43MiwwLS41OS0uMzctLjg4LTEuMTEtLjg4aC0xMi44M2Mt' +
+  'LjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0u' +
+  'MzYsMS4xMS0uNTQsMS42Mi0uNTRoMjUuNjVjLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2Mt' +
+  'LjI4LjUxLS43MS45NC0xLjI3LDEuMy0uNTguMzYtMS4xLjUzLTEuNTguNTNoLTkuMTdjLS43MSwwLTEuMDctLjMxLTEuMDctLjkyLDAtLjI4' +
+  'LjA5LS41OS4yNy0uOTFsMS4wNS0xLjg0Yy4xOS0uMzMuMjgtLjY0LjI4LS45MSwwLS42MS0uMzQtLjkyLTEuMDQtLjkyLS41LDAtMS4wNC4x' +
+  'OC0xLjYuNTQtLjU1LjM1LS45OS43OC0xLjMsMS4yOWwtNy40LDEyLjgzYy0uMTguMzQtLjI3LjY0LS4yNy45MiwwLC42MS4zNC45MiwxLjAz' +
+  'LjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2Ljk5LS43OSwxLjI3LTEuM2wzLjE3LTUuNWMuMzEtLjUuNzQtLjk0LDEuMzEtMS4y' +
+  'OS41Ni0uMzYsMS4wOS0uNTQsMS42LS41NGg5LjE2Yy43MSwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMS41OS0uMzEuOTFsLTEyLjQsMjEu' +
+  'NTRjLS4zOC42Ni0uNzksMS0xLjIzLDEtLjIyLDAtLjQtLjEzLS41My0uMzhsLTUuMDgtOC42WiIvPgogICAgPHBhdGggZD0iTTY5OS44Mywx' +
+  'MDYzLjE5Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI2LjkybC05LjU1LDE2LjQ5Yy0uMjguNTEtLjcxLjk1LTEuMjcs' +
+  'MS4zLS41Ny4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjVjLS43MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3LS45MWwxNy43' +
+  'NC0zMC42OWMuMzgtLjY2Ljc4LS45OSwxLjE5LS45OS4yNCwwLC40Mi4xMS41Ny4zNGw1LjA4LDguNjNjLjE1LjI1LjIzLjYxLjIzLDEuMDQs' +
+  'MCwuNjQtLjE1LDEuMjItLjQ2LDEuNzUtLjE2LjI2LS4yMy40OS0uMjMuNzMsMCwuNTkuMzcuODcsMS4xNC44N2gxMi44MlpNNjg2LjcxLDEw' +
+  'NjYuODZjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wNC0uOTItLjUsMC0xLjA0LjE4LTEuNi41NC0uNTYuMzUtLjk5' +
+  'Ljc5LTEuMywxLjNsLTcuNCwxMi44M2MtLjE4LjMzLS4yNy42My0uMjcuOTEsMCwuNjEuMzUuOTIsMS4wMy45Mi41MSwwLDEuMDUtLjE4LDEu' +
+  'NjItLjUzLjU3LS4zNiwxLS43OSwxLjI4LTEuM2w3LjQtMTIuODNaIi8+CiAgICA8cGF0aCBkPSJNNzMyLjk0LDEwNjMuMTljLjY5LDAsMS4w' +
+  'Mi4zMSwxLjAyLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43Ljk0LTEuMjgsMS4zLS41Ny4zNS0xLjExLjUz' +
+  'LTEuNi41M2gtOS4xNWMtLjcyLDAtMS4wNy0uMzEtMS4wNy0uOTIsMC0uMjguMDktLjU5LjI3LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNi0u' +
+  'NjMuMjYtLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNC4xOC0xLjYxLjU0LS41Ni4zNS0uOTkuNzgtMS4yOSwxLjI5bC04' +
+  'LjUsMTQuNjRjLS4yOS41Mi0uNy45Ni0xLjI4LDEuMzEtLjU3LjM2LTEuMS41NC0xLjU4LjU0aC05LjE1Yy0uNzEsMC0xLjA2LS4zLTEuMDYt' +
+  'LjkyLDAtLjI3LjA4LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjgtLjUuNy0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0' +
+  'aDI1LjY2WiIvPgogICAgPHBhdGggZD0iTTc2NC44OSwxMDYzLjE5Yy42OCwwLDEuMDMuMzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI2Ljky' +
+  'bC05LjU0LDE2LjQ5Yy0uMjkuNTEtLjcyLjk1LTEuMjgsMS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjVjLS43MiwwLTEuMDctLjMt' +
+  'MS4wNy0uOTIsMC0uMjcuMDktLjU4LjI2LS45MWw5LjU0LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTgtLjM2LDEuMTItLjU0LDEu' +
+  'NjItLjU0aDI1LjY2Wk03NTEuNzUsMTA2Ni44NmMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjAzLS45Mi0uNTEsMC0x' +
+  'LjA0LjE4LTEuNTkuNTQtLjU2LjM1LS45OS43OS0xLjMxLDEuM2wtNy40LDEyLjgzYy0uMTcuMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45' +
+  'MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTgtLjM2LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M1oiLz4KICAgIDxwYXRoIGQ9' +
+  'Ik03ODQuNTcsMTA3MC41M2MtLjcxLDAtMS4wNi0uMzEtMS4wNi0uOTIsMC0uMjguMDgtLjU5LjI3LS45MWwxLjA2LTEuODRjLjE4LS4zMy4y' +
+  'Ny0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYxLjU0LS41Ni4zNS0uOTkuNzgtMS4zLDEuMjls' +
+  'LTIuMTMsMy42NWMtLjE4LjM0LS4yNy42NS0uMjcuOTMsMCwuNjEuMzYuOTIsMS4wNi45MmgxMi44M2MuNzEsMCwxLjA3LjMxLDEuMDcuOTIs' +
+  'MCwuMjktLjExLjU5LS4zMS45MWwtNC4yNCw3LjM0Yy0uMjcuNTEtLjcuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42' +
+  'NWMtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4xLS41OC4yNy0uOTJsMi4xNC0zLjY2Yy4yOC0uNTEuNzEtLjk0LDEuMjgtMS4zLjU4' +
+  'LS4zNSwxLjExLS41MywxLjYyLS41M2g5LjE2Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0xLjA3LDEuODNj' +
+  'LS4xNy4zNC0uMjYuNjQtLjI2LjkyLDAsLjYxLjM1LjkyLDEuMDQuOTIuNTEsMCwxLjA0LS4xOCwxLjYxLS41My41OC0uMzYsMS4wMS0uNzks' +
+  'MS4yOS0xLjNsMi4xNC0zLjY2Yy4xNy0uMzMuMjYtLjY0LjI2LS45MiwwLS42MS0uMzUtLjkyLTEuMDYtLjkyaC0xMi44MmMtLjY5LDAtMS4w' +
+  'NC0uMjktMS4wNC0uOTEsMC0uMjcuMDktLjU4LjI3LS45Mmw0LjI0LTcuMzNjLjI4LS41LjcxLS45NCwxLjI4LTEuMy41OC0uMzYsMS4xMS0u' +
+  'NTQsMS42My0uNTRoMjUuNjVjLjY4LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43' +
+  'MS45NC0xLjI4LDEuMy0uNTcuMzUtMS4xLjUzLTEuNTguNTNoLTkuMTdaIi8+CiAgPC9nPgogIDxnPgogICAgPHBhdGggY2xhc3M9InN0MSIg' +
+  'ZD0iTTQ2Ny44NCwxMDQ2djU0LjY0YzAsMy4zNy0yLjczLDYuMS02LjEsNi4xaC01NC42NGMtMy4zNywwLTYuMS0yLjczLTYuMS02LjF2LTU0' +
+  'LjY0YzAtMy4zNywyLjczLTYuMSw2LjEtNi4xaDU0LjY0YzMuMzcsMCw2LjEsMi43Myw2LjEsNi4xWk00NjQsMTA3My43NGMuMjgtLjQ0LjQx' +
+  'LS44NS40MS0xLjIsMC0uODEtLjQ1LTEuMjEtMS40LTEuMjFoLTE2LjgzYy0uMjQsMC0uNDUtLjAyLS42My0uMDctLjU1LS4xNS0uODItLjUx' +
+  'LS44Mi0xLjA4LDAtLjI5LjA5LS42Mi4yNi0uOTUuMzktLjcuNjEtMS40Ny42MS0yLjMsMC0uNTYtLjEtMS4wMi0uMy0xLjM1bC00LjYzLTcu' +
+  'ODhoOC42MWMuNjYsMCwxLjM3LS4yNCwyLjEzLS43MS43NS0uNDYsMS4zMS0xLjAzLDEuNjgtMS43bDIuNzYtNC44M2MuMjctLjQxLjQxLS44' +
+  'Mi40MS0xLjIsMC0uNzktLjQ2LTEuMTktMS40LTEuMTloLTMzLjY2Yy0uNjcsMC0xLjM4LjIzLTIuMTEuNy0uNzMuNDYtMS4zLDEuMDMtMS43' +
+  'MSwxLjY5bC0xMi41MiwyMS42NWMtLjI0LjQ0LS4zNS44NS0uMzUsMS4yLDAsLjgxLjQ0LDEuMjEsMS4zNSwxLjIxaDEyLjAxYy42OCwwLDEu' +
+  'MzgtLjIzLDIuMTQtLjcuNzUtLjQ3LDEuMzItMS4wMywxLjY3LTEuNzFsMTEuMTgtMTkuMjJjLjM3LS42Ni45My0xLjIzLDEuNjgtMS43czEu' +
+  'NDQtLjcsMi4wNi0uN2MuOTUsMCwxLjQyLjM5LDEuNDIsMS4yLDAsLjM3LS4xMi43Ni0uMzcsMS4ybC0xLjE5LDIuMDRjLS4wMy4wNi0uMDcu' +
+  'MTMtLjEyLjE5bC0yMy4zMiw0MC4yNWMtLjIzLjQ0LS4zNi44My0uMzYsMS4yLDAsLjgxLjQ1LDEuMiwxLjM1LDEuMmgzMy42NmMuNjcsMCwx' +
+  'LjM4LS4yMiwyLjE1LS42OS43My0uNDYsMS4zLTEuMDQsMS42Ni0xLjcxbDEyLjUyLTIxLjYzWiIvPgogICAgPHBhdGggY2xhc3M9InN0MSIg' +
+  'ZD0iTTQ0Ni4xOCwxMDc0Ljk1YzAsLjM1LS4xMi43Ni0uMzUsMS4ybC05Ljc2LDE2LjgyYy0uNDIuNjYtLjk3LDEuMjQtMS43MiwxLjctLjcx' +
+  'LjQ3LTEuNDQuNy0yLjA5LjctLjk1LDAtMS40Mi0uNC0xLjQyLTEuMTksMC0uMzcuMTYtLjc3LjQzLTEuMmw5Ljc1LTE2LjgyYy4zNy0uNjku' +
+  'OTQtMS4yNSwxLjY5LTEuNzMuNzMtLjQ1LDEuNDMtLjY5LDIuMDctLjY5LjkyLDAsMS40LjQsMS40LDEuMjFaIi8+CiAgICA8cGF0aCBjbGFz' +
+  'cz0ic3QwIiBkPSJNNDQ0Ljc4LDEwNzMuNzRsLjc3LTIuNDhjLjE4LjA1LjM5LjA3LjYzLjA3aDE2LjgzYy45NSwwLDEuNC40LDEuNCwxLjIx' +
+  'LDAsLjM1LS4xMy43Ni0uNDEsMS4ybC0xMi41MiwyMS42M2MtLjM2LjY3LS45MywxLjI1LTEuNjYsMS43MS0uNzcuNDctMS40OC42OS0yLjE1' +
+  'LjY5aC0xNS40MXYtMi40Yy42NSwwLDEuMzgtLjIzLDIuMDktLjcuNzUtLjQ2LDEuMy0xLjA0LDEuNzItMS43bDkuNzYtMTYuODJjLjIzLS40' +
+  'NC4zNS0uODUuMzUtMS4yLDAtLjgxLS40OC0xLjIxLTEuNC0xLjIxWiIvPgogICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTQzOC4wMiwxMDUx' +
+  'LjY5YzAtLjgxLS40Ny0xLjItMS40Mi0xLjJ2LTIuNDJoMTguMjZjLjk0LDAsMS40LjQsMS40LDEuMTksMCwuMzgtLjE0Ljc5LS40MSwxLjJs' +
+  'LTIuNzYsNC44M2MtLjM3LjY3LS45MywxLjI0LTEuNjgsMS43LS43Ni40Ny0xLjQ3LjcxLTIuMTMuNzFoLTguNjFsNC42Myw3Ljg4Yy4yLjMz' +
+  'LjMuNzkuMywxLjM1LDAsLjgzLS4yMiwxLjYtLjYxLDIuMy0uMTcuMzMtLjI2LjY2LS4yNi45NSwwLC41Ny4yNy45My44MiwxLjA4bC0uNzcs' +
+  'Mi40OGMtLjY0LDAtMS4zNC4yNC0yLjA3LjY5LS43NS40OC0xLjMyLDEuMDQtMS42OSwxLjczbC05Ljc1LDE2LjgyYy0uMjcuNDMtLjQzLjgz' +
+  'LS40MywxLjIsMCwuNzkuNDcsMS4xOSwxLjQyLDEuMTl2Mi40aC0xOC4yNWMtLjksMC0xLjM1LS4zOS0xLjM1LTEuMiwwLS4zNy4xMy0uNzYu' +
+  'MzYtMS4ybDIzLjMyLTQwLjI1Yy4wNS0uMDYuMDktLjEzLjEyLS4xOWwxLjE5LTIuMDRjLjI1LS40NC4zNy0uODMuMzctMS4yWiIvPgogICAg' +
+  'PHBhdGggY2xhc3M9InN0MCIgZD0iTTQzNi42LDEwNDguMDd2Mi40MmMtLjYyLDAtMS4zMS4yMy0yLjA2LjdzLTEuMzEsMS4wNC0xLjY4LDEu' +
+  'N2wtMTEuMTgsMTkuMjJjLS4zNS42OC0uOTIsMS4yNC0xLjY3LDEuNzEtLjc2LjQ3LTEuNDYuNy0yLjE0LjdoLTEyLjAxYy0uOTEsMC0xLjM1' +
+  'LS40LTEuMzUtMS4yMSwwLS4zNS4xMS0uNzYuMzUtMS4ybDEyLjUyLTIxLjY1Yy40MS0uNjYuOTgtMS4yMywxLjcxLTEuNjkuNzMtLjQ3LDEu' +
+  'NDQtLjcsMi4xMS0uN2gxNS40WiIvPgogIDwvZz4KPC9zdmc+';
+const TPL_1200x1200_B_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjAwIDEyMDAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MSB7CiAgICAgICAgZmlsbDogI2Q3' +
+  'MjgyZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgeD0iMjAiIHk9Ijk2Ni42MyIgd2lkdGg9IjExNjAiIGhlaWdo' +
+  'dD0iMjEzLjM3Ii8+CiAgPGc+CiAgICA8Zz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTUyMi4zNywxMDYzLjE5Yy42OSwwLDEuMDMu' +
+  'MzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0LDMuNjdjLS4yOC41MS0uNy45NC0xLjI4LDEuMy0uNTcuMzUtMS4xLjUzLTEu' +
+  'NTkuNTNoLTkuMTZjLS43MSwwLTEuMDYtLjMxLTEuMDYtLjkyLDAtLjI4LjA5LS41OS4yNi0uOTFsMS4wNy0xLjg0Yy4xOC0uMzMuMjYtLjYz' +
+  'LjI2LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42LjU0LS41Ni4zNS0xLC43OC0xLjMsMS4yOWwtOC41LDE0' +
+  'LjY0Yy0uMjguNTItLjcuOTYtMS4yOCwxLjMxLS41Ny4zNi0xLjA5LjU0LTEuNTguNTRoLTkuMTVjLS43MSwwLTEuMDctLjMtMS4wNy0uOTIs' +
+  'MC0uMjcuMDktLjU4LjI3LS45Mmw5LjU0LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1' +
+  'LjY4WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTU0LjcsMTA2My4xOWMuNjksMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5' +
+  'LjU5LS4yNy45MmwtOS41NCwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI4LDEuMy0uNTcuMzUtMS4xLjU0LTEuNTguNTRoLTI1LjY2Yy0uNzEs' +
+  'MC0xLjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNy0uOTJsNC4yNC03LjM0Yy4zMS0uNS43NC0uOTQsMS4yOS0xLjI5LjU3LS4zNiwx' +
+  'LjEtLjU0LDEuNjEtLjU0aDEyLjgzYy41MSwwLDEuMDUtLjE4LDEuNjEtLjUzLjU2LS4zNiwxLS43OCwxLjMtMS4zbDIuMTEtMy42NWMuMTYt' +
+  'LjMzLjI0LS42NC4yNC0uOTIsMC0uNjItLjM0LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjAzLjE4LTEuNTkuNTRzLS45OS44LTEuMjksMS4zMWwt' +
+  'MS4wNywxLjg0Yy0uMjguNS0uNzEuOTMtMS4yOCwxLjI4LS41OC4zNi0xLjExLjUzLTEuNTkuNTNoLTkuMTljLS43MiwwLTEuMDctLjMxLTEu' +
+  'MDctLjkyLDAtLjI4LjA5LS41OS4yNy0uOTFsMi4xMy0zLjY3Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjIt' +
+  'LjU0aDI1LjY4Wk01MzYuMjgsMTA3Ni4wMmMuMTgtLjMzLjI3LS42NC4yNy0uOTIsMC0uNjEtLjM1LS45Mi0xLjA3LS45Mi0uNTEsMC0xLjA0' +
+  'LjE5LTEuNi41NC0uNTYuMzUtLjk4Ljc5LTEuMjYsMS4zbC0yLjE0LDMuNjdjLS4xOC4zNC0uMjYuNjQtLjI2LjkyLDAsLjYxLjM0LjkyLDEu' +
+  'MDMuOTIuNTEsMCwxLjA1LS4xOCwxLjYyLS41My41Ny0uMzYsMS0uNzksMS4yOC0xLjNsMi4xMy0zLjY3aDBaIi8+CiAgICAgIDxwYXRoIGNs' +
+  'YXNzPSJzdDAiIGQ9Ik01NzMuNDMsMTA3MC41M2MtLjcxLDAtMS4wNy0uMzEtMS4wNy0uOTIsMC0uMjguMDktLjU5LjI3LS45MWwxLjA3LTEu' +
+  'ODRjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4zNS0uOTItMS4wMy0uOTItLjUsMC0xLjA0LjE4LTEuNi41NC0uNTYuMzUtLjk5Ljc5' +
+  'LTEuMywxLjNsLTcuNDEsMTIuODNjLS4xOC4zMy0uMjcuNjMtLjI3LjkxLDAsLjYxLjM0LjkyLDEuMDMuOTIuNTEsMCwxLjA2LS4xOCwxLjYy' +
+  'LS41My41Ny0uMzYsMS0uNzksMS4yOC0xLjNsMy4xNy01LjQ5Yy4zMS0uNTEuNzQtLjk1LDEuMy0xLjMuNTYtLjM2LDEuMS0uNTQsMS42LS41' +
+  'NGg5LjE2Yy43MiwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMS41OS0uMy45MWwtNC4yNCw3LjM0Yy0uMjcuNTEtLjcuOTUtMS4yNywxLjMt' +
+  'LjU4LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NmMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkybDkuNTUtMTYu' +
+  'NDljLjI3LS41LjctLjk0LDEuMjgtMS4zLjU3LS4zNiwxLjExLS41NCwxLjYyLS41NGgyNS42NWMuNjgsMCwxLjA0LjMxLDEuMDQuOTIsMCwu' +
+  'MjgtLjA5LjU5LS4yNy45MmwtMi4xNCwzLjY3Yy0uMjguNTEtLjcuOTQtMS4yNywxLjMtLjU3LjM1LTEuMS41My0xLjU5LjUzaC05LjE2di0u' +
+  'MDJaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik01ODEuODYsMTA4My4zNmMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4w' +
+  'OS0uNTguMjYtLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRoOS4xNmMuNjgs' +
+  'MCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NCwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI4LDEuMy0uNTcuMzUt' +
+  'MS4xLjU0LTEuNTkuNTRoLTkuMTYuMDFaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02MzQuOTksMTA2My4xOWMuNjksMCwxLjA0' +
+  'LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NSwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0' +
+  'LTEuNTkuNTRoLTkuMTdjLS43MSwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3LS45Mmw4LjQ4LTE0LjY2Yy4xOC0uMzMuMjct' +
+  'LjYzLjI3LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42MS41NC0uNTYuMzUtLjk5Ljc5LTEuMywxLjNsLTgu' +
+  'NDgsMTQuNjVjLS4yNy41MS0uNy45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTkuMTZjLS43MiwwLTEuMDctLjMtMS4wNy0u' +
+  'OTIsMC0uMjcuMDktLjU4LjI2LS45Mmw5LjU0LTE2LjQ5Yy4yNy0uNS43LS45NCwxLjI3LTEuMy41OC0uMzYsMS4xMi0uNTQsMS42My0uNTRo' +
+  'MjUuNjdaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02NDMuMzUsMTA4Ny43NWMtLjE1LS4yNy0uMjMtLjY0LS4yMy0xLjA3LDAt' +
+  'LjY0LjE2LTEuMjEuNDYtMS43Mi4xMy0uMjUuMTktLjQ5LjE5LS43MiwwLS41OS0uMzctLjg4LTEuMTEtLjg4aC0xMi44M2MtLjcxLDAtMS4w' +
+  'Ny0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0u' +
+  'NTQsMS42Mi0uNTRoMjUuNjVjLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43' +
+  'MS45NC0xLjI3LDEuMy0uNTguMzYtMS4xLjUzLTEuNTguNTNoLTkuMTdjLS43MSwwLTEuMDctLjMxLTEuMDctLjkyLDAtLjI4LjA5LS41OS4y' +
+  'Ny0uOTFsMS4wNS0xLjg0Yy4xOS0uMzMuMjgtLjY0LjI4LS45MSwwLS42MS0uMzQtLjkyLTEuMDQtLjkyLS41LDAtMS4wNC4xOC0xLjYuNTQt' +
+  'LjU1LjM1LS45OS43OC0xLjMsMS4yOWwtNy40LDEyLjgzYy0uMTguMzQtLjI3LjY0LS4yNy45MiwwLC42MS4zNC45MiwxLjAzLjkyLjUxLDAs' +
+  'MS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2Ljk5LS43OSwxLjI3LTEuM2wzLjE3LTUuNWMuMzEtLjUuNzQtLjk0LDEuMzEtMS4yOS41Ni0uMzYs' +
+  'MS4wOS0uNTQsMS42LS41NGg5LjE2Yy43MSwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMS41OS0uMzEuOTFsLTEyLjQsMjEuNTRjLS4zOC42' +
+  'Ni0uNzksMS0xLjIzLDEtLjIyLDAtLjQtLjEzLS41My0uMzhsLTUuMDgtOC42aC4wMVoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MCIgZD0i' +
+  'TTY5OS44MywxMDYzLjE5Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI2LjkybC05LjU1LDE2LjQ5Yy0uMjguNTEtLjcx' +
+  'Ljk1LTEuMjcsMS4zLS41Ny4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjVjLS43MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3' +
+  'LS45MWwxNy43NC0zMC42OWMuMzgtLjY2Ljc4LS45OSwxLjE5LS45OS4yNCwwLC40Mi4xMS41Ny4zNGw1LjA4LDguNjNjLjE1LjI1LjIzLjYx' +
+  'LjIzLDEuMDQsMCwuNjQtLjE1LDEuMjItLjQ2LDEuNzUtLjE2LjI2LS4yMy40OS0uMjMuNzMsMCwuNTkuMzcuODcsMS4xNC44N2gxMi44MnYt' +
+  'LjAyWk02ODYuNzEsMTA2Ni44NmMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjA0LS45Mi0uNSwwLTEuMDQuMTgtMS42' +
+  'LjU0LS41Ni4zNS0uOTkuNzktMS4zLDEuM2wtNy40LDEyLjgzYy0uMTguMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45MiwxLjAzLjkyLjUx' +
+  'LDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M2gwWiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3Qw' +
+  'IiBkPSJNNzMyLjk0LDEwNjMuMTljLjY5LDAsMS4wMi4zMSwxLjAyLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIuMTQsMy42N2MtLjI4LjUx' +
+  'LS43Ljk0LTEuMjgsMS4zLS41Ny4zNS0xLjExLjUzLTEuNi41M2gtOS4xNWMtLjcyLDAtMS4wNy0uMzEtMS4wNy0uOTIsMC0uMjguMDktLjU5' +
+  'LjI3LS45MWwxLjA3LTEuODRjLjE4LS4zMy4yNi0uNjMuMjYtLjkxLDAtLjYxLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wNC4xOC0xLjYx' +
+  'LjU0LS41Ni4zNS0uOTkuNzgtMS4yOSwxLjI5bC04LjUsMTQuNjRjLS4yOS41Mi0uNy45Ni0xLjI4LDEuMzEtLjU3LjM2LTEuMS41NC0xLjU4' +
+  'LjU0aC05LjE1Yy0uNzEsMC0xLjA2LS4zLTEuMDYtLjkyLDAtLjI3LjA4LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjgtLjUuNy0uOTQsMS4y' +
+  'OC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1LjY4WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNzY0Ljg5LDEwNjMu' +
+  'MTljLjY4LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTkuNTQsMTYuNDljLS4yOS41MS0uNzIuOTUtMS4yOCwxLjMt' +
+  'LjU4LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NWMtLjcyLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkxbDkuNTQtMTYu' +
+  'NDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41OC0uMzYsMS4xMi0uNTQsMS42Mi0uNTRoMjUuNjZaTTc1MS43NSwxMDY2Ljg2Yy4xOC0uMzMu' +
+  'MjctLjYzLjI3LS45MSwwLS42MS0uMzUtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDQuMTgtMS41OS41NC0uNTYuMzUtLjk5Ljc5LTEuMzEsMS4z' +
+  'bC03LjQsMTIuODNjLS4xNy4zMy0uMjcuNjMtLjI3LjkxLDAsLjYxLjM1LjkyLDEuMDMuOTIuNTEsMCwxLjA1LS4xOCwxLjYyLS41My41OC0u' +
+  'MzYsMS0uNzksMS4yOC0xLjNsNy40LTEyLjgzaDBaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik03ODQuNTcsMTA3MC41M2MtLjcx' +
+  'LDAtMS4wNi0uMzEtMS4wNi0uOTIsMC0uMjguMDgtLjU5LjI3LS45MWwxLjA2LTEuODRjLjE4LS4zMy4yNy0uNjMuMjctLjkxLDAtLjYxLS4z' +
+  'NS0uOTItMS4wMy0uOTItLjUxLDAtMS4wNS4xOC0xLjYxLjU0LS41Ni4zNS0uOTkuNzgtMS4zLDEuMjlsLTIuMTMsMy42NWMtLjE4LjM0LS4y' +
+  'Ny42NS0uMjcuOTMsMCwuNjEuMzYuOTIsMS4wNi45MmgxMi44M2MuNzEsMCwxLjA3LjMxLDEuMDcuOTIsMCwuMjktLjExLjU5LS4zMS45MWwt' +
+  'NC4yNCw3LjM0Yy0uMjcuNTEtLjcuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NWMtLjcxLDAtMS4wNy0uMy0xLjA3' +
+  'LS45MiwwLS4yNy4xLS41OC4yNy0uOTJsMi4xNC0zLjY2Yy4yOC0uNTEuNzEtLjk0LDEuMjgtMS4zLjU4LS4zNSwxLjExLS41MywxLjYyLS41' +
+  'M2g5LjE2Yy42OSwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0xLjA3LDEuODNjLS4xNy4zNC0uMjYuNjQtLjI2Ljky' +
+  'LDAsLjYxLjM1LjkyLDEuMDQuOTIuNTEsMCwxLjA0LS4xOCwxLjYxLS41My41OC0uMzYsMS4wMS0uNzksMS4yOS0xLjNsMi4xNC0zLjY2Yy4x' +
+  'Ny0uMzMuMjYtLjY0LjI2LS45MiwwLS42MS0uMzUtLjkyLTEuMDYtLjkyaC0xMi44MmMtLjY5LDAtMS4wNC0uMjktMS4wNC0uOTEsMC0uMjcu' +
+  'MDktLjU4LjI3LS45Mmw0LjI0LTcuMzNjLjI4LS41LjcxLS45NCwxLjI4LTEuMy41OC0uMzYsMS4xMS0uNTQsMS42My0uNTRoMjUuNjVjLjY4' +
+  'LDAsMS4wMy4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTIuMTQsMy42N2MtLjI4LjUxLS43MS45NC0xLjI4LDEuMy0uNTcuMzUt' +
+  'MS4xLjUzLTEuNTguNTNoLTkuMTdsLS4wMi0uMDNaIi8+CiAgICA8L2c+CiAgICA8Zz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTQ2' +
+  'Ny44NCwxMDQ2djU0LjY0YzAsMy4zNy0yLjczLDYuMS02LjEsNi4xaC01NC42NGMtMy4zNywwLTYuMS0yLjczLTYuMS02LjF2LTU0LjY0YzAt' +
+  'My4zNywyLjczLTYuMSw2LjEtNi4xaDU0LjY0YzMuMzcsMCw2LjEsMi43Myw2LjEsNi4xWk00NjQsMTA3My43NGMuMjgtLjQ0LjQxLS44NS40' +
+  'MS0xLjIsMC0uODEtLjQ1LTEuMjEtMS40LTEuMjFoLTE2LjgzYy0uMjQsMC0uNDUtLjAyLS42My0uMDctLjU1LS4xNS0uODItLjUxLS44Mi0x' +
+  'LjA4LDAtLjI5LjA5LS42Mi4yNi0uOTUuMzktLjcuNjEtMS40Ny42MS0yLjMsMC0uNTYtLjEtMS4wMi0uMy0xLjM1bC00LjYzLTcuODhoOC42' +
+  'MWMuNjYsMCwxLjM3LS4yNCwyLjEzLS43MS43NS0uNDYsMS4zMS0xLjAzLDEuNjgtMS43bDIuNzYtNC44M2MuMjctLjQxLjQxLS44Mi40MS0x' +
+  'LjIsMC0uNzktLjQ2LTEuMTktMS40LTEuMTloLTMzLjY2Yy0uNjcsMC0xLjM4LjIzLTIuMTEuNy0uNzMuNDYtMS4zLDEuMDMtMS43MSwxLjY5' +
+  'bC0xMi41MiwyMS42NWMtLjI0LjQ0LS4zNS44NS0uMzUsMS4yLDAsLjgxLjQ0LDEuMjEsMS4zNSwxLjIxaDEyLjAxYy42OCwwLDEuMzgtLjIz' +
+  'LDIuMTQtLjcuNzUtLjQ3LDEuMzItMS4wMywxLjY3LTEuNzFsMTEuMTgtMTkuMjJjLjM3LS42Ni45My0xLjIzLDEuNjgtMS43czEuNDQtLjcs' +
+  'Mi4wNi0uN2MuOTUsMCwxLjQyLjM5LDEuNDIsMS4yLDAsLjM3LS4xMi43Ni0uMzcsMS4ybC0xLjE5LDIuMDRjLS4wMy4wNi0uMDcuMTMtLjEy' +
+  'LjE5bC0yMy4zMiw0MC4yNWMtLjIzLjQ0LS4zNi44My0uMzYsMS4yLDAsLjgxLjQ1LDEuMiwxLjM1LDEuMmgzMy42NmMuNjcsMCwxLjM4LS4y' +
+  'MiwyLjE1LS42OS43My0uNDYsMS4zLTEuMDQsMS42Ni0xLjcxbDEyLjUyLTIxLjYzaDBaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9' +
+  'Ik00NDYuMTgsMTA3NC45NWMwLC4zNS0uMTIuNzYtLjM1LDEuMmwtOS43NiwxNi44MmMtLjQyLjY2LS45NywxLjI0LTEuNzIsMS43LS43MS40' +
+  'Ny0xLjQ0LjctMi4wOS43LS45NSwwLTEuNDItLjQtMS40Mi0xLjE5LDAtLjM3LjE2LS43Ny40My0xLjJsOS43NS0xNi44MmMuMzctLjY5Ljk0' +
+  'LTEuMjUsMS42OS0xLjczLjczLS40NSwxLjQzLS42OSwyLjA3LS42OS45MiwwLDEuNC40LDEuNCwxLjIxaDBaIi8+CiAgICAgIDxwYXRoIGNs' +
+  'YXNzPSJzdDAiIGQ9Ik00NDQuNzgsMTA3My43NGwuNzctMi40OGMuMTguMDUuMzkuMDcuNjMuMDdoMTYuODNjLjk1LDAsMS40LjQsMS40LDEu' +
+  'MjEsMCwuMzUtLjEzLjc2LS40MSwxLjJsLTEyLjUyLDIxLjYzYy0uMzYuNjctLjkzLDEuMjUtMS42NiwxLjcxLS43Ny40Ny0xLjQ4LjY5LTIu' +
+  'MTUuNjloLTE1LjQxdi0yLjRjLjY1LDAsMS4zOC0uMjMsMi4wOS0uNy43NS0uNDYsMS4zLTEuMDQsMS43Mi0xLjdsOS43Ni0xNi44MmMuMjMt' +
+  'LjQ0LjM1LS44NS4zNS0xLjIsMC0uODEtLjQ4LTEuMjEtMS40LTEuMjFaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00MzguMDIs' +
+  'MTA1MS42OWMwLS44MS0uNDctMS4yLTEuNDItMS4ydi0yLjQyaDE4LjI2Yy45NCwwLDEuNC40LDEuNCwxLjE5LDAsLjM4LS4xNC43OS0uNDEs' +
+  'MS4ybC0yLjc2LDQuODNjLS4zNy42Ny0uOTMsMS4yNC0xLjY4LDEuNy0uNzYuNDctMS40Ny43MS0yLjEzLjcxaC04LjYxbDQuNjMsNy44OGMu' +
+  'Mi4zMy4zLjc5LjMsMS4zNSwwLC44My0uMjIsMS42LS42MSwyLjMtLjE3LjMzLS4yNi42Ni0uMjYuOTUsMCwuNTcuMjcuOTMuODIsMS4wOGwt' +
+  'Ljc3LDIuNDhjLS42NCwwLTEuMzQuMjQtMi4wNy42OS0uNzUuNDgtMS4zMiwxLjA0LTEuNjksMS43M2wtOS43NSwxNi44MmMtLjI3LjQzLS40' +
+  'My44My0uNDMsMS4yLDAsLjc5LjQ3LDEuMTksMS40MiwxLjE5djIuNGgtMTguMjVjLS45LDAtMS4zNS0uMzktMS4zNS0xLjIsMC0uMzcuMTMt' +
+  'Ljc2LjM2LTEuMmwyMy4zMi00MC4yNWMuMDUtLjA2LjA5LS4xMy4xMi0uMTlsMS4xOS0yLjA0Yy4yNS0uNDQuMzctLjgzLjM3LTEuMmgwWiIv' +
+  'PgogICAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNDM2LjYsMTA0OC4wN3YyLjQyYy0uNjIsMC0xLjMxLjIzLTIuMDYuN3MtMS4zMSwxLjA0' +
+  'LTEuNjgsMS43bC0xMS4xOCwxOS4yMmMtLjM1LjY4LS45MiwxLjI0LTEuNjcsMS43MS0uNzYuNDctMS40Ni43LTIuMTQuN2gtMTIuMDFjLS45' +
+  'MSwwLTEuMzUtLjQtMS4zNS0xLjIxLDAtLjM1LjExLS43Ni4zNS0xLjJsMTIuNTItMjEuNjVjLjQxLS42Ni45OC0xLjIzLDEuNzEtMS42OS43' +
+  'My0uNDcsMS40NC0uNywyLjExLS43aDE1LjRaIi8+CiAgICA8L2c+CiAgPC9nPgogIDxwYXRoIGQ9Ik0xMTg5LjUsMTE4OS41SDExLjI5VjEw' +
+  'LjVoMTE3OC4yMXYxMTc5Wk0zMC4yOSwxMTcwLjVoMTE0MC4yMVYyOS41SDMwLjI5djExNDFaIi8+Cjwvc3ZnPg==';
+const TPL_1200x1200_C_B64 =
+  'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3Jn' +
+  'LzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjAwIDEyMDAiPgogIDwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3Ry' +
+  'YXRvciAzMC40LjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiAyLjEuNCBCdWlsZCAyMjYpICAtLT4KICA8ZGVmcz4KICAg' +
+  'IDxzdHlsZT4KICAgICAgLnN0MCB7CiAgICAgICAgZmlsbDogI2ZkYjY0NDsKICAgICAgfQoKICAgICAgLnN0MSwgLnN0MiB7CiAgICAgICAg' +
+  'ZmlsbDogI2ZmZjsKICAgICAgfQoKICAgICAgLnN0MiB7CiAgICAgICAgZm9udC1mYW1pbHk6IEtvekdvUHI2Ti1NZWRpdW0tOTBtcy1SS1NK' +
+  'LUgsICdLb3p1a2EgR290aGljIFByNk4nOwogICAgICAgIGZvbnQtc2l6ZTogMzEuMTlweDsKICAgICAgICBmb250LXdlaWdodDogNTAwOwog' +
+  'ICAgICAgIGxldHRlci1zcGFjaW5nOiAuM2VtOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8Zz4KICAgIDxyZWN0IHg9IjIw' +
+  'IiB5PSIyMCIgd2lkdGg9IjExNjAiIGhlaWdodD0iMTE2MCIvPgogICAgPHJlY3QgY2xhc3M9InN0MSIgeD0iMjAiIHk9IjgwMC4zNiIgd2lk' +
+  'dGg9IjExNjAiIGhlaWdodD0iMTY2LjI3Ii8+CiAgPC9nPgogIDxnPgogICAgPGc+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01MjIu' +
+  'MzcsMTA2My4xOWMuNjksMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtMi4xNCwzLjY3Yy0uMjguNTEtLjcuOTQtMS4y' +
+  'OCwxLjMtLjU3LjM1LTEuMS41My0xLjU5LjUzaC05LjE2Yy0uNzEsMC0xLjA2LS4zMS0xLjA2LS45MiwwLS4yOC4wOS0uNTkuMjYtLjkxbDEu' +
+  'MDctMS44NGMuMTgtLjMzLjI2LS42My4yNi0uOTEsMC0uNjEtLjM0LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjA1LjE4LTEuNi41NC0uNTYuMzUt' +
+  'MSwuNzgtMS4zLDEuMjlsLTguNSwxNC42NGMtLjI4LjUyLS43Ljk2LTEuMjgsMS4zMS0uNTcuMzYtMS4wOS41NC0xLjU4LjU0aC05LjE1Yy0u' +
+  'NzEsMC0xLjA3LS4zLTEuMDctLjkyLDAtLjI3LjA5LS41OC4yNy0uOTJsOS41NC0xNi40OWMuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU3LS4z' +
+  'NiwxLjExLS41NCwxLjYyLS41NGgyNS42NloiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTU1NC43LDEwNjMuMTljLjY5LDAsMS4w' +
+  'My4zMSwxLjAzLjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTkuNTQsMTYuNDljLS4yOC41MS0uNzEuOTUtMS4yOCwxLjMtLjU3LjM1LTEuMS41' +
+  'NC0xLjU4LjU0aC0yNS42NmMtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDQuMjQtNy4zNGMuMzEtLjUuNzQt' +
+  'Ljk0LDEuMjktMS4yOS41Ny0uMzYsMS4xLS41NCwxLjYxLS41NGgxMi44M2MuNTEsMCwxLjA1LS4xOCwxLjYxLS41My41Ni0uMzYsMS0uNzgs' +
+  'MS4zLTEuM2wyLjExLTMuNjVjLjE2LS4zMy4yNC0uNjQuMjQtLjkyLDAtLjYyLS4zNC0uOTItMS4wMy0uOTItLjUxLDAtMS4wMy4xOC0xLjU5' +
+  'LjU0LS41Ni4zNi0uOTkuOC0xLjI5LDEuMzFsLTEuMDcsMS44NGMtLjI4LjUtLjcxLjkzLTEuMjgsMS4yOC0uNTguMzYtMS4xMS41My0xLjU5' +
+  'LjUzaC05LjE5Yy0uNzIsMC0xLjA3LS4zMS0xLjA3LS45MiwwLS4yOC4wOS0uNTkuMjctLjkxbDIuMTMtMy42N2MuMjgtLjUuNzEtLjk0LDEu' +
+  'MjgtMS4zLjU3LS4zNiwxLjExLS41NCwxLjYyLS41NGgyNS42NlpNNTM2LjI4LDEwNzYuMDJjLjE4LS4zMy4yNy0uNjQuMjctLjkyLDAtLjYx' +
+  'LS4zNS0uOTItMS4wNy0uOTItLjUxLDAtMS4wNC4xOS0xLjYuNTQtLjU2LjM1LS45OC43OS0xLjI2LDEuM2wtMi4xNCwzLjY3Yy0uMTguMzQt' +
+  'LjI2LjY0LS4yNi45MiwwLC42MS4zNC45MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDIu' +
+  'MTMtMy42N1oiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTU3My40MywxMDcwLjUzYy0uNzEsMC0xLjA3LS4zMS0xLjA3LS45Miww' +
+  'LS4yOC4wOS0uNTkuMjctLjkxbDEuMDctMS44NGMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjAzLS45Mi0uNSwwLTEu' +
+  'MDQuMTgtMS42LjU0LS41Ni4zNS0uOTkuNzktMS4zLDEuM2wtNy40MSwxMi44M2MtLjE4LjMzLS4yNy42My0uMjcuOTEsMCwuNjEuMzQuOTIs' +
+  'MS4wMy45Mi41MSwwLDEuMDYtLjE4LDEuNjItLjUzLjU3LS4zNiwxLS43OSwxLjI4LTEuM2wzLjE3LTUuNDljLjMxLS41MS43NC0uOTUsMS4z' +
+  'LTEuMy41Ni0uMzYsMS4xLS41NCwxLjYtLjU0aDkuMTZjLjcyLDAsMS4wNy4zMSwxLjA3LjkyLDAsLjI5LS4xLjU5LS4zLjkxbC00LjI0LDcu' +
+  'MzRjLS4yNy41MS0uNy45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTI1LjY2Yy0uNzIsMC0xLjA3LS4zLTEuMDctLjkyLDAt' +
+  'LjI3LjA5LS41OC4yNi0uOTJsOS41NS0xNi40OWMuMjctLjUuNy0uOTQsMS4yOC0xLjMuNTctLjM2LDEuMTEtLjU0LDEuNjItLjU0aDI1LjY1' +
+  'Yy42OCwwLDEuMDQuMzEsMS4wNC45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0LDMuNjdjLS4yOC41MS0uNy45NC0xLjI3LDEuMy0uNTcu' +
+  'MzUtMS4xLjUzLTEuNTkuNTNoLTkuMTZaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01ODEuODYsMTA4My4zNmMtLjcyLDAtMS4w' +
+  'Ny0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjYtLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4LTEuMy41Ny0uMzYsMS4xMS0u' +
+  'NTQsMS42Mi0uNTRoOS4xNmMuNjgsMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NCwxNi40OWMtLjI4LjUxLS43' +
+  'MS45NS0xLjI4LDEuMy0uNTcuMzUtMS4xLjU0LTEuNTkuNTRoLTkuMTZaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik02MzQuOTks' +
+  'MTA2My4xOWMuNjksMCwxLjA0LjMxLDEuMDQuOTIsMCwuMjgtLjA5LjU5LS4yNy45MmwtOS41NSwxNi40OWMtLjI4LjUxLS43MS45NS0xLjI3' +
+  'LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTkuMTdjLS43MSwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI3LS45Mmw4LjQ4' +
+  'LTE0LjY2Yy4xOC0uMzMuMjctLjYzLjI3LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDUuMTgtMS42MS41NC0uNTYuMzUt' +
+  'Ljk5Ljc5LTEuMywxLjNsLTguNDgsMTQuNjVjLS4yNy41MS0uNy45NS0xLjI3LDEuMy0uNTguMzUtMS4xLjU0LTEuNTkuNTRoLTkuMTZjLS43' +
+  'MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI2LS45Mmw5LjU0LTE2LjQ5Yy4yNy0uNS43LS45NCwxLjI3LTEuMy41OC0uMzYs' +
+  'MS4xMi0uNTQsMS42My0uNTRoMjUuNjVaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik02NDMuMzUsMTA4Ny43NWMtLjE1LS4yNy0u' +
+  'MjMtLjY0LS4yMy0xLjA3LDAtLjY0LjE2LTEuMjEuNDYtMS43Mi4xMy0uMjUuMTktLjQ5LjE5LS43MiwwLS41OS0uMzctLjg4LTEuMTEtLjg4' +
+  'aC0xMi44M2MtLjcxLDAtMS4wNy0uMy0xLjA3LS45MiwwLS4yNy4wOS0uNTguMjctLjkybDkuNTUtMTYuNDljLjI4LS41LjcxLS45NCwxLjI4' +
+  'LTEuMy41Ny0uMzYsMS4xMS0uNTQsMS42Mi0uNTRoMjUuNjVjLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTIu' +
+  'MTQsMy42N2MtLjI4LjUxLS43MS45NC0xLjI3LDEuMy0uNTguMzYtMS4xLjUzLTEuNTguNTNoLTkuMTdjLS43MSwwLTEuMDctLjMxLTEuMDct' +
+  'LjkyLDAtLjI4LjA5LS41OS4yNy0uOTFsMS4wNS0xLjg0Yy4xOS0uMzMuMjgtLjY0LjI4LS45MSwwLS42MS0uMzQtLjkyLTEuMDQtLjkyLS41' +
+  'LDAtMS4wNC4xOC0xLjYuNTQtLjU1LjM1LS45OS43OC0xLjMsMS4yOWwtNy40LDEyLjgzYy0uMTguMzQtLjI3LjY0LS4yNy45MiwwLC42MS4z' +
+  'NC45MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2Ljk5LS43OSwxLjI3LTEuM2wzLjE3LTUuNWMuMzEtLjUuNzQtLjk0' +
+  'LDEuMzEtMS4yOS41Ni0uMzYsMS4wOS0uNTQsMS42LS41NGg5LjE2Yy43MSwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMS41OS0uMzEuOTFs' +
+  'LTEyLjQsMjEuNTRjLS4zOC42Ni0uNzksMS0xLjIzLDEtLjIyLDAtLjQtLjEzLS41My0uMzhsLTUuMDgtOC42WiIvPgogICAgICA8cGF0aCBj' +
+  'bGFzcz0ic3QxIiBkPSJNNjk5LjgzLDEwNjMuMTljLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjYuOTJsLTkuNTUsMTYu' +
+  'NDljLS4yOC41MS0uNzEuOTUtMS4yNywxLjMtLjU3LjM1LTEuMS41NC0xLjU5LjU0aC0yNS42NWMtLjcyLDAtMS4wNy0uMy0xLjA3LS45Miww' +
+  'LS4yNy4wOS0uNTguMjctLjkxbDE3Ljc0LTMwLjY5Yy4zOC0uNjYuNzgtLjk5LDEuMTktLjk5LjI0LDAsLjQyLjExLjU3LjM0bDUuMDgsOC42' +
+  'M2MuMTUuMjUuMjMuNjEuMjMsMS4wNCwwLC42NC0uMTUsMS4yMi0uNDYsMS43NS0uMTYuMjYtLjIzLjQ5LS4yMy43MywwLC41OS4zNy44Nywx' +
+  'LjE0Ljg3aDEyLjgyWk02ODYuNzEsMTA2Ni44NmMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjA0LS45Mi0uNSwwLTEu' +
+  'MDQuMTgtMS42LjU0LS41Ni4zNS0uOTkuNzktMS4zLDEuM2wtNy40LDEyLjgzYy0uMTguMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45Miwx' +
+  'LjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0uNTMuNTctLjM2LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M1oiLz4KICAgICAgPHBhdGggY2xh' +
+  'c3M9InN0MSIgZD0iTTczMi45NCwxMDYzLjE5Yy42OSwwLDEuMDIuMzEsMS4wMi45MiwwLC4yOC0uMDkuNTktLjI3LjkybC0yLjE0LDMuNjdj' +
+  'LS4yOC41MS0uNy45NC0xLjI4LDEuMy0uNTcuMzUtMS4xMS41My0xLjYuNTNoLTkuMTVjLS43MiwwLTEuMDctLjMxLTEuMDctLjkyLDAtLjI4' +
+  'LjA5LS41OS4yNy0uOTFsMS4wNy0xLjg0Yy4xOC0uMzMuMjYtLjYzLjI2LS45MSwwLS42MS0uMzQtLjkyLTEuMDMtLjkyLS41MSwwLTEuMDQu' +
+  'MTgtMS42MS41NC0uNTYuMzUtLjk5Ljc4LTEuMjksMS4yOWwtOC41LDE0LjY0Yy0uMjkuNTItLjcuOTYtMS4yOCwxLjMxLS41Ny4zNi0xLjEu' +
+  'NTQtMS41OC41NGgtOS4xNWMtLjcxLDAtMS4wNi0uMy0xLjA2LS45MiwwLS4yNy4wOC0uNTguMjYtLjkybDkuNTUtMTYuNDljLjI4LS41Ljct' +
+  'Ljk0LDEuMjgtMS4zLjU3LS4zNiwxLjExLS41NCwxLjYyLS41NGgyNS42NloiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTc2NC44' +
+  'OSwxMDYzLjE5Yy42OCwwLDEuMDMuMzEsMS4wMy45MiwwLC4yOC0uMDkuNTktLjI2LjkybC05LjU0LDE2LjQ5Yy0uMjkuNTEtLjcyLjk1LTEu' +
+  'MjgsMS4zLS41OC4zNS0xLjEuNTQtMS41OS41NGgtMjUuNjVjLS43MiwwLTEuMDctLjMtMS4wNy0uOTIsMC0uMjcuMDktLjU4LjI2LS45MWw5' +
+  'LjU0LTE2LjQ5Yy4yOC0uNS43MS0uOTQsMS4yOC0xLjMuNTgtLjM2LDEuMTItLjU0LDEuNjItLjU0aDI1LjY2Wk03NTEuNzUsMTA2Ni44NmMu' +
+  'MTgtLjMzLjI3LS42My4yNy0uOTEsMC0uNjEtLjM1LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjA0LjE4LTEuNTkuNTQtLjU2LjM1LS45OS43OS0x' +
+  'LjMxLDEuM2wtNy40LDEyLjgzYy0uMTcuMzMtLjI3LjYzLS4yNy45MSwwLC42MS4zNS45MiwxLjAzLjkyLjUxLDAsMS4wNS0uMTgsMS42Mi0u' +
+  'NTMuNTgtLjM2LDEtLjc5LDEuMjgtMS4zbDcuNC0xMi44M1oiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTc4NC41NywxMDcwLjUz' +
+  'Yy0uNzEsMC0xLjA2LS4zMS0xLjA2LS45MiwwLS4yOC4wOC0uNTkuMjctLjkxbDEuMDYtMS44NGMuMTgtLjMzLjI3LS42My4yNy0uOTEsMC0u' +
+  'NjEtLjM1LS45Mi0xLjAzLS45Mi0uNTEsMC0xLjA1LjE4LTEuNjEuNTQtLjU2LjM1LS45OS43OC0xLjMsMS4yOWwtMi4xMywzLjY1Yy0uMTgu' +
+  'MzQtLjI3LjY1LS4yNy45MywwLC42MS4zNi45MiwxLjA2LjkyaDEyLjgzYy43MSwwLDEuMDcuMzEsMS4wNy45MiwwLC4yOS0uMTEuNTktLjMx' +
+  'LjkxbC00LjI0LDcuMzRjLS4yNy41MS0uNy45NS0xLjI4LDEuMy0uNTcuMzUtMS4xLjU0LTEuNTkuNTRoLTI1LjY1Yy0uNzEsMC0xLjA3LS4z' +
+  'LTEuMDctLjkyLDAtLjI3LjEtLjU4LjI3LS45MmwyLjE0LTMuNjZjLjI4LS41MS43MS0uOTQsMS4yOC0xLjMuNTgtLjM1LDEuMTEtLjUzLDEu' +
+  'NjItLjUzaDkuMTZjLjY5LDAsMS4wNC4zMSwxLjA0LjkyLDAsLjI4LS4wOS41OS0uMjcuOTJsLTEuMDcsMS44M2MtLjE3LjM0LS4yNi42NC0u' +
+  'MjYuOTIsMCwuNjEuMzUuOTIsMS4wNC45Mi41MSwwLDEuMDQtLjE4LDEuNjEtLjUzLjU4LS4zNiwxLjAxLS43OSwxLjI5LTEuM2wyLjE0LTMu' +
+  'NjZjLjE3LS4zMy4yNi0uNjQuMjYtLjkyLDAtLjYxLS4zNS0uOTItMS4wNi0uOTJoLTEyLjgyYy0uNjksMC0xLjA0LS4yOS0xLjA0LS45MSww' +
+  'LS4yNy4wOS0uNTguMjctLjkybDQuMjQtNy4zM2MuMjgtLjUuNzEtLjk0LDEuMjgtMS4zLjU4LS4zNiwxLjExLS41NCwxLjYzLS41NGgyNS42' +
+  'NWMuNjgsMCwxLjAzLjMxLDEuMDMuOTIsMCwuMjgtLjA5LjU5LS4yNi45MmwtMi4xNCwzLjY3Yy0uMjguNTEtLjcxLjk0LTEuMjgsMS4zLS41' +
+  'Ny4zNS0xLjEuNTMtMS41OC41M2gtOS4xN1oiLz4KICAgIDwvZz4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNDQ0Ljc4' +
+  'LDEwNzMuNzRjLS42NCwwLTEuMzQuMjMtMi4wNy42OS0uNzUuNDgtMS4zMiwxLjA0LTEuNjksMS43MmwtOS43NSwxNi44MmMtLjI3LjQzLS40' +
+  'My44My0uNDMsMS4yLDAsLjc5LjQ4LDEuMTksMS40MywxLjE5LjY1LDAsMS4zNy0uMjMsMi4wOS0uNy43NC0uNDYsMS4zLTEuMDQsMS43MS0x' +
+  'LjdsOS43Ni0xNi44MmMuMjMtLjQ0LjM1LS44NC4zNS0xLjIsMC0uODEtLjQ4LTEuMi0xLjQtMS4yWiIvPgogICAgICA8cGF0aCBjbGFzcz0i' +
+  'c3QxIiBkPSJNNDYxLjc0LDEwMzkuODloLTU0LjY0Yy0zLjM3LDAtNi4xLDIuNzMtNi4xLDYuMXY1NC42NGMwLDMuMzcsMi43Myw2LjEsNi4x' +
+  'LDYuMWg1NC42NGMzLjM3LDAsNi4xLTIuNzMsNi4xLTYuMXYtNTQuNjRjMC0zLjM3LTIuNzMtNi4xLTYuMS02LjFaTTQ2NCwxMDczLjc0bC0x' +
+  'Mi41MywyMS42M2MtLjM2LjY3LS45MiwxLjI1LTEuNjYsMS43MS0uNzcuNDctMS40OC42OS0yLjE1LjY5aC0zMy42NmMtLjksMC0xLjM1LS4z' +
+  'OS0xLjM1LTEuMiwwLS4zNy4xMy0uNzYuMzYtMS4ybDIzLjMyLTQwLjI1Yy4wNC0uMDYuMDktLjEzLjEyLS4xOWwxLjE5LTIuMDRjLjI1LS40' +
+  'NC4zNy0uODMuMzctMS4yLDAtLjgxLS40Ny0xLjItMS40Mi0xLjItLjYzLDAtMS4zMi4yMy0yLjA2LjctLjc1LjQ4LTEuMzEsMS4wNC0xLjY4' +
+  'LDEuN2wtMTEuMTgsMTkuMjJjLS4zNi42OC0uOTIsMS4yNC0xLjY4LDEuNzEtLjc1LjQ3LTEuNDYuNy0yLjEzLjdoLTEyLjAxYy0uOTEsMC0x' +
+  'LjM1LS40LTEuMzUtMS4yMSwwLS4zNi4xMi0uNzYuMzYtMS4ybDEyLjUyLTIxLjY1Yy40MS0uNjUuOTgtMS4yMywxLjcxLTEuNjkuNzMtLjQ4' +
+  'LDEuNDMtLjcxLDIuMTEtLjcxaDMzLjY2Yy45NCwwLDEuNC40LDEuNCwxLjE5LDAsLjM5LS4xMy43OS0uNCwxLjJsLTIuNzYsNC44M2MtLjM3' +
+  'LjY3LS45MywxLjI0LTEuNjksMS42OS0uNzUuNDgtMS40Ny43MS0yLjEyLjcxaC04LjYxbDQuNjMsNy44OGMuMi4zMy4zLjc5LjMsMS4zNSww' +
+  'LC44My0uMjIsMS42LS42MSwyLjMtLjE3LjMyLS4yNi42NS0uMjYuOTUsMCwuNTYuMjguOTIuODIsMS4wOC4xOC4wNC4zOS4wNy42My4wN2gx' +
+  'Ni44M2MuOTUsMCwxLjQuMzksMS40LDEuMjEsMCwuMzUtLjEzLjc2LS40LDEuMloiLz4KICAgIDwvZz4KICA8L2c+CiAgPGc+CiAgICA8Zz4K' +
+  'ICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTYyMC45LDQwMy45MnYxMi43MWMwLDI2LjcxLTQuMDksNjQuNjMtMjQuNzcsODkuMi0zLjY2' +
+  'LTQuNTMtMTMuNzktMTIuOTMtMTguNzUtMTUuNzMsMTcuODgtMjEuNTQsMTkuODItNTEuOTIsMTkuODItNzMuOXYtMzIuNzVoODkuNDFjLS44' +
+  'Ni02Ljg5LTEuNTEtMTQtMS43Mi0yMS4xMWwzMC41OSwxLjI5YzAsMi4xNS0xLjk0LDMuNDUtNS44Miw0LjA5LjIyLDUuMTcuNDMsMTAuNTYs' +
+  'MS4wOCwxNS43M2gyMy4wNWMtNC41My0zLjAyLTkuNDgtNi4wMy0xNC04LjRsMTQuODctMTMuMTRjOC44MywzLjg4LDE5LjYxLDEwLjM0LDI0' +
+  'Ljk5LDE1LjczbC02LjQ2LDUuODJoMjIuNjJ2MjAuNDdoLTYxLjgzYzIuMzcsMTIuMjgsNS44MiwyMy45MSw5LjkxLDM0LjA0LDUuMTctOC44' +
+  'Myw5LjctMTguNTMsMTIuOTMtMjguNDRsMjcuNTgsNy43NmMtLjY1LDEuNzItMi44LDIuOC01LjgyLDIuNTktNS44MiwxNS4wOC0xMy4zNiwy' +
+  'OS4zLTIyLjQxLDQyLjAxLDUuODIsOC40LDEyLjA2LDEzLjU3LDE4LjEsMTMuNTcsNS4zOSwwLDcuNTQtNy4zMiw4LjYyLTI2LjA3LDUuMTcs' +
+  'NC45NiwxMi45Myw5LjQ4LDE5LjE3LDExLjYzLTMuNjYsMzAuMzgtMTEuNDIsMzcuOTItMjguNDQsMzcuOTItMTIuOTMsMC0yMy4yNy02LjI1' +
+  'LTMzLjM5LTE4LjMxLTcuOTcsOC40LTE3LjAyLDE1LjUxLTI2LjUsMjEuNTQtMy42Ni00Ljc0LTExLjY0LTEyLjkzLTE2LjU5LTE3LjAyLDEu' +
+  'MjktLjg2LDIuNTktMS41MSw0LjA5LTIuMzdoLTM1LjEydjcuMzJoLTIwLjY4di01My44Nmg2MS44M3Y0Mi40NGM3LjMyLTUuMTcsMTQtMTEu' +
+  'NDIsMjAuMjUtMTguMzEtNy45Ny0xNS43My0xNC0zNS4zMy0xNy44OC01Ni40NWgtNjguNzNaTTYzMC41OSw1MTIuNzJjLTUuODIsMTguOTYt' +
+  'MTQuNDMsMzYuODQtMzEuMDIsNDcuODNsLTIxLjExLTE0Ljg3YzE0LjQ0LTkuMjYsMjQuMzUtMjQuMzUsMjkuMDktNDAuOTNsMjMuMDUsNy45' +
+  'N1pNNjg4LjMzLDQxMS44OXYxNi41OWgtNjMuNzd2LTE2LjU5aDYzLjc3Wk02NjEuODMsNTMzLjQxYzAsNi4wMywxLjUxLDYuNjgsMTAuOTks' +
+  'Ni42OGgyNy41OGM3LjU0LDAsOC44My0yLjE1LDkuOTEtMTcuNjcsNC45NSwzLjg4LDE1Ljk0LDcuNTQsMjIuNjIsOS4wNS0yLjgsMjUuNDIt' +
+  'MTAuMTMsMzEuNjctMzAuMTYsMzEuNjdoLTMyLjk2Yy0yNy4zNiwwLTMzLjYxLTcuMTEtMzMuNjEtMjkuM3YtMjcuNThsMjUuNjQsMS41MWMt' +
+  'My40NS0yLjU5LTYuNjgtNC45Ni05LjkxLTYuODlsMTcuMjQtMTMuMzZjMTIuMDYsNi44OSwyNi43MSwxOC4xLDMzLjYxLDI2LjcybC0xOC4x' +
+  'LDE0Ljg3Yy0zLjg4LTUuMzktMTAuOTktMTIuMDctMTguOTYtMTguMzEtLjg2LjY1LTIuMTUsMS4wOC0zLjg4LDEuMjl2MjEuMzNaTTY2Ni4x' +
+  'NCw0NjYuNHYtMTMuNTdoLTIwLjA0djEzLjU3aDIwLjA0Wk03NTguNzgsNTU5LjA0Yy01LjgyLTEzLjM2LTIxLjMzLTMyLjEtMzYuMTktNDUu' +
+  'MjRsMjEuMTEtMTEuODVjMTUuMDgsMTIuNSwzMS4yNCwzMC4xNiwzNy45Miw0My45NWwtMjIuODQsMTMuMTRaIi8+CiAgICAgIDxwYXRoIGNs' +
+  'YXNzPSJzdDEiIGQ9Ik05NjYuMDUsNDc1LjY2Yy0uNjUuNjUtMS41MSwxLjA4LTIuMzcsMS41MS05LjQ4LDE5LjgyLTIzLjA1LDM1Ljc2LTM5' +
+  'LjY0LDQ4LjY5LDIxLjExLDcuMzIsNDUuNjcsMTIuMDYsNzIuODIsMTQuNjUtNS44Miw2LjI1LTEyLjkzLDE4LjEtMTYuOCwyNS40Mi0zMi4x' +
+  'LTQuMDktNTkuODktMTEuNjMtODMuNTktMjMuMjctMjMuMjcsMTEuNDItNTAuMiwxOC43NC03OS41LDIzLjI3LTIuOC02LjY4LTEwLjM0LTE4' +
+  'LjUzLTE1Ljk0LTI0LjEzLDI1LjIxLTIuOCw0OC42OS03Ljc2LDY4Ljk0LTE1LjMtMTIuNS05LjI2LTIzLjQ4LTIwLjI1LTMyLjc1LTMzLjE4' +
+  'bDE3Ljg4LTcuMTFoLTIyLjYydi0yMi40MWgxMTEuMTdsNC43NC0xLjA4LDE3LjY3LDkuOTF2LTI1LjY0aC0xNDAuNjl2MjguNjVoLTI0LjEz' +
+  'di01MS4wNmgzMC4xNmMtMi4xNS02LjI1LTUuODItMTQtOS4yNi0yMC4wNGwxOC4zMS01LjE3Yy0xMC41Ni40My0yMS4xMS44Ni0zMS40Niwx' +
+  'LjA4LS40My02LjI1LTMuNDUtMTYuMTYtNS44Mi0yMS43Niw1Ny4zMS0xLjk0LDEyMi41OS03LjExLDE2Mi4yMy0xNS4wOGwxOC4xLDIxLjk3' +
+  'Yy0uODYuNDMtMS45NC42NS0zLjIzLjY1LS44NiwwLTEuOTQtLjIyLTMuMDItLjQzLTM0LjksNi4yNS04NC4yNCwxMC45OS0xMzEuODUsMTMu' +
+  'MzYsNC45NSw3Ljc2LDkuOTEsMTcuNjcsMTEuODUsMjQuNTZsLTMuMDIuODZoMzEuNDVjLTEuNTEtNy4xMS00LjMxLTE2LjM3LTcuNzYtMjMu' +
+  'OTFsMjMuMDUtNS4xN2M0LjMxLDguNjIsOC42MiwyMC4wNCw5LjcsMjcuMzZsLTYuODksMS43MmgyOS4zYzUuNi05LjkxLDExLjYzLTIyLjYy' +
+  'LDE0Ljg3LTMyLjUzbDMwLjU5LDkuMjZjLS44NiwxLjcyLTMuMDIsMi4zNy02LjAzLDIuMzctMy4yMyw2LjI1LTcuNzYsMTMuNzktMTIuMjgs' +
+  'MjAuOWgzMS4yNHY1MS4wNmgtMjUuNDJaTTg2Mi42Myw0ODYuMjJjOC42MiwxMC43NywyMC4wNCwyMC4wNCwzNC4wNCwyNy41OCwxMi4yOC03' +
+  'LjU0LDIyLjYyLTE2LjU5LDMwLjM4LTI3LjU4aC02NC40MloiLz4KICAgIDwvZz4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0ic3QxIiBk' +
+  'PSJNNTg0LjExLDYzOS4wM2MtLjMuNzQtLjk2Ljg5LTEuNzcuODEtMS42Miw1LjgzLTQuMzUsMTIuNC03Ljc1LDE2LjUzLTEuMjUtMS40OC0z' +
+  'Ljk4LTQuMjEtNS42OC01LjU0LDIuNjYtMy4zOSw0LjY1LTkuMDgsNS43Ni0xNC40N2w5LjQ1LDIuNjZaTTYwNy4yMSw1OTkuODR2OC4xOWgt' +
+  'MzcuNDJ2LTguMTloMTQuNDd2LTkuM2wxMSwuNTJjLS4wNy44MS0uNTksMS4xOC0xLjk5LDEuNDh2Ny4zMWgxMy45NVpNNjI4LjMyLDY1MC4x' +
+  'N2MwLDIuMjEuMDcsMi44LDEuMjUsMi44LDIuMDcsMCwyLjM2LDAsMi43My0uMy44OS0uODkuODktNi43Mi44OS0xMC40MSwxLjQ4LDEuMzMs' +
+  'NC4yOCwyLjczLDYuMjcsMy4zOS0uMjIsOS44Mi0uODEsMTQuNTQtNy45NywxNC41NGgtNC4zNmMtMS43NywwLTMuODQtLjY2LTUuMTYtMS45' +
+  'Mi0xLjQtMS4yNS0xLjkyLTIuOTUtMS45Mi04LjM0di0xMy44Yy0yLjI5LDguODYtNi4zNSwxNy40Mi0xMy40MywyNC4yMS0xLjYyLTEuNjIt' +
+  'NS4yNC00LjEzLTcuNTMtNS4yNCwyLjUxLTIuMjEsNC41OC00LjcyLDYuMjctNy4zMWwtNS45LDMuMTdjLTEuMjYtMy4xLTMuOTEtNy45LTYu' +
+  'NDItMTEuNDR2MTEuODFjMCw3LjE2LTIuNTgsOC44Ni0xMi40Nyw4Ljg2LS4zLTIuNDQtMS40OC01LjktMi41OC04LjEyLDIuMjkuMDcsNC42' +
+  'NS4wNyw1LjM5LjA3LjgxLS4wNywxLjAzLS4zLDEuMDMtLjk2di0xNy4wNWgtMTAuMzN2LTIyLjQ0aDI5djIyLjQ0aC0xMC4wNHY1LjMxbDYu' +
+  'ODYtMy4zMmMyLjQ0LDMuMSw1LjAyLDcuMTYsNi40MiwxMC4xMSw1LjU0LTkuMDgsNy4yMy0xOS43LDcuNzUtMjguODZoLTcuODJ2LTguNDFo' +
+  'OC4wNHYtMTguNDVsMTAuNjMuNTJjLS4wNy43NC0uNjYsMS4xOC0xLjk5LDEuNHYxNi41M2gxNi4wOXY4LjQxaC0xNi4zMWMwLDEuMTEtLjA3' +
+  'LDIuMTQtLjE1LDMuMjUsMi44LjIyLDUuMjQuMyw3LjY4LjQ0LS4wNy43NC0uNTksMS4xOC0xLjkyLDEuMzN2MjcuNzVaTTU4Mi4yNyw2MTku' +
+  'MjV2Ny40NWgxMi4wM3YtNy40NWgtMTIuMDNaTTYzMS4zNCw1OTIuMTZjMy4zMiwzLjQ3LDYuMzUsOC4zNCw3LjY4LDExLjgxbC03LjM4LDMu' +
+  'NjJjLTEuMTEtMy40Ny00LjA2LTguNjMtNy4xNi0xMi4zM2w2Ljg2LTMuMVoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTY4NS40' +
+  'NSw2MDguMTh2MTAuMDRjMCwuODksMCwxLjc3LS4wNywyLjczaDExLjM3djguNDFoLTEyLjAzYy0uMjIsMS40OC0uNTIsMi45NS0uODEsNC40' +
+  'MywzLjYyLDMuNjksMTEsMTEuNzMsMTIuODQsMTMuODhsLTUuNzYsNy4yM2MtMi4yMS0zLjQtNi4yNy04LjQ5LTkuNjctMTIuNjktMi41OCw2' +
+  'LjU3LTYuNzksMTIuODQtMTMuMjgsMTcuNjQtMS4xMS0xLjc3LTQuMjgtNS4xNy01LjktNi4zNSw5LjE1LTYuNzIsMTIuNjktMTUuNjUsMTQu' +
+  'MS0yNC4xM2gtMTMuOHYtOC40MWgxNC40N2MuMDctLjk2LjA3LTEuOTIuMDctMi44OHYtOS44OWgtMy42OWMtMS40OCw0LjEzLTMuMTcsNy45' +
+  'Ny01LjE2LDEwLjkyLTEuNDgtMS4zMy00LjUtMy41NC02LjQyLTQuNjUsMy41NC01LjQ2LDYuMi0xNC45MSw3LjYtMjMuODRsOS42NywyLjI5' +
+  'Yy0uMjIuNjYtLjgxLjk2LTEuODUuOTYtLjM3LDEuOTktLjg5LDQuMDYtMS40LDYuMTNoMTkuNzh2OC4xOWgtMTAuMDRaTTY5OS40LDU5Ni45' +
+  'NmgyOC44NnY2MGgtOS4wOHYtNC4yOGgtMTEuMjJ2NS4zOWgtOC41NnYtNjEuMTFaTTcwNy45Niw2NDQuMzRoMTEuMjJ2LTM5LjA0aC0xMS4y' +
+  'MnYzOS4wNFoiLz4KICAgICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTc3Mi40Nyw2MTkuNDd2MjMuNDdjNC41OCw3LjQ1LDEzLjUxLDcuNDUs' +
+  'MjYuNDIsNy40NSw4LjQ5LDAsMTguNTItLjIyLDI1LjM5LS44MS0uOTYsMi4xNC0yLjM2LDYuNDItMi44LDktNS40Ni4zLTEzLjE0LjQ0LTIw' +
+  'LjM3LjQ0LTE2LjUzLDAtMjUuMzksMC0zMi41NS04LjQ5LTMuMjUsMi44OC02LjU3LDUuNzYtOS4zNyw3Ljk3LDAsLjgxLS4zLDEuMjUtMS4w' +
+  'MywxLjQ4bC00LjUtOS43NGMzLjE3LTEuOTIsNi45NC00LjM1LDEwLjE4LTYuOTR2LTE1LjY1aC04LjYzdi04LjE5aDE3LjI3Wk03NjEuODQs' +
+  'NTkyLjMxYzQuNSwzLjEsOS45Niw3LjY4LDEyLjQ3LDExLjIybC03LjAxLDUuOWMtMi4yOS0zLjU0LTcuNi04LjQ5LTEyLjAzLTExLjgxbDYu' +
+  'NTctNS4zMVpNNzgwLjczLDYxMS4zNWgxMS4xNGMuMzctMS4yNS42Ni0yLjU4Ljg5LTMuOTFoLTE3Ljg2di03LjE2aDEwLjc4Yy0xLjAzLTIu' +
+  'MjEtMi41OC00LjgtNC4yMS02Ljc5bDYuODYtMi44OGMyLjI5LDIuNjYsNC43Miw2LjM1LDUuNjEsOC45M2wtMS43Ljc0aDEwLjYzbC0uOTYt' +
+  'LjM3YzEuNy0yLjczLDMuNjItNi41Nyw0LjcyLTkuMzdsOS45NiwyLjczYy0uMy41OS0uODkuODEtMS45OS44OS0xLjE4LDEuNzctMi45NSw0' +
+  'LjEzLTQuNjUsNi4xM2gxMi40N3Y3LjE2aC0yMC41MmMtLjUyLDEuMjUtMS4xMSwyLjU4LTEuNywzLjkxaDE2LjE2djM2LjQ2aC04Ljc4di0x' +
+  'LjYyaC0xOC40NXYxLjYyaC04LjQxdi0zNi40NlpNODA3LjYsNjIxLjI0di0zLjM5aC0xOC40NXYzLjM5aDE4LjQ1Wk03ODkuMTUsNjI3djMu' +
+  'NDdoMTguNDV2LTMuNDdoLTE4LjQ1Wk03ODkuMTUsNjM5Ljc3aDE4LjQ1di0zLjU0aC0xOC40NXYzLjU0WiIvPgogICAgICA8cGF0aCBjbGFz' +
+  'cz0ic3QxIiBkPSJNODg1LjY5LDYyNC40MWw1LjYxLTUuNTRjNy43NSw0LjcyLDE5LjA0LDEyLjAzLDI0LjUsMTYuOThsLTcuMDksNy40NWMt' +
+  'NC44LTQuODctMTUuMDYtMTIuMjUtMjMuMDMtMTcuNDJ2MzQuMzJoLTkuMjN2LTM2LjAyYy02LjcyLDcuNjgtMTQuOTEsMTQuNjktMjQuMjgs' +
+  'MTkuODUtMS4yNS0yLjIxLTQuMTMtNS43Ni01LjgzLTcuNjgsMTQuMDItNy4wOSwyNS43Ni0xOS42MywzMi42Mi0zMS44OGgtMjkuOTZ2LTgu' +
+  'OTNoNjQuNjV2OC45M2gtMjMuNjJjLTEuNTUsMi45NS0zLjMyLDUuOS01LjI0LDguODZsMi45NS42NmMtLjE1LjY2LS43NCwxLjI1LTIuMDcs' +
+  'MS40djlaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMDA1LjMzLDU5NC4wOHY1NS45NGMwLDguODYtMy43NiwxMC4yNi0xNi45' +
+  'OCwxMC4yNi0uMy0yLjQzLTEuNy02LjQ5LTIuOTUtOC43OCwyLjUxLjE1LDUuMDkuMjIsNy4wMS4yMiwzLjc2LDAsNC4yMSwwLDQuMjEtMS43' +
+  'N3YtNDcuNDZoLTQ1Ljl2NTcuNzFoLTguNTZ2LTY2LjEzaDYzLjE4Wk05OTIuMTIsNjA3LjY2djcuNDVoLTM3LjA1di03LjQ1aDM3LjA1Wk05' +
+  'ODguNDIsNjQ1LjQ1aC0yMS43N3Y1LjAyaC04LjEydi0yOS45NmgyOS44OXYyNC45NVpNOTgwLjIzLDYyNy44MWgtMTMuNTh2MTAuMzNoMTMu' +
+  'NTh2LTEwLjMzWiIvPgogICAgPC9nPgogIDwvZz4KICA8Zz4KICAgIDxwb2x5Z29uIGNsYXNzPSJzdDEiIHBvaW50cz0iMzI4LjQ2IDU2NC40' +
+  'NyAzMjMuMzYgNTY0LjQ3IDM5My44OSA0NDAuMTIgMzk4Ljk5IDQ0MC4xMiAzMjguNDYgNTY0LjQ3Ii8+CiAgICA8cGF0aCBjbGFzcz0ic3Qx' +
+  'IiBkPSJNNTIyLjE2LDY4MC42OEgxOTQuNDZ2LTMyNy43aDMyNy43djMyNy43Wk0yMDIuNSw2NzIuNjRoMzExLjYxdi0zMTEuNjFIMjAyLjV2' +
+  'MzExLjYxWiIvPgogICAgPGNpcmNsZSBjbGFzcz0ic3QwIiBjeD0iMjQ2IiBjeT0iNjI1LjIyIiByPSI5MiIvPgogIDwvZz4KICA8Zz4KICAg' +
+  'IDx0ZXh0IGNsYXNzPSJzdDIiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMxMi43IDI3My42NykiPjx0c3BhbiB4PSIwIiB5PSIwIiB4bWw6c3Bh' +
+  'Y2U9InByZXNlcnZlIj7pgoDmgqjokp7oh6ggICAgICAgICAgICAgICAg5ZOB54mM6Kyb5bqnPC90c3Bhbj48L3RleHQ+CiAgICA8Zz4KICAg' +
+  'ICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTQ5OC4zNSwyNzYuMmwtNS42OC04LjQ5aC00LjU5djguNDloLTUuODN2LTI2LjUyaDEyLjEyYzYu' +
+  'MjUsMCwxMCwzLjI5LDEwLDguNzV2LjA3YzAsNC4yOC0yLjMxLDYuOTctNS42OCw4LjIybDYuNDgsOS40N2gtNi44MlpNNDk4LjQ2LDI1OC43' +
+  'M2MwLTIuNS0xLjc0LTMuNzktNC41OC0zLjc5aC01Ljh2Ny42MWg1LjkxYzIuODQsMCw0LjQ3LTEuNTEsNC40Ny0zLjc1di0uMDdaIi8+CiAg' +
+  'ICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01MjYuMSwyNzYuMmwtMi40Mi01Ljk1aC0xMS4yMWwtMi40Miw1Ljk1aC01Ljk1bDExLjM2LTI2' +
+  'LjcxaDUuMzhsMTEuMzYsMjYuNzFoLTYuMVpNNTE4LjA3LDI1Ni40OWwtMy41Miw4LjZoNy4wNGwtMy41Mi04LjZaIi8+CiAgICAgIDxwYXRo' +
+  'IGNsYXNzPSJzdDEiIGQ9Ik01NDQuMjgsMjc2LjY1Yy03LjgsMC0xMy42LTYuMDItMTMuNi0xMy42NHYtLjA4YzAtNy41NCw1LjY4LTEzLjcx' +
+  'LDEzLjgzLTEzLjcxLDUsMCw3Ljk5LDEuNjcsMTAuNDUsNC4wOWwtMy43MSw0LjI4Yy0yLjA1LTEuODYtNC4xMy0yLjk5LTYuNzgtMi45OS00' +
+  'LjQ3LDAtNy42OSwzLjcyLTcuNjksOC4yNnYuMDdjMCw0LjU1LDMuMTQsOC4zNCw3LjY5LDguMzQsMy4wMywwLDQuODktMS4yMSw2Ljk3LTMu' +
+  'MTFsMy43MSwzLjc1Yy0yLjczLDIuOTEtNS43Niw0LjczLTEwLjg3LDQuNzNaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01NTku' +
+  'MjUsMjc2LjJ2LTI2LjUyaDUuODN2MjYuNTJoLTUuODNaIi8+CiAgICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01ODcuNDgsMjc2LjJsLTEy' +
+  'Ljg0LTE2Ljg2djE2Ljg2aC01Ljc2di0yNi41Mmg1LjM4bDEyLjQzLDE2LjMzdi0xNi4zM2g1Ljc2djI2LjUyaC00Ljk2WiIvPgogICAgICA8' +
+  'cGF0aCBjbGFzcz0ic3QxIiBkPSJNNjA5LjI3LDI3Ni42NWMtOC4yNiwwLTEzLjk0LTUuNzktMTMuOTQtMTMuNjR2LS4wOGMwLTcuNTQsNS44' +
+  'Ny0xMy43MSwxMy45LTEzLjcxLDQuNzcsMCw3LjY1LDEuMjksMTAuNDIsMy42NGwtMy42OCw0LjQzYy0yLjA1LTEuNy0zLjg2LTIuNjktNi45' +
+  'My0yLjY5LTQuMjQsMC03LjYyLDMuNzUtNy42Miw4LjI2di4wN2MwLDQuODUsMy4zMyw4LjQxLDguMDMsOC40MSwyLjEyLDAsNC4wMS0uNTMs' +
+  'NS40OS0xLjU5di0zLjc5aC01Ljg3di01LjA0aDExLjUydjExLjUyYy0yLjczLDIuMzEtNi40OCw0LjIxLTExLjMzLDQuMjFaIi8+CiAgICAg' +
+  'IDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik02MzYuMzgsMjc2LjJoLTEyLjYydi0yNi41MmgxMi4zMWM1LjQyLDAsOC43NSwyLjY5LDguNzUsNi44' +
+  'NnYuMDdjMCwyLjk5LTEuNTksNC42Ni0zLjQ5LDUuNzIsMy4wNywxLjE4LDQuOTYsMi45Niw0Ljk2LDYuNTJ2LjA3YzAsNC44NS0zLjk0LDcu' +
+  'MjctOS45Myw3LjI3Wk02MzkuMDMsMjU3LjUyYzAtMS43NC0xLjM2LTIuNzMtMy44My0yLjczaC01Ljc2djUuNjFoNS4zOGMyLjU4LDAsNC4y' +
+  'MS0uODMsNC4yMS0yLjh2LS4wN1pNNjQwLjUxLDI2OC4xM2MwLTEuNzgtMS4zMy0yLjg4LTQuMzItMi44OGgtNi43NHY1LjgzaDYuOTNjMi41' +
+  'OCwwLDQuMTMtLjkxLDQuMTMtMi44OHYtLjA3WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNjY0LjM4LDI3Ni4ybC01LjY4LTgu' +
+  'NDloLTQuNTl2OC40OWgtNS44M3YtMjYuNTJoMTIuMTJjNi4yNSwwLDEwLDMuMjksMTAsOC43NXYuMDdjMCw0LjI4LTIuMzEsNi45Ny01LjY4' +
+  'LDguMjJsNi40OCw5LjQ3aC02LjgyWk02NjQuNSwyNTguNzNjMC0yLjUtMS43NC0zLjc5LTQuNTgtMy43OWgtNS44djcuNjFoNS45MWMyLjg0' +
+  'LDAsNC40Ny0xLjUxLDQuNDctMy43NXYtLjA3WiIvPgogICAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNNjg1LjczLDI3Ni42NWMtOC4xOCww' +
+  'LTE0LjA1LTYuMS0xNC4wNS0xMy42NHYtLjA4YzAtNy41NCw1Ljk1LTEzLjcxLDE0LjEzLTEzLjcxczE0LjA1LDYuMSwxNC4wNSwxMy42NHYu' +
+  'MDdjMCw3LjU0LTUuOTUsMTMuNzEtMTQuMTMsMTMuNzFaTTY5My43NiwyNjIuOTRjMC00LjU0LTMuMzQtOC4zMy04LjAzLTguMzNzLTcuOTYs' +
+  'My43Mi03Ljk2LDguMjZ2LjA3YzAsNC41NSwzLjMzLDguMzQsOC4wMyw4LjM0czcuOTYtMy43Miw3Ljk2LTguMjZ2LS4wOFoiLz4KICAgICAg' +
+  'PHBhdGggY2xhc3M9InN0MSIgZD0iTTcxMS40NywyNzYuNThjLTQuMDIsMC04LjA3LTEuNC0xMS4yNS00LjI0bDMuNDUtNC4xM2MyLjM5LDEu' +
+  'OTcsNC44OSwzLjIyLDcuOTIsMy4yMiwyLjM5LDAsMy44My0uOTQsMy44My0yLjV2LS4wN2MwLTEuNDgtLjkxLTIuMjMtNS4zNC0zLjM3LTUu' +
+  'MzQtMS4zNi04Ljc5LTIuODQtOC43OS04LjExdi0uMDhjMC00LjgxLDMuODYtNy45OSw5LjI4LTcuOTksMy44NiwwLDcuMTYsMS4yMSw5Ljg1' +
+  'LDMuMzdsLTMuMDMsNC4zOWMtMi4zNS0xLjYzLTQuNjYtMi42MS02Ljg5LTIuNjFzLTMuNDEsMS4wMi0zLjQxLDIuMzF2LjA3YzAsMS43NCwx' +
+  'LjE0LDIuMzEsNS43MiwzLjQ4LDUuMzgsMS40LDguNDEsMy4zNCw4LjQxLDcuOTZ2LjA3YzAsNS4yNy00LjAxLDguMjItOS43Myw4LjIyWiIv' +
+  'PgogICAgPC9nPgogIDwvZz4KPC9zdmc+';
 
 /* Ensure an SVG has an intrinsic size so it renders inside an <img>.
    Many SVGs (incl. the bundled LETTER_TEMP-01) declare only a viewBox and
@@ -9106,19 +9986,21 @@ function svgTextToSizedBlobUrl(svgText){
   return URL.createObjectURL(new Blob([sized],{type:'image/svg+xml'}));
 }
 
-/* Decode the inlined SVG to a Blob URL. Same shape any other VEC source uses,
-   so all downstream code (cel render, exports, LAYERS thumb) treats it as a
-   normal vector — no special-case branching anywhere. */
-function decodeLetterTemplateUrl(){
-  const bin = atob(LETTER_TEMPLATE_SVG_B64);
+/* Decode an inlined base64 SVG to a Blob URL. Same shape any other VEC source
+   uses, so all downstream code (cel render, exports, LAYERS thumb) treats it
+   as a normal vector — no special-case branching anywhere. v0.4.0: parametrized
+   so the six social/square templates share this path with the letter template. */
+function decodeTemplateUrl(b64){
+  const bin = atob(b64);
   const len = bin.length;
   const bytes = new Uint8Array(len);
   for (let i=0; i<len; i++) bytes[i] = bin.charCodeAt(i);
-  /* Decode to text and run through ensureSvgSized — the bundled template
-     is viewBox-only, so without this it renders blank on the canvas. */
+  /* Decode to text and run through ensureSvgSized — the bundled templates
+     are viewBox-only, so without this they render blank on the canvas. */
   const svgText=new TextDecoder('utf-8').decode(bytes);
   return svgTextToSizedBlobUrl(svgText);
 }
+function decodeLetterTemplateUrl(){ return decodeTemplateUrl(LETTER_TEMPLATE_SVG_B64); }
 
 const TAB3_CSV=`POSITION,BRAND,YEAR,MODEL,SERIES,VARIANT,PN,LENGTH,SR1,SR2,SR3,SR4,SR5,TYPE
 F,HARLEY-DAVIDSON,,TOURING,SCEPTER 25,,???,,,,,,,Street
