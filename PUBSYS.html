@@ -699,6 +699,13 @@ textarea.txt-in{overflow:hidden;min-height:28px}
   writing-mode:vertical-lr;transform:rotate(180deg);
   text-align:center;width:22px;padding:5px 4px}
 .pub-tbl .nc{text-align:center;font-size:12px}
+/* v0.4.0: right-aligned column class. Used for the 3rd column of titled
+   (banner-header) tables — measurement/price-style values read cleaner
+   flush-right. Applies in the live preview AND inside layout cels (the
+   .cel-tbl-inner overrides don't set text-align, so this wins there too).
+   NOTE: must NOT be named .rc — that's the global resize-corner class
+   (position:absolute + inverse-scale + hidden-on-export). */
+.pub-tbl .alnr{text-align:right}
 
 /* Title-row layout: single banner header spanning all cols, case-preserving body.
    Matches the height of a regular .pub-tbl th so a titled table sits visually
@@ -791,6 +798,7 @@ textarea.txt-in{overflow:hidden;min-height:28px}
 #print-frame .gc{background:var(--gc,#444)!important;color:var(--gt,#fff);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:10px;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:20px;padding:6px 3px;border-right:2px solid var(--bd,#ccc)}
 #print-frame .sc{background:var(--sc,#888)!important;color:var(--st,#fff);font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:18px;padding:4px 3px}
 #print-frame .nc{text-align:center;font-size:10px}
+#print-frame .alnr{text-align:right}
 #print-frame .ttl-row{text-align:center;font-size:10px;letter-spacing:.1em;font-weight:600;padding:4px 8px}
 #print-frame .pub-tbl.ttl-mode td{text-transform:none}
 #print-frame-close{position:fixed;top:10px;right:10px;z-index:10000;background:#111;color:#fff;border:none;padding:6px 14px;font-family:var(--font);font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
@@ -7025,6 +7033,7 @@ tr:nth-child(even) td{background:${sc.alt}}
 .gc{background:${sc.gc}!important;color:${sc.gt};font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:10px;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:20px;padding:6px 3px;border-right:2px solid ${sc.bd}}
 .sc{background:${sc.sc}!important;color:${sc.st};font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:18px;padding:4px 3px}
 .nc{text-align:center;font-size:10px}
+.alnr{text-align:right}
 </style></head><body>${tw.innerHTML}</body></html>`;
                 big.file(`tables/${base}.html`,html);
               }
@@ -7812,7 +7821,11 @@ function csvToTableHTML(csv){
     bodyData.forEach(row=>{
       html+=`<tr>`;
       for(let ci=0;ci<numCols;ci++){
-        html+=`<td>${escXML((row[ci]||'').trim())}</td>`;
+        /* v0.4.0: 3rd column (index 2) flush-right — measurement/value
+           columns in these banner-header price lists read cleaner that way.
+           Class is .alnr (NOT .rc — that collides with the resize-corner). */
+        const cls = ci===2 ? ' class="alnr"' : '';
+        html+=`<td${cls}>${escXML((row[ci]||'').trim())}</td>`;
       }
       html+=`</tr>`;
     });
@@ -8252,7 +8265,12 @@ function buildTitledTableSVG(tbl,sc){
       const w=colW[ci]||60;
       const txt=td.textContent.trim();
       if(txt){
-        svg+=`<text x="${cx+PAD}" y="${y+ROW_H/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" clip-path="url(#${clipId}-${ci})">${escXML(txt)}</text>`;
+        /* v0.4.0: 3rd column (index 2) flush-right — matches the .alnr class
+           applied in csvToTableHTML so preview and PNG/SVG export agree. */
+        const right = ci===2;
+        const tx = right ? cx+w-PAD : cx+PAD;
+        const anchor = right ? 'end' : 'start';
+        svg+=`<text x="${tx}" y="${y+ROW_H/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" text-anchor="${anchor}" clip-path="url(#${clipId}-${ci})">${escXML(txt)}</text>`;
       }
       cx+=w;
     });
@@ -8297,6 +8315,7 @@ tr:nth-child(even) td{background:${sc.alt}}
     text-transform:uppercase;font-weight:600;writing-mode:vertical-lr;transform:rotate(180deg);
     text-align:center;width:18px;padding:4px 3px}
 .nc{text-align:center;font-size:10px}
+.alnr{text-align:right}
 </style></head><body>${tw.innerHTML}</body></html>`;
   dl(html,'pubsys-table.html','text/html');
 }
