@@ -588,6 +588,8 @@ textarea.txt-in{overflow:hidden;min-height:28px}
   font-weight:600;text-transform:uppercase;padding:0 1px 0 2px}
 .vec-ctl-color{width:24px;height:22px;border:1px solid var(--border);
   background:var(--strip-bg);padding:1px;cursor:pointer;outline:none}
+.txt-ctl-color{width:24px;height:22px;border:1px solid var(--border);
+  background:var(--strip-bg);padding:1px;cursor:pointer;outline:none}
 .vec-ctl-sw{width:48px;height:22px;border:1px solid var(--border);
   background:var(--strip-bg);color:var(--text2);font-size:11px;text-align:right;
   padding:0 4px;font-family:'Courier New',monospace;font-variant-numeric:tabular-nums;
@@ -706,6 +708,32 @@ textarea.txt-in{overflow:hidden;min-height:28px}
    NOTE: must NOT be named .rc — that's the global resize-corner class
    (position:absolute + inverse-scale + hidden-on-export). */
 .pub-tbl .alnr{text-align:right}
+/* v0.4.0: full per-column alignment set for CSV/table objects. alnl/alnc/alnr
+   are explicit overrides set from the table-cel toolbar; they win over the
+   legacy numeric-center (.nc) and titled-col defaults because the builder
+   emits EITHER an override class OR a legacy class, never both. */
+.pub-tbl .alnl{text-align:left}
+.pub-tbl .alnc{text-align:center}
+/* v0.4.0 TABLE-CEL TOOLBAR — `.tbl-ctl`. Same skeleton as .txt-ctl / .vec-ctl:
+   hidden by default, shown (flex) when a single table cel is selected. Lets
+   the user target a column (COL pill cycles 1..N) and set its alignment. */
+.tbl-ctl{display:none;align-items:center;gap:6px;padding:0 6px;
+  border-left:1px solid var(--border);border-right:1px solid var(--border);height:100%}
+.tbl-ctl-lbl{font-size:9px;color:var(--text3);letter-spacing:.1em;font-weight:600}
+.tbl-ctl-col{height:22px;min-width:54px;padding:0 8px;border:1px solid var(--border2);
+  background:var(--input-bg);color:var(--text);font-family:var(--font);font-size:11px;
+  font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .12s}
+.tbl-ctl-col:hover{background:var(--btn-bg);color:var(--btn-txt)}
+.tbl-ctl-al{height:22px;min-width:24px;padding:0 6px;border:1px solid var(--border2);
+  background:var(--input-bg);color:var(--text);font-family:var(--font);font-size:11px;
+  font-weight:600;cursor:pointer;transition:all .12s}
+.tbl-ctl-al:hover{background:var(--btn-bg);color:var(--btn-txt);border-color:var(--btn-bg)}
+.tbl-ctl-al.act{background:var(--text);color:var(--surface);border-color:var(--text)}
+.tbl-ctl-font{height:22px;border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-family:var(--font);font-size:11px;padding:0 4px;max-width:120px}
+.tbl-ctl-fs{width:50px;height:22px;border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-family:var(--font);font-size:11px;text-align:center;padding:0 4px}
+.tbl-ctl-fs::-webkit-inner-spin-button,.tbl-ctl-fs::-webkit-outer-spin-button{opacity:.4}
 
 /* Title-row layout: single banner header spanning all cols, case-preserving body.
    Matches the height of a regular .pub-tbl th so a titled table sits visually
@@ -799,6 +827,8 @@ textarea.txt-in{overflow:hidden;min-height:28px}
 #print-frame .sc{background:var(--sc,#888)!important;color:var(--st,#fff);font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:18px;padding:4px 3px}
 #print-frame .nc{text-align:center;font-size:10px}
 #print-frame .alnr{text-align:right}
+#print-frame .alnl{text-align:left}
+#print-frame .alnc{text-align:center}
 #print-frame .ttl-row{text-align:center;font-size:10px;letter-spacing:.1em;font-weight:600;padding:4px 8px}
 #print-frame .pub-tbl.ttl-mode td{text-transform:none}
 #print-frame-close{position:fixed;top:10px;right:10px;z-index:10000;background:#111;color:#fff;border:none;padding:6px 14px;font-family:var(--font);font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
@@ -853,13 +883,14 @@ textarea.txt-in{overflow:hidden;min-height:28px}
   <div id="s1">
     <button class="tbtn g" id="btn-new">NEW</button>
     <button class="tbtn g" id="btn-export-all" title="Export every tab in every format (zip)">EXPORT ALL</button>
-    <button class="tbtn g" id="btn-import" title="Import a .pubsys.zip into a new tab">IMPORT</button>
+    <button class="tbtn g" id="btn-import" title="Import a .pubsys.zip, or drop an .svg to import it as editable objects in a new tab">IMPORT</button>
     <button class="tbtn g" id="btn-export" title="Export current tab as .pubsys.zip (layout/hybrid only)">EXPORT</button>
+    <button class="tbtn g" id="btn-export-odf" title="Export every tab as one editable OpenDocument (.odt) — text and tables stay editable, images embedded">EXPORT ODF</button>
     <!-- v0.3.9: SCREEN SHOTS button removed — every PNG it produced is
          already in EXPORT ALL's `png/` folder (same captureLayoutAsPng
          pipeline since v0.3.7). The exportScreenshots function is left
          in place for any external integration. -->
-    <input type="file" id="s1-impf" accept=".zip,.pubsys" multiple style="display:none">
+    <input type="file" id="s1-impf" accept=".zip,.pubsys,.svg,image/svg+xml" multiple style="display:none">
     <div class="vsep"></div>
     <div id="s1sp"></div>
     <!-- v0.3.4: A DIGITAL / B PREVIEW / C PRINT 300DPI resolution buttons
@@ -2410,6 +2441,8 @@ function buildLayoutTC(tab){
         <button class="txt-ctl-align" data-align="left"   id="txt-ctl-al-${tab.id}" title="Align left">L</button>
         <button class="txt-ctl-align" data-align="center" id="txt-ctl-ac-${tab.id}" title="Align center">C</button>
         <button class="txt-ctl-align" data-align="right"  id="txt-ctl-ar-${tab.id}" title="Align right">R</button>
+        <span class="txt-ctl-lbl">COLOR</span>
+        <input type="color" class="txt-ctl-color" id="txt-ctl-color-${tab.id}" value="#c41e33" title="Colour of the targeted element — LABEL sets the tag/pill colour; TITLE / SUB / BODY set text colour">
       </div>
       <!-- v0.3.9 VEC-CEL TOOLBAR: appears when a single VEC cel is
            selected. COLOR drives stroke (and fill when FILL is toggled
@@ -2422,7 +2455,25 @@ function buildLayoutTC(tab){
         <input type="color" class="vec-ctl-color" id="vec-ctl-color-${tab.id}" value="#000000" title="Stroke colour (and fill when FILL is toggled on)">
         <span class="vec-ctl-lbl">SW</span>
         <input type="number" class="vec-ctl-sw" id="vec-ctl-sw-${tab.id}" min="0" step="0.5" value="2" title="Stroke width (px in SVG user units)">
-        <button class="vec-ctl-fill" id="vec-ctl-fill-${tab.id}" title="Toggle solid fill (uses the COLOR value)">FILL</button>
+      </div>
+      <!-- v0.4.0 TABLE-CEL TOOLBAR: appears when a single table (CSV) cel is
+           selected. COL pill cycles the target column (1..N); L/C/R set that
+           column's text alignment. Stored on the cel's dataset.colAlign and
+           re-rendered live; honoured by every export path. -->
+      <div class="tbl-ctl" id="tbl-ctl-${tab.id}">
+        <span class="tbl-ctl-lbl">COLUMN</span>
+        <button class="tbl-ctl-col" id="tbl-ctl-col-${tab.id}" title="Click to target the next column">COL 1</button>
+        <span class="tbl-ctl-lbl">ALIGN</span>
+        <button class="tbl-ctl-al" data-al="l" id="tbl-ctl-al-${tab.id}" title="Align column left">L</button>
+        <button class="tbl-ctl-al" data-al="c" id="tbl-ctl-ac-${tab.id}" title="Align column center">C</button>
+        <button class="tbl-ctl-al" data-al="r" id="tbl-ctl-ar-${tab.id}" title="Align column right">R</button>
+        <span class="tbl-ctl-lbl">FONT</span>
+        <select class="tbl-ctl-font" id="tbl-ctl-font-${tab.id}" title="Font for the whole CSV object (PUBSYS font registry)"></select>
+        <span class="tbl-ctl-lbl">TITLE</span>
+        <input class="tbl-ctl-fs" id="tbl-ctl-fs-${tab.id}" type="number" min="6" max="120" step="1" title="Font size of the title / first section (px). Titled tables only.">
+        <span class="tbl-ctl-lbl">MARGIN</span>
+        <button class="tbl-ctl-al" id="tbl-ctl-mdec-${tab.id}" title="Decrease cell margins (text-to-edge padding)">−</button>
+        <button class="tbl-ctl-al" id="tbl-ctl-minc-${tab.id}" title="Increase cell margins (text-to-edge padding)">+</button>
       </div>
       <!-- v0.3.9: LAYERS button at the far right of the topbar (was on
            the left). The margin-left:auto on the wrapper pushes it past
@@ -2632,6 +2683,7 @@ function buildLayoutTC(tab){
   initTextCtlToolbar(tab.id);
   /* Initialize the v0.3.9 VEC-cel toolbar for this tab. */
   initVecCtlToolbar(tab.id);
+  initTblCtlToolbar(tab.id);  // v0.4.0
 
   /* buttons (v0.3.2: per-format SAVE buttons collapsed into a dropdown;
      IMPORT/EXPORT moved to the global #s1 toolbar) */
@@ -2718,6 +2770,7 @@ function buildLayoutTC(tab){
          early-returns when the selected cel isn't a TXT cel, so it
          can't carry the VEC refresh as a tail call. */
       refreshVecCtlToolbar(tab.id);
+      refreshTblCtlToolbar(tab.id);  // v0.4.0
     });
     _obs.observe(_cvForPos,{attributes:true,subtree:true,childList:true,attributeFilter:['style','class']});
   }
@@ -3359,7 +3412,7 @@ function refreshTableCelsForSource(bid,newCsv){
     if(cel.dataset.sourceBid===sbid){
       cel.dataset.csv=newCsv;
       const inner=cel.querySelector('.cel-tbl-inner');
-      if(inner) inner.innerHTML=csvToTableHTML(newCsv);
+      if(inner){ inner.innerHTML=csvToTableHTML(newCsv, cel.dataset.colAlign||''); applyTblCelStyle(cel); }
     }
   });
   /* Re-apply this box's scale — refreshing inner.innerHTML wipes the inline
@@ -4109,6 +4162,10 @@ function serializeCel(cel){
   } else if(cel.classList.contains('cel-tbl')){
     rec.type='table';
     rec.csv=cel.dataset.csv||'';
+    rec.colAlign=cel.dataset.colAlign||'';
+    rec.tblFont=cel.dataset.tblFont||'';
+    rec.titleFS=cel.dataset.titleFS||'';
+    rec.cellPad=cel.dataset.cellPad||'';
     rec.cellScale=parseFloat(cel.dataset.cellScale)||1;
   } else {
     rec.type='text';
@@ -4176,7 +4233,7 @@ function pasteCelFromRecord(cv,rec){
     preserveSize:true,
   };
   if(rec.type==='image'||rec.type==='vec') opts.src=rec.src;
-  else if(rec.type==='table')              opts.csv=rec.csv;
+  else if(rec.type==='table')              { opts.csv=rec.csv; opts.colAlign=rec.colAlign||''; opts.tblFont=rec.tblFont||''; opts.titleFS=rec.titleFS||''; opts.cellPad=rec.cellPad||''; }
   else {
     opts.label=rec.label; opts.labelColor=rec.labelColor;
     opts.title=rec.title; opts.sub=rec.sub; opts.body=rec.body;
@@ -4278,13 +4335,41 @@ function pasteCels(){
   }
   return true;
 }
+/* v0.4.0: delete every selected cel on the active layout/hybrid canvas.
+   Locked cels (e.g. the page TEMPLATE) are protected — they're filtered out
+   so a stray Delete can't wipe them; unlock from LAYERS to remove. Returns
+   true whenever there WAS a selection, so the caller consumes the keypress
+   (stops Backspace from triggering browser back-navigation) even if every
+   selected cel was locked. Snapshots undo first; refreshes the LAYERS panel. */
+function deleteSelectedCels(){
+  const tab=state.tabs.find(t=>t.id===state.active);
+  if(!tab||(tab.type!=='layout'&&tab.type!=='hybrid')) return false;
+  const cv=$('cv-'+tab.id); if(!cv) return false;
+  const sel=Array.from(cv.querySelectorAll('.cel.sel'));
+  if(!sel.length) return false;
+  const del=sel.filter(c=>c.dataset.locked!=='1');
+  if(del.length){
+    captureUndoSnapshot(tab.id);
+    del.forEach(c=>c.remove());
+    try{ populateLayersPanel(tab.id); }catch(_){}
+  }
+  return true;
+}
 (function bindCopyPaste(){
   if(window._copyPasteBound) return;
   window._copyPasteBound=true;
   document.addEventListener('keydown',e=>{
-    /* Ignore when typing in any text-entry field — Ctrl+C/V there should
-       do the normal browser thing (copy/paste text in that field). */
+    /* Ignore when typing in any text-entry field — Ctrl+C/V and Backspace
+       there should do the normal browser thing (edit text in that field). */
     if(e.target.closest&&e.target.closest('input, textarea, [contenteditable="true"]')) return;
+    /* v0.4.0: Delete / Backspace removes the selected cel(s) directly. Handled
+       before the Ctrl/Meta gate since it needs no modifier. We always consume
+       the key when there's a selection on a canvas — important for Backspace,
+       whose default would otherwise navigate the browser back. */
+    if(e.key==='Delete'||e.key==='Backspace'){
+      if(deleteSelectedCels()) e.preventDefault();
+      return;
+    }
     if(!(e.ctrlKey||e.metaKey)) return;
     const k=e.key.toLowerCase();
     if(k==='c'){
@@ -4292,6 +4377,54 @@ function pasteCels(){
     } else if(k==='v'){
       if(pasteCels()) e.preventDefault();
     }
+  });
+})();
+(function bindImagePaste(){
+  if(window._imgPasteBound) return;
+  window._imgPasteBound=true;
+  /* v0.4.0: paste an image from the system clipboard (print-screen, "copy
+     image", a copied file) straight onto the active layout/hybrid canvas as an
+     image cel. The internal cel-paste (Ctrl+V keydown) only preventDefaults
+     when it actually has copied cels, so the browser's paste event still fires
+     here for images — no conflict. Ignored while typing in a field. */
+  document.addEventListener('paste',e=>{
+    if(e.target.closest && e.target.closest('input, textarea, [contenteditable="true"]')) return;
+    const items=e.clipboardData && e.clipboardData.items;
+    if(!items) return;
+    let file=null;
+    for(const it of items){ if(it.kind==='file' && /^image\//.test(it.type)){ file=it.getAsFile(); break; } }
+    if(!file) return;
+    const tab=state.tabs.find(t=>t.id===state.active);
+    if(!tab || (tab.type!=='layout' && tab.type!=='hybrid')){
+      /* Only layout/hybrid tabs have a canvas to drop onto. */
+      return;
+    }
+    const cv=$('cv-'+tab.id);
+    if(!cv) return;
+    e.preventDefault();
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const src=String(rd.result||'');
+      if(!src) return;
+      const place=(w,h)=>{
+        const canvasW=parseInt(cv.style.width)||794, canvasH=parseInt(cv.style.height)||1123;
+        /* cap to 60% of the canvas, preserve aspect, centre it */
+        const sc=Math.min(1, (canvasW*0.6)/w, (canvasH*0.6)/h);
+        w=Math.max(20,Math.round(w*sc)); h=Math.max(20,Math.round(h*sc));
+        const x=Math.round((canvasW-w)/2), y=Math.round((canvasH-h)/2);
+        captureUndoSnapshot(tab.id);
+        deselectAll();
+        const cel=addCel(cv,{type:'image',src,x,y,w,h});
+        cel.style.left=x+'px'; cel.style.top=y+'px';
+        cel.style.width=w+'px'; cel.style.height=h+'px';
+        cel.classList.add('sel');
+      };
+      const img=new Image();
+      img.onload=()=>place(img.naturalWidth||300, img.naturalHeight||200);
+      img.onerror=()=>place(300,200);
+      img.src=src;
+    };
+    rd.readAsDataURL(file);
   });
 })();
 
@@ -4551,7 +4684,14 @@ function addCel(cv,opts){
     inner.className='cel-tbl-inner sch-mono';
     inner.dataset.csv=opts.csv||'';
     el.dataset.csv=opts.csv||'';
-    inner.innerHTML=csvToTableHTML(opts.csv||'');
+    /* v0.4.0: per-column alignment (comma string of l/c/r by column). */
+    if(opts.colAlign){ el.dataset.colAlign=opts.colAlign; }
+    /* v0.4.0: font / title-size / cell-margin settings. */
+    if(opts.tblFont){ el.dataset.tblFont=opts.tblFont; }
+    if(opts.titleFS){ el.dataset.titleFS=opts.titleFS; }
+    if(opts.cellPad){ el.dataset.cellPad=opts.cellPad; }
+    inner.innerHTML=csvToTableHTML(opts.csv||'', el.dataset.colAlign||'');
+    applyTblCelStyle(el);
     el.appendChild(inner);
 
     /* EDIT opens a textarea in a modal-lite overlay so the CSV can be tweaked
@@ -4563,7 +4703,8 @@ function addCel(cv,opts){
       if(next!=null){
         el.dataset.csv=next;
         inner.dataset.csv=next;
-        inner.innerHTML=csvToTableHTML(next);
+        inner.innerHTML=csvToTableHTML(next, el.dataset.colAlign||'');
+        applyTblCelStyle(el);
         /* Table dimensions just changed — re-apply current scale so the
            outline tightens around the new content. RAF so the rebuilt
            DOM is laid out first. */
@@ -4878,6 +5019,7 @@ function deselectAll(){
   if(state.active){
     refreshTxtCtlToolbar(state.active);
     refreshVecCtlToolbar(state.active);
+    refreshTblCtlToolbar(state.active);  // v0.4.0
   }
 }
 
@@ -4960,6 +5102,21 @@ function initTextCtlToolbar(tabId){
     const stack=PUBSYS_FONTS[parseInt(fontSel.value)||0]?.stack;
     if(stack) sub.style.fontFamily=stack;
   });
+
+  /* v0.4.0: COLOR applies to the LABEL only — it sets the label pill's
+     BACKGROUND. Title / Sub / Body text is always black and the label's own
+     text is always white, so the swatch is inert for non-label targets. */
+  const colorIn=$('txt-ctl-color-'+tabId);
+  if(colorIn){
+    const applyColor=()=>{
+      if(_txtCtlTarget!=='label') return;
+      const cel=_txtCtlActiveCel(tabId);
+      const sub=_txtCtlSubElForCel(cel,'label');
+      if(sub) sub.style.background=colorIn.value;
+    };
+    colorIn.addEventListener('input',applyColor);
+    colorIn.addEventListener('change',applyColor);
+  }
 
   /* FONT SIZE input — writes inline font-size on the targeted sub-
      element. Overrides the proportional formula the .etb FS input uses
@@ -5216,6 +5373,28 @@ function refreshTxtCtlToolbar(tabId){
     btn.disabled=isLabel;
     btn.classList.toggle('act', !isLabel && btn.dataset.align===alignVal);
   });
+  /* v0.4.0: COLOR swatch is LABEL-only. Enabled + synced to the pill
+     background for the label; disabled (dimmed) for title/sub/body. */
+  const colorIn=$('txt-ctl-color-'+tabId);
+  if(colorIn){
+    colorIn.disabled=!isLabel;
+    colorIn.style.opacity=isLabel?'1':'.4';
+    if(isLabel) colorIn.value=_rgbToHex(cs.backgroundColor)||'#c41e33';
+  }
+}
+
+/* v0.4.0: normalize a CSS colour (computed 'rgb(r, g, b)' / 'rgba(...)' or an
+   existing '#rrggbb') to the '#rrggbb' an <input type="color"> requires.
+   Returns '' if it can't (e.g. 'transparent'), so callers can fall back. */
+function _rgbToHex(c){
+  if(!c) return '';
+  c=c.trim();
+  if(/^#[0-9a-f]{6}$/i.test(c)) return c.toLowerCase();
+  if(/^#[0-9a-f]{3}$/i.test(c)) return ('#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3]).toLowerCase();
+  const m=c.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if(!m) return '';
+  const h=n=>(+n).toString(16).padStart(2,'0');
+  return ('#'+h(m[1])+h(m[2])+h(m[3])).toLowerCase();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -5367,6 +5546,168 @@ function refreshVecCtlToolbar(tabId){
     fillBtn.style.display=isLine?'none':'';
     if(!isLine) fillBtn.classList.toggle('act', (cel.dataset.primFill||'none')!=='none');
     else fillBtn.classList.remove('act');
+  }
+}
+
+/* ══ TABLE-CEL TOOLBAR (v0.4.0) ══
+   Per-column text alignment for table (CSV) cels. The COL pill targets a
+   column (1..N from the cel's CSV); L/C/R write that column's code into
+   cel.dataset.colAlign (a comma string keyed by raw column index) and
+   re-render. Honoured by the live preview and every export path. */
+let _tblCtlCol=0;  // 0-based target column, shared like _txtCtlTarget
+
+function _tblCtlActiveCel(tabId){
+  const cv=$('cv-'+tabId);
+  if(!cv) return null;
+  const sels=cv.querySelectorAll('.cel.sel');
+  if(sels.length!==1) return null;
+  return sels[0].classList.contains('cel-tbl')?sels[0]:null;
+}
+function _celColCount(cel){
+  try{
+    const rows=parseCSV(cel.dataset.csv||'');
+    if(!rows.length) return 0;
+    return Math.max(...rows.map(r=>r.length), 1);
+  }catch(_){ return 0; }
+}
+function setCelColAlign(cel, ci, code){
+  const arr=parseColAlign(cel.dataset.colAlign);
+  while(arr.length<=ci) arr.push('');
+  arr[ci]=code;
+  let end=arr.length; while(end>0 && !arr[end-1]) end--;  // trim trailing empties
+  cel.dataset.colAlign=arr.slice(0,end).join(',');
+  const inner=cel.querySelector('.cel-tbl-inner');
+  if(!inner) return;
+  inner.innerHTML=csvToTableHTML(cel.dataset.csv||'', cel.dataset.colAlign);
+  applyTblCelStyle(cel);
+  /* Re-apply scale exactly like the in-place CSV edit does — alignment can
+     nudge column widths, so the cel outline should re-fit. */
+  requestAnimationFrame(()=>{
+    const sbid=cel.dataset.sourceBid;
+    if(sbid && $('sb-'+sbid)) applyBoxTblScale(sbid);
+    else syncTableCelToScale(cel, parseFloat(cel.dataset.cellScale)||1);
+  });
+}
+
+/* v0.4.0: apply the table cel's font / title-size / cell-margin settings as
+   INLINE styles on the rendered .pub-tbl. Re-run after every csvToTableHTML
+   render (innerHTML replacement wipes inline styles). The live preview and the
+   html2canvas PNG export honour these directly; the SVG painter re-reads them
+   from the DOM (see buildTableSVGCore / buildTitledTableSVG). */
+function applyTblCelStyle(cel){
+  const inner=cel.querySelector('.cel-tbl-inner'); if(!inner) return;
+  const tbl=inner.querySelector('.pub-tbl'); if(!tbl) return;
+  if(cel.dataset.tblFont) tbl.style.fontFamily=cel.dataset.tblFont;
+  if(cel.dataset.cellPad){
+    const h=Math.max(1,parseFloat(cel.dataset.cellPad)||8);
+    const v=Math.max(1,Math.round(h*0.5));  // keep the ~1:2 vertical:horizontal feel
+    /* skip the rotated GC/SC index cells — uniform padding would distort them */
+    tbl.querySelectorAll('td:not(.gc):not(.sc),th:not(.gc):not(.sc)').forEach(c=>{
+      c.style.padding=v+'px '+h+'px';
+    });
+  }
+  if(cel.dataset.titleFS){
+    const t=tbl.querySelector('.ttl-row');
+    if(t) t.style.fontSize=(parseFloat(cel.dataset.titleFS)||10)+'px';
+  }
+}
+
+function initTblCtlToolbar(tabId){
+  const colBtn=$('tbl-ctl-col-'+tabId);
+  const lBtn=$('tbl-ctl-al-'+tabId), cBtn=$('tbl-ctl-ac-'+tabId), rBtn=$('tbl-ctl-ar-'+tabId);
+  if(!colBtn||!lBtn||!cBtn||!rBtn) return;
+  colBtn.addEventListener('click',()=>{
+    const cel=_tblCtlActiveCel(tabId); if(!cel) return;
+    const n=_celColCount(cel)||1;
+    _tblCtlCol=(_tblCtlCol+1)%n;
+    refreshTblCtlToolbar(tabId);
+  });
+  [['l',lBtn],['c',cBtn],['r',rBtn]].forEach(([code,btn])=>{
+    btn.addEventListener('click',()=>{
+      const cel=_tblCtlActiveCel(tabId); if(!cel) return;
+      setCelColAlign(cel, _tblCtlCol, code);
+      refreshTblCtlToolbar(tabId);
+    });
+  });
+
+  /* v0.4.0: FONT — whole-table font family from the PUBSYS_FONTS registry. */
+  const fontSel=$('tbl-ctl-font-'+tabId);
+  if(fontSel){
+    fontSel.innerHTML=PUBSYS_FONTS.map((f,i)=>
+      `<option value="${i}" style="font-family:${f.stack}">${f.label}</option>`).join('');
+    fontSel.addEventListener('change',()=>{
+      const cel=_tblCtlActiveCel(tabId); if(!cel) return;
+      const stack=PUBSYS_FONTS[parseInt(fontSel.value)||0]?.stack;
+      if(stack){ cel.dataset.tblFont=stack; applyTblCelStyle(cel); _refitTblCel(cel); }
+    });
+  }
+  /* v0.4.0: TITLE — font size of the first section (title row). */
+  const fsIn=$('tbl-ctl-fs-'+tabId);
+  if(fsIn){
+    const commit=()=>{
+      const cel=_tblCtlActiveCel(tabId); if(!cel) return;
+      const v=parseInt(fsIn.value);
+      if(!isNaN(v)&&v>=6){ cel.dataset.titleFS=String(v); applyTblCelStyle(cel); _refitTblCel(cel); }
+    };
+    fsIn.addEventListener('input',commit);
+    fsIn.addEventListener('change',commit);
+  }
+  /* v0.4.0: MARGIN −/+ — cell padding (text-to-edge) for the whole object. */
+  const decBtn=$('tbl-ctl-mdec-'+tabId), incBtn=$('tbl-ctl-minc-'+tabId);
+  const bumpPad=(d)=>{
+    const cel=_tblCtlActiveCel(tabId); if(!cel) return;
+    const cur=parseFloat(cel.dataset.cellPad)||8;
+    const next=Math.min(40,Math.max(1,cur+d));
+    cel.dataset.cellPad=String(next);
+    applyTblCelStyle(cel); _refitTblCel(cel);
+  };
+  if(decBtn) decBtn.addEventListener('click',()=>bumpPad(-2));
+  if(incBtn) incBtn.addEventListener('click',()=>bumpPad(+2));
+}
+
+/* Re-fit a table cel's scale after a style change (font/title/margin can shift
+   the rendered dimensions). Mirrors the CSV-edit re-fit. */
+function _refitTblCel(cel){
+  requestAnimationFrame(()=>{
+    const sbid=cel.dataset.sourceBid;
+    if(sbid && $('sb-'+sbid)) applyBoxTblScale(sbid);
+    else syncTableCelToScale(cel, parseFloat(cel.dataset.cellScale)||1);
+  });
+}
+
+function refreshTblCtlToolbar(tabId){
+  const wrap=$('tbl-ctl-'+tabId);
+  if(!wrap) return;
+  const cel=_tblCtlActiveCel(tabId);
+  if(!cel){ wrap.style.display='none'; return; }
+  wrap.style.display='flex';
+  const n=_celColCount(cel)||1;
+  if(_tblCtlCol>=n) _tblCtlCol=0;
+  const colBtn=$('tbl-ctl-col-'+tabId);
+  if(colBtn) colBtn.textContent='COL '+(_tblCtlCol+1);
+  const cur=(parseColAlign(cel.dataset.colAlign)[_tblCtlCol])||'';
+  const map={l:'tbl-ctl-al-',c:'tbl-ctl-ac-',r:'tbl-ctl-ar-'};
+  Object.entries(map).forEach(([code,pfx])=>{
+    const b=$(pfx+tabId); if(b) b.classList.toggle('act', cur===code);
+  });
+  /* v0.4.0: sync FONT / TITLE controls to the cel's stored values. */
+  const fontSel=$('tbl-ctl-font-'+tabId);
+  if(fontSel){
+    const stack=cel.dataset.tblFont;
+    let idx=stack?PUBSYS_FONTS.findIndex(f=>f.stack===stack):0;
+    if(idx<0) idx=0;
+    fontSel.value=String(idx);
+  }
+  const fsIn=$('tbl-ctl-fs-'+tabId);
+  if(fsIn){
+    const hasTitle=!!cel.querySelector('.cel-tbl-inner .ttl-row');
+    fsIn.disabled=!hasTitle;
+    fsIn.style.opacity=hasTitle?'1':'.4';
+    if(cel.dataset.titleFS) fsIn.value=cel.dataset.titleFS;
+    else {
+      const t=cel.querySelector('.cel-tbl-inner .ttl-row');
+      fsIn.value=t?Math.round(parseFloat(getComputedStyle(t).fontSize))||10:10;
+    }
   }
 }
 
@@ -6795,6 +7136,10 @@ async function buildLayoutZipBlob(tabId){
     } else if(cel.classList.contains('cel-tbl')){
       rec.type='table';
       rec.csv=cel.dataset.csv||'';
+      rec.colAlign=cel.dataset.colAlign||'';
+      rec.tblFont=cel.dataset.tblFont||'';
+      rec.titleFS=cel.dataset.titleFS||'';
+      rec.cellPad=cel.dataset.cellPad||'';
       rec.cellScale=parseFloat(cel.dataset.cellScale)||1;
     } else {
       rec.type='text';
@@ -7034,6 +7379,8 @@ tr:nth-child(even) td{background:${sc.alt}}
 .sc{background:${sc.sc}!important;color:${sc.st};font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;writing-mode:vertical-lr;transform:rotate(180deg);text-align:center;width:18px;padding:4px 3px}
 .nc{text-align:center;font-size:10px}
 .alnr{text-align:right}
+.alnl{text-align:left}
+.alnc{text-align:center}
 </style></head><body>${tw.innerHTML}</body></html>`;
                 big.file(`tables/${base}.html`,html);
               }
@@ -7083,6 +7430,241 @@ ${errors.length?'\nWARNINGS:\n'+errors.map(e=>'  - '+e).join('\n'):''}
     overlay.remove();
   }
   if(btn){btn.textContent=origLabel||'EXPORT ALL';btn.disabled=false;}
+}
+
+/* ══ EXPORT ODF (v0.4.0) — editable OpenDocument export ══
+   Exports every tab as ONE editable .odt (OpenDocument Text). Unlike a flat
+   image dump, text becomes real paragraphs and tables become real ODF tables —
+   both fully editable in LibreOffice / Word. Images (photo + vector cels) are
+   embedded as pictures. Because tabs are absolute-positioned page layouts and
+   ODF text flows, content is emitted top-to-bottom (sorted by cel position),
+   one tab per page; exact x/y positioning is traded for editability, which is
+   the whole point of this export. Each tab is briefly activated so innerText /
+   offsetWidth read correctly (same approach as EXPORT ALL). */
+function _blobToB64(blob){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>res(String(fr.result).split(',')[1]||'');
+    fr.onerror=()=>rej(new Error('read failed'));
+    fr.readAsDataURL(blob);
+  });
+}
+/* Fit a pixel w×h into a page box (cm), preserving aspect. */
+function _fitCm(w,h,maxW,maxH){
+  let cw=maxW, ch=maxW*(h/w);
+  if(ch>maxH){ ch=maxH; cw=maxH*(w/h); }
+  return {w:+cw.toFixed(2), h:+ch.toFixed(2)};
+}
+/* CSV → editable ODF table. Titled tables → spanned title row + data rows;
+   columned tables → first row treated as a (bold) header. Per-column alignment
+   honours the cel's colAlign override, else the titled col-3-right default. */
+function _csvToOdf(csv, colAlignStr, idx){
+  if(!csv||!csv.trim()) return '';
+  const rows=parseCSV(csv);
+  if(!rows.length) return '';
+  const CA=parseColAlign(colAlignStr);
+  const numCols=Math.max(...rows.map(r=>r.length),1);
+  const titled=(rows[0].filter(c=>c.trim()!=='').length===1 && rows.length>1);
+  const alignPara=(ci)=>{
+    const a=CA[ci];
+    if(a==='c') return 'AlC'; if(a==='r') return 'AlR'; if(a==='l') return 'AlL';
+    return (titled && ci===2)?'AlR':'AlL';
+  };
+  let x='<table:table table:name="Tbl'+idx+'" table:style-name="TblS">'
+       +'<table:table-column table:style-name="ColS" table:number-columns-repeated="'+numCols+'"/>';
+  let dataRows=rows;
+  if(titled){
+    const title=rows[0].find(c=>c.trim()!=='')||'';
+    x+='<table:table-row><table:table-cell table:style-name="CelTtl" table:number-columns-spanned="'+numCols+'" '
+      +'office:value-type="string"><text:p text:style-name="TblTtl">'+escXML(title)+'</text:p></table:table-cell>';
+    for(let k=1;k<numCols;k++) x+='<table:covered-table-cell/>';
+    x+='</table:table-row>';
+    dataRows=rows.slice(1);
+  }
+  dataRows.forEach((row,ri)=>{
+    const isHeader=(!titled && ri===0);
+    x+='<table:table-row>';
+    for(let ci=0;ci<numCols;ci++){
+      const cell=(row[ci]||'').trim();
+      const cs=isHeader?'CelHdr':'Cel';
+      const ps=isHeader?'HdC':alignPara(ci);
+      x+='<table:table-cell table:style-name="'+cs+'" office:value-type="string">'
+        +'<text:p text:style-name="'+ps+'">'+escXML(cell)+'</text:p></table:table-cell>';
+    }
+    x+='</table:table-row>';
+  });
+  return x+'</table:table>';
+}
+/* Text cel → editable ODF paragraphs (label / title / sub / body). */
+function _textCelToOdf(cel){
+  const get=s=>{const e=cel.querySelector(s);return e?(e.innerText||e.textContent||'').trim():'';};
+  const label=get('.cel-label-el'), title=get('.cel-title-el'),
+        sub=get('.cel-sub-el'), body=get('.cel-body-el');
+  let x='';
+  if(label) x+='<text:p text:style-name="Lbl">'+escXML(label)+'</text:p>';
+  if(title) x+='<text:p text:style-name="Ttl">'+escXML(title)+'</text:p>';
+  if(sub)   x+='<text:p text:style-name="Sub">'+escXML(sub)+'</text:p>';
+  if(body)  body.split('\n').forEach(line=>{ x+='<text:p text:style-name="Body">'+escXML(line)+'</text:p>'; });
+  return x;
+}
+/* Resolve an <img> src (data: or blob:) to {b64, mime} for ODF embedding. */
+async function _srcToPic(src){
+  try{
+    if(src.startsWith('data:')){
+      const mm=src.match(/^data:([^;]+);base64,([\s\S]*)$/);
+      if(mm) return {b64:mm[2], mime:mm[1]};
+    }
+    const blob=await (await fetch(src)).blob();
+    return {b64:await _blobToB64(blob), mime:blob.type||'image/png'};
+  }catch(_){ return null; }
+}
+function _picExt(mime){
+  if(/svg/i.test(mime)) return 'svg';
+  if(/jpe?g/i.test(mime)) return 'jpg';
+  if(/gif/i.test(mime)) return 'gif';
+  return 'png';
+}
+
+async function exportEditableOdf(){
+  if(typeof JSZip==='undefined'){alert('ZIP library failed to load.');return;}
+  if(!state.tabs.length){ alert('No tabs to export.'); return; }
+  const btn=$('btn-export-odf');
+  const origLabel=btn?.textContent;
+  if(btn){btn.textContent='WORKING…';btn.disabled=true;}
+  const origActive=state.active;
+  const errors=[];
+
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;'
+    +'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;'
+    +'color:#fff;font-family:monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;user-select:none';
+  const olbl=document.createElement('div'); olbl.textContent='EXPORTING ODF…';
+  const osub=document.createElement('div');
+  osub.style.cssText='font-size:11px;letter-spacing:.05em;color:#9aa;text-transform:none';
+  overlay.appendChild(olbl); overlay.appendChild(osub); document.body.appendChild(overlay);
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(_){} }
+
+  try{
+    const pics=[];          // {name, b64, mime}
+    let bodyXml='', tblIdx=0, picIdx=0, emitted=0;
+
+    for(let i=0;i<state.tabs.length;i++){
+      const tab=state.tabs[i];
+      osub.textContent='('+(i+1)+'/'+state.tabs.length+') '+(tab.name||'tab');
+      /* Activate so innerText / offsetWidth read correctly on hidden tabs. */
+      if(state.active!==tab.id){
+        activateTab(tab.id);
+        await new Promise(r=>requestAnimationFrame(()=>r()));
+        await new Promise(r=>requestAnimationFrame(()=>r()));
+      }
+      try{
+        bodyXml+='<text:p text:style-name="'+(i>0?'HdPb':'Hd')+'">'+escXML(tab.name||('Tab '+(i+1)))+'</text:p>';
+        if(tab.type==='table'){
+          const csv=$('t2e-'+tab.id)?.value||'';
+          const t=_csvToOdf(csv,'',tblIdx++); if(t){ bodyXml+=t; emitted++; }
+        } else {
+          const cv=$('cv-'+tab.id);
+          if(cv){
+            const cels=Array.from(cv.querySelectorAll('.cel'))
+              .filter(c=>c.style.display!=='none')
+              .sort((a,b)=>((parseInt(a.style.top)||0)-(parseInt(b.style.top)||0))
+                         ||((parseInt(a.style.left)||0)-(parseInt(b.style.left)||0)));
+            for(const cel of cels){
+              if(cel.classList.contains('cel-tbl')){
+                const t=_csvToOdf(cel.dataset.csv||'', cel.dataset.colAlign||'', tblIdx++);
+                if(t){ bodyXml+=t; emitted++; }
+              } else if(cel.classList.contains('cel-img')||cel.classList.contains('cel-vec')){
+                const img=cel.querySelector('img');
+                if(img&&img.src){
+                  const pic=await _srcToPic(img.src);
+                  if(pic){
+                    picIdx++;
+                    const name='Pictures/p'+picIdx+'.'+_picExt(pic.mime);
+                    pics.push({name, b64:pic.b64, mime:pic.mime});
+                    const w=parseInt(cel.style.width)||cel.offsetWidth||200;
+                    const h=parseInt(cel.style.height)||cel.offsetHeight||150;
+                    /* v0.4.0: all images at 40% of page-fit (i.e. −60% size). */
+                    const IMG_SCALE=0.4;
+                    const fit=_fitCm(w,h,17,25.7);
+                    const iw=+(fit.w*IMG_SCALE).toFixed(2), ih=+(fit.h*IMG_SCALE).toFixed(2);
+                    bodyXml+='<text:p text:style-name="ImgP"><draw:frame draw:name="g'+picIdx+'" '
+                      +'text:anchor-type="as-char" svg:width="'+iw+'cm" svg:height="'+ih+'cm" '
+                      +'draw:z-index="'+picIdx+'"><draw:image xlink:href="'+name+'" xlink:type="simple" '
+                      +'xlink:show="embed" xlink:actuate="onLoad"/></draw:frame></text:p>';
+                    emitted++;
+                  }
+                }
+              } else {
+                const t=_textCelToOdf(cel); if(t){ bodyXml+=t; emitted++; }
+              }
+            }
+          }
+        }
+      }catch(e){ errors.push((tab.name||'tab')+': '+e.message); }
+    }
+
+    if(!emitted){ alert('No editable content found to export.'); }
+    else{
+      const odt=new JSZip();
+      odt.file('mimetype','application/vnd.oasis.opendocument.text',{compression:'STORE'});
+      pics.forEach(p=>odt.file(p.name, p.b64, {base64:true}));
+
+      const NS='xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+        +'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" '
+        +'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" '
+        +'xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" '
+        +'xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" '
+        +'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" '
+        +'xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" '
+        +'xmlns:xlink="http://www.w3.org/1999/xlink"';
+      const STYLES=
+         '<style:style style:name="Hd" style:family="paragraph"><style:paragraph-properties fo:margin-top="0.5cm" fo:margin-bottom="0.25cm"/><style:text-properties fo:font-size="15pt" fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="HdPb" style:family="paragraph"><style:paragraph-properties fo:break-before="page" fo:margin-bottom="0.25cm"/><style:text-properties fo:font-size="15pt" fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="Lbl" style:family="paragraph"><style:paragraph-properties fo:margin-top="0.3cm" fo:margin-bottom="0.05cm"/><style:text-properties fo:font-weight="bold" fo:text-transform="uppercase"/></style:style>'
+        +'<style:style style:name="Ttl" style:family="paragraph"><style:paragraph-properties fo:margin-top="0.1cm" fo:margin-bottom="0.05cm"/><style:text-properties fo:font-size="13pt" fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="Sub" style:family="paragraph"><style:paragraph-properties fo:margin-bottom="0.05cm"/><style:text-properties fo:font-size="11pt"/></style:style>'
+        +'<style:style style:name="Body" style:family="paragraph"><style:paragraph-properties fo:margin-bottom="0.12cm"/><style:text-properties fo:font-size="10pt"/></style:style>'
+        +'<style:style style:name="AlL" style:family="paragraph"><style:paragraph-properties fo:text-align="start"/></style:style>'
+        +'<style:style style:name="AlC" style:family="paragraph"><style:paragraph-properties fo:text-align="center"/></style:style>'
+        +'<style:style style:name="AlR" style:family="paragraph"><style:paragraph-properties fo:text-align="end"/></style:style>'
+        +'<style:style style:name="HdC" style:family="paragraph"><style:paragraph-properties fo:text-align="start"/><style:text-properties fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="TblTtl" style:family="paragraph"><style:paragraph-properties fo:text-align="center"/><style:text-properties fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="ImgP" style:family="paragraph"><style:paragraph-properties fo:text-align="center" fo:margin-top="0.3cm" fo:margin-bottom="0.3cm"/></style:style>'
+        +'<style:style style:name="TblS" style:family="table"><style:table-properties style:width="17cm" table:align="left" fo:margin-top="0.35cm" fo:margin-bottom="0.45cm"/></style:style>'
+        +'<style:style style:name="ColS" style:family="table-column"><style:table-column-properties style:use-optimal-column-width="true"/></style:style>'
+        +'<style:style style:name="Cel" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.08cm"/></style:style>'
+        +'<style:style style:name="CelHdr" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.08cm" fo:background-color="#e8e8e8"/></style:style>'
+        +'<style:style style:name="CelTtl" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.1cm" fo:background-color="#d8d8d8"/></style:style>';
+      const contentXml='<?xml version="1.0" encoding="UTF-8"?>'
+        +'<office:document-content '+NS+' office:version="1.2"><office:automatic-styles>'+STYLES+'</office:automatic-styles>'
+        +'<office:body><office:text>'+bodyXml+'</office:text></office:body></office:document-content>';
+      odt.file('content.xml',contentXml);
+      odt.file('styles.xml','<?xml version="1.0" encoding="UTF-8"?>'
+        +'<office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+        +'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" '
+        +'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.2">'
+        +'<office:styles/><office:automatic-styles>'
+        +'<style:page-layout style:name="pm1"><style:page-layout-properties fo:page-width="21cm" fo:page-height="29.7cm" fo:margin="2cm"/></style:page-layout>'
+        +'</office:automatic-styles><office:master-styles>'
+        +'<style:master-page style:name="Standard" style:page-layout-name="pm1"/></office:master-styles></office:document-styles>');
+      const manEntries=['<manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.text"/>',
+        '<manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/>',
+        '<manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>']
+        .concat(pics.map(p=>'<manifest:file-entry manifest:full-path="'+p.name+'" manifest:media-type="'+p.mime+'"/>'));
+      odt.file('META-INF/manifest.xml','<?xml version="1.0" encoding="UTF-8"?>'
+        +'<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">'
+        +manEntries.join('')+'</manifest:manifest>');
+      const blob=await odt.generateAsync({type:'blob',mimeType:'application/vnd.oasis.opendocument.text'});
+      dl(blob,'pubsys-export.odt','application/vnd.oasis.opendocument.text');
+    }
+    if(errors.length) console.warn('EXPORT ODF completed with warnings:',errors);
+  }catch(e){
+    alert('EXPORT ODF failed: '+e.message); console.error(e);
+  }finally{
+    if(origActive && state.active!==origActive && state.tabs.some(t=>t.id===origActive)) activateTab(origActive);
+    overlay.remove();
+    if(btn){btn.textContent=origLabel||'EXPORT ODF';btn.disabled=false;}
+  }
 }
 
 /* ══ captureLayoutAsPng(tabId) — the html2canvas capture pipeline ══
@@ -7491,6 +8073,10 @@ async function importLayoutZip(tabId,file){
           opts.src=cel.image?imageUrls[cel.image]:'';
         } else if(cel.type==='table'){
           opts.csv=cel.csv||'';
+          opts.colAlign=cel.colAlign||'';  // v0.4.0
+          opts.tblFont=cel.tblFont||'';     // v0.4.0
+          opts.titleFS=cel.titleFS||'';     // v0.4.0
+          opts.cellPad=cel.cellPad||'';     // v0.4.0
         } else {
           opts.label=cel.label; opts.labelColor=cel.labelColor;
           opts.title=cel.title; opts.sub=cel.sub; opts.body=cel.body;
@@ -7804,10 +8390,36 @@ function applyTableScheme(tw,scheme){
    re-rendered any time the cel is created / its CSV is edited). Picks the
    titled layout when the first row is a single non-empty cell, else falls
    back to the column-headers + auto GC/SC detection used by Tables 1 and 2. */
-function csvToTableHTML(csv){
+/* v0.4.0: per-column alignment helpers. colAlign is an array of 'l'|'c'|'r'
+   (or '' / undefined) by RAW csv column index. parseColAlign turns the stored
+   comma-string back into that array. ALIGN_CLS maps a code to its CSS class. */
+const ALIGN_CLS={l:'alnl',c:'alnc',r:'alnr'};
+function parseColAlign(str){
+  if(!str) return [];
+  return String(str).split(',').map(s=>s.trim());
+}
+/* v0.4.0: read a rendered <td>'s final text-align (which already reflects
+   any per-column override or legacy default) and return the SVG text x +
+   text-anchor for it. Keeps PNG/SVG/PDF export in lockstep with the live
+   HTML without re-deriving alignment rules. */
+function _svgCellAnchor(td, cx, w, PAD){
+  const ta=(getComputedStyle(td).textAlign||'').toLowerCase();
+  if(ta==='right'||ta==='end')    return {tx:cx+w-PAD, anchor:'end'};
+  if(ta==='center'||ta==='justify-center') return {tx:cx+w/2, anchor:'middle'};
+  return {tx:cx+PAD, anchor:'start'};
+}
+
+function csvToTableHTML(csv, colAlign){
   if(!csv||!csv.trim()) return '<div style="padding:8px;color:#999;font-size:12px;text-transform:none">Empty CSV</div>';
   const rows=parseCSV(csv);
   if(!rows.length) return '<div style="padding:8px;color:#999;font-size:12px;text-transform:none">No data</div>';
+  const CA=Array.isArray(colAlign)?colAlign:parseColAlign(colAlign);
+  /* Returns the alignment class for column ci: explicit override wins,
+     otherwise the caller-supplied legacy default class (may be ''). */
+  const alignCls=(ci,legacy)=>{
+    const a=CA[ci];
+    return (a==='l'||a==='c'||a==='r')?ALIGN_CLS[a]:legacy;
+  };
 
   /* Titled layout */
   const firstRowNonEmpty=rows[0].filter(c=>c.trim()!=='').length;
@@ -7821,10 +8433,10 @@ function csvToTableHTML(csv){
     bodyData.forEach(row=>{
       html+=`<tr>`;
       for(let ci=0;ci<numCols;ci++){
-        /* v0.4.0: 3rd column (index 2) flush-right — measurement/value
-           columns in these banner-header price lists read cleaner that way.
-           Class is .alnr (NOT .rc — that collides with the resize-corner). */
-        const cls = ci===2 ? ' class="alnr"' : '';
+        /* Legacy default: 3rd column (index 2) flush-right (the v0.4.0
+           price-list default). Any explicit per-column override replaces it. */
+        const c=alignCls(ci, ci===2?'alnr':'');
+        const cls=c?` class="${c}"`:'';
         html+=`<td${cls}>${escXML((row[ci]||'').trim())}</td>`;
       }
       html+=`</tr>`;
@@ -7861,7 +8473,10 @@ function csvToTableHTML(csv){
     }
     row.forEach((cell,ci)=>{
       if(ci<skip) return;
-      html+=`<td class="${numC[ci]&&cell.trim()?'nc':''}">${escXML(cell)}</td>`;
+      /* Legacy default: numeric columns centered (.nc). Explicit override wins. */
+      const legacy=(numC[ci]&&cell.trim())?'nc':'';
+      const c=alignCls(ci, legacy);
+      html+=`<td class="${c}">${escXML(cell)}</td>`;
     });
     html+=`</tr>`;
   });
@@ -7896,14 +8511,21 @@ function buildTableSVGCore(tbl,sc){
      using 13px would overflow the columns and get clipped by the per-column
      clipPath. Table-tab renders stay at 13px (matches preview). */
   const inLayoutCel = !!tbl.closest('.cel-tbl-inner');
-  const ROW_H = inLayoutCel ? 18 : 22;
-  const TH_H  = inLayoutCel ? 20 : 26;
+  /* v0.4.0: read font / padding / row heights from the live DOM (authoritative,
+     same philosophy as the offsetWidth-based column widths) so the table-cel
+     toolbar's FONT and MARGIN settings flow into SVG export. Fallback to the
+     historical constants when a value isn't available. */
+  const _cs=window.getComputedStyle;
+  const _sTd=tbl.querySelector('tbody td:not(.gc):not(.sc)');
+  const _sTh=tbl.querySelector('thead th:not(.gc):not(.sc)');
+  const ROW_H = (_sTd&&_sTd.offsetHeight)?Math.round(_sTd.offsetHeight):(inLayoutCel?18:22);
+  const TH_H  = (_sTh&&_sTh.offsetHeight)?Math.round(_sTh.offsetHeight):(inLayoutCel?20:26);
   const GC_W=24, SC_W=20;
   const FS_TH = inLayoutCel ? 10 : 13;
   const FS_TD = inLayoutCel ? 10 : 13;
   const FS_GC = 11;
-  const PAD = 8;
-  const FK="'Barlow Condensed','Arial Narrow',sans-serif";
+  const PAD = _sTd?(Math.round(parseFloat(_cs(_sTd).paddingLeft))||8):8;
+  const FK=(_cs(tbl).fontFamily)||"'Barlow Condensed','Arial Narrow',sans-serif";
 
   /* text width measurement */
   const _mc=(()=>{const c=document.createElement('canvas');return c.getContext('2d');})();
@@ -8121,8 +8743,7 @@ function buildTableSVGCore(tbl,sc){
     dataCells.forEach((td,ci)=>{
       const w=colW[ci]||60, txt=td.textContent.trim();
       if(txt){
-        const isNum=numC[ci];
-        const tx=isNum?cx+w/2:cx+PAD, anchor=isNum?'middle':'start';
+        const {tx,anchor}=_svgCellAnchor(td, cx, w, PAD);
         svg+=`<text x="${tx}" y="${y+ROW_H/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" text-anchor="${anchor}">${escXML(txt)}</text>`;
       }
       cx+=w;
@@ -8152,12 +8773,18 @@ function buildTitledTableSVG(tbl,sc){
      so the SVG must too — otherwise 13px text overflows DOM-measured columns
      and gets sliced by the per-column clipPath. Table-tab stays at 13px. */
   const inLayoutCel = !!tbl.closest('.cel-tbl-inner');
-  const ROW_H = inLayoutCel ? 18 : 22;   // matches buildTableSVGCore so titled/columned tables sit at the same height
-  const TH_H  = inLayoutCel ? 20 : 26;
-  const FS_TTL = inLayoutCel ? 10 : 13;
+  /* v0.4.0: derive from the live DOM so the table-cel toolbar's FONT,
+     TITLE-size and MARGIN settings carry into SVG export; fall back to the
+     historical constants otherwise. */
+  const _cs=window.getComputedStyle;
+  const _ttl=tbl.querySelector('th.ttl-row');
+  const _sTd=tbl.querySelector('tbody td');
+  const ROW_H = (_sTd&&_sTd.offsetHeight)?Math.round(_sTd.offsetHeight):(inLayoutCel?18:22);
+  const TH_H  = (_ttl&&_ttl.offsetHeight)?Math.round(_ttl.offsetHeight):(inLayoutCel?20:26);
+  const FS_TTL = _ttl?(Math.round(parseFloat(_cs(_ttl).fontSize))||(inLayoutCel?10:13)):(inLayoutCel?10:13);
   const FS_TD  = inLayoutCel ? 10 : 13;
-  const PAD = 10;
-  const FK="'Barlow Condensed','Arial Narrow',sans-serif";
+  const PAD = _sTd?(Math.round(parseFloat(_cs(_sTd).paddingLeft))||10):10;
+  const FK=(_cs(tbl).fontFamily)||"'Barlow Condensed','Arial Narrow',sans-serif";
 
   const titleTh=tbl.querySelector('th.ttl-row');
   const title=titleTh.textContent.trim();
@@ -8265,11 +8892,9 @@ function buildTitledTableSVG(tbl,sc){
       const w=colW[ci]||60;
       const txt=td.textContent.trim();
       if(txt){
-        /* v0.4.0: 3rd column (index 2) flush-right — matches the .alnr class
-           applied in csvToTableHTML so preview and PNG/SVG export agree. */
-        const right = ci===2;
-        const tx = right ? cx+w-PAD : cx+PAD;
-        const anchor = right ? 'end' : 'start';
+        /* v0.4.0: read the cell's rendered alignment (per-column override or
+           the legacy col-3-right default) so export matches the live preview. */
+        const {tx,anchor}=_svgCellAnchor(td, cx, w, PAD);
         svg+=`<text x="${tx}" y="${y+ROW_H/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" text-anchor="${anchor}" clip-path="url(#${clipId}-${ci})">${escXML(txt)}</text>`;
       }
       cx+=w;
@@ -8316,6 +8941,8 @@ tr:nth-child(even) td{background:${sc.alt}}
     text-align:center;width:18px;padding:4px 3px}
 .nc{text-align:center;font-size:10px}
 .alnr{text-align:right}
+.alnl{text-align:left}
+.alnc{text-align:center}
 </style></head><body>${tw.innerHTML}</body></html>`;
   dl(html,'pubsys-table.html','text/html');
 }
@@ -8542,6 +9169,16 @@ $('s1-impf').addEventListener('change',e=>{
      async importLayoutZip calls then run in parallel against their
      respective tabs. */
   const files=Array.from(e.target.files||[]);
+  /* v0.4.0: a picked .svg → editable-object import via the NEW modal. */
+  const svg=files.find(f=>/\.svg$/i.test(f.name)||/svg/i.test(f.type));
+  if(svg){
+    const rd=new FileReader();
+    rd.onload=()=>openSvgImportModal(String(rd.result||''));
+    rd.onerror=()=>alert('Could not read the SVG file.');
+    rd.readAsText(svg);
+    e.target.value='';
+    return;
+  }
   for(const f of files){
     const newTab=addTab({name:'IMPORTING…',type:'layout',fmt:'a4',res:'digital'});
     importLayoutZip(newTab.id,f);
@@ -8571,10 +9208,19 @@ $('s1-impf').addEventListener('change',e=>{
   btn.addEventListener('drop',e=>{
     e.preventDefault(); e.stopPropagation();
     btn.classList.remove('drag-over');
-    const files=Array.from(e.dataTransfer?.files||[])
-      .filter(f=>/\.(zip|pubsys)$/i.test(f.name));
+    const all=Array.from(e.dataTransfer?.files||[]);
+    /* v0.4.0: a dropped .svg opens the NEW modal then imports as editable objects. */
+    const svg=all.find(f=>/\.svg$/i.test(f.name)||/svg/i.test(f.type));
+    if(svg){
+      const rd=new FileReader();
+      rd.onload=()=>openSvgImportModal(String(rd.result||''));
+      rd.onerror=()=>alert('Could not read the SVG file.');
+      rd.readAsText(svg);
+      return;
+    }
+    const files=all.filter(f=>/\.(zip|pubsys)$/i.test(f.name));
     if(!files.length){
-      alert('Drop .pubsys.zip files onto IMPORT to load them.');
+      alert('Drop a .svg to import as editable objects, or .pubsys.zip to load a saved layout.');
       return;
     }
     for(const f of files){
@@ -8695,14 +9341,252 @@ function openModal(){
   /* Reset template selection too (v0.3) */
   nmTemplate=null;
   document.querySelectorAll('#nm-tpls .tpl-sq').forEach(b=>b.classList.remove('act'));
+  /* v0.4.0: ensure a normal NEW doesn't carry a pending SVG import. */
+  _pendingSvgImport=null;
+  { const cb=$('nm-create'); if(cb) cb.textContent='CREATE'; }
   $('new-modal').classList.add('open');
+}
+/* v0.4.0: SVG → editable objects. Drop an .svg onto IMPORT and this opens the
+   exact NEW modal so the user picks canvas size / res / template, then nm-create
+   creates the tab and runs importSvgAsObjects into it. */
+let _pendingSvgImport=null;
+function openSvgImportModal(svgText){
+  openModal();                       // reset to NEW defaults first
+  _pendingSvgImport=svgText;
+  $('nm-name').value='Imported SVG';
+  $('nm-size').value='a4';           // these Illustrator exports are A4
+  $('nm-res').value='digital';
+  $('nm-cust').classList.add('hidden');
+  nmType='layout';                   // imported objects live on a free canvas
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('active',b.dataset.type==='layout'));
+  const cb=$('nm-create'); if(cb) cb.textContent='IMPORT INTO TAB';
+}
+
+/* v0.4.0: knock out an image's white background → transparent PNG data URL.
+   Near-pure-white pixels (min channel ≥ HI) go fully transparent; a feather
+   band (LO..HI) scales alpha so anti-aliased edges don't leave a white halo.
+   Operates on a canvas; data: sources never taint it, so getImageData is safe.
+   Falls back to the original src on any failure (e.g. a tainted external img). */
+function _whiteToTransparent(src){
+  return new Promise(res=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{
+      try{
+        const w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+        if(!w||!h){ res(src); return; }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const ctx=c.getContext('2d');
+        ctx.drawImage(img,0,0);
+        const id=ctx.getImageData(0,0,w,h), d=id.data;
+        const HI=245, LO=224;
+        for(let i=0;i<d.length;i+=4){
+          if(d[i+3]===0) continue;
+          const mn=Math.min(d[i],d[i+1],d[i+2]);
+          if(mn>=HI) d[i+3]=0;
+          else if(mn>=LO) d[i+3]=Math.round(d[i+3]*(1-(mn-LO)/(HI-LO)));
+        }
+        ctx.putImageData(id,0,0);
+        res(c.toDataURL('image/png'));
+      }catch(_){ res(src); }
+    };
+    img.onerror=()=>res(src);
+    img.src=src;
+  });
+}
+
+/* Convert an SVG document into editable PUBSYS cels in `tab`:
+   • all vector shapes (path/rect/circle/…) → ONE full-page VEC cel (the
+     artwork layer, behind everything), preserving their exact positions in
+     the original coordinate system;
+   • each <image> → an IMAGE cel (editable / swappable);
+   • each <text> → a TEXT cel (editable copy), with font size + colour matched.
+   Geometry comes from getBoundingClientRect of a hidden 1:1 render, mapped to
+   the chosen canvas — so transforms/matrices are handled by the browser. */
+/* v0.4.0: split a content extent into page regions by detecting large
+   whitespace gutters on each axis, then keep the split only if the resulting
+   tiles match the chosen page aspect (so a single page never false-splits and
+   internal gaps don't either). Returns axis ranges. */
+function _svgSplitAxis(intervals,total){
+  if(!intervals.length) return [[0,total]];
+  intervals=intervals.slice().sort((a,b)=>a[0]-b[0]);
+  const merged=[]; let cs=intervals[0][0], ce=intervals[0][1];
+  for(let k=1;k<intervals.length;k++){
+    const s2=intervals[k][0], e2=intervals[k][1];
+    if(s2<=ce+0.5){ ce=Math.max(ce,e2); } else { merged.push([cs,ce]); cs=s2; ce=e2; }
+  }
+  merged.push([cs,ce]);
+  if(merged.length===1) return [[0,total]];
+  const GUT=Math.max(18,total*0.04);
+  const bounds=[0];
+  for(let k=0;k<merged.length-1;k++){
+    const gap=merged[k+1][0]-merged[k][1];
+    if(gap>GUT) bounds.push((merged[k][1]+merged[k+1][0])/2);
+  }
+  bounds.push(total);
+  const ranges=[];
+  for(let k=0;k<bounds.length-1;k++) ranges.push([bounds[k],bounds[k+1]]);
+  return ranges;
+}
+/* boxes: [{x,y,w,h}] in svg units. pageAspect = chosen canvas W/H. */
+function _svgDetectRegions(boxes,vbW,vbH,pageAspect){
+  const whole=[{x:0,y:0,w:vbW,h:vbH}];
+  if(!boxes.length) return whole;
+  const cols=_svgSplitAxis(boxes.map(b=>[b.x,b.x+b.w]),vbW);
+  const rows=_svgSplitAxis(boxes.map(b=>[b.y,b.y+b.h]),vbH);
+  if(cols.length*rows.length<=1) return whole;
+  const cells=[];
+  rows.forEach(([ry,ry2])=>cols.forEach(([rx,rx2])=>{
+    const w=rx2-rx, h=ry2-ry;
+    const has=boxes.some(b=>{const cx=b.x+b.w/2, cy=b.y+b.h/2; return cx>=rx&&cx<rx2&&cy>=ry&&cy<ry2;});
+    if(has && w>4 && h>4) cells.push({x:rx,y:ry,w,h});
+  }));
+  if(cells.length<=1) return whole;
+  /* validate: most cells must look like the chosen page (aspect within 18%) */
+  const match=cells.filter(c=>Math.abs((c.w/c.h)-pageAspect)/pageAspect<0.18).length;
+  if(match/cells.length>=0.6) return cells;
+  return whole;
+}
+
+/* Convert an SVG document into editable PUBSYS cels. If the SVG holds several
+   page-sized canvases (detected by whitespace gutters), each becomes its own
+   tab in the SAME format the user picked — all imported in one go. The first
+   region fills the tab nm-create already made; extras get fresh sibling tabs. */
+async function importSvgAsObjects(firstTab, svgText){
+  const cv0=$('cv-'+firstTab.id);
+  if(!cv0){ alert('Import failed: canvas not ready.'); return; }
+  const canvasW=parseInt(cv0.style.width)||794, canvasH=parseInt(cv0.style.height)||1123;
+  const pageAspect=canvasW/canvasH;
+  const XLINK='http://www.w3.org/1999/xlink';
+
+  let doc;
+  try{ doc=new DOMParser().parseFromString(svgText,'image/svg+xml'); }
+  catch(e){ alert('SVG parse failed: '+e.message); return; }
+  const svg=doc.querySelector('svg');
+  if(!svg || doc.querySelector('parsererror')){ alert('That file is not a valid SVG.'); return; }
+
+  let vbW,vbH;
+  const vb=(svg.getAttribute('viewBox')||'').trim().split(/[\s,]+/).map(Number);
+  if(vb.length===4 && vb[2]>0 && vb[3]>0){ vbW=vb[2]; vbH=vb[3]; }
+  else { vbW=parseFloat(svg.getAttribute('width'))||canvasW; vbH=parseFloat(svg.getAttribute('height'))||canvasH; }
+
+  /* hidden 1:1 render for geometry (image hrefs stripped to save memory) */
+  const meas=document.createElement('div');
+  meas.style.cssText='position:absolute;left:-99999px;top:0;pointer-events:none;opacity:0;'
+    +'width:'+vbW+'px;height:'+vbH+'px;overflow:hidden';
+  const liveSvg=document.importNode(svg,true);
+  liveSvg.setAttribute('width',vbW); liveSvg.setAttribute('height',vbH);
+  liveSvg.style.width=vbW+'px'; liveSvg.style.height=vbH+'px';
+  liveSvg.querySelectorAll('image').forEach(im=>{ im.removeAttribute('href'); im.removeAttributeNS(XLINK,'href'); });
+  meas.appendChild(liveSvg);
+  document.body.appendChild(meas);
+  await new Promise(r=>requestAnimationFrame(()=>r()));
+
+  try{
+    const svgRect=liveSvg.getBoundingClientRect();
+    const u2x=l=>(l-svgRect.left)/svgRect.width*vbW;   // screen px -> svg units
+    const u2y=t=>(t-svgRect.top)/svgRect.height*vbH;
+
+    /* collect content boxes (svg units) for region detection */
+    const boxes=[];
+    liveSvg.querySelectorAll('path,rect,circle,ellipse,polygon,polyline,line,text,image').forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.width<0.5 && r.height<0.5) return;
+      boxes.push({x:u2x(r.left), y:u2y(r.top), w:r.width/svgRect.width*vbW, h:r.height/svgRect.height*vbH});
+    });
+    const regions=_svgDetectRegions(boxes,vbW,vbH,pageAspect);
+
+    /* create sibling tabs for extra regions (same format) up front */
+    const tabs=[firstTab];
+    for(let i=1;i<regions.length;i++){
+      tabs.push(addTab({name:firstTab.name+' '+(i+1), type:firstTab.type,
+        fmt:firstTab.fmt, res:firstTab.res, cw:firstTab.cw, ch:firstTab.ch, cunit:firstTab.cunit}));
+    }
+    if(regions.length>1){ await new Promise(r=>requestAnimationFrame(()=>r())); await new Promise(r=>requestAnimationFrame(()=>r())); }
+
+    const liveImgs=Array.from(liveSvg.querySelectorAll('image'));
+    const origImgs=Array.from(svg.querySelectorAll('image'));
+    const liveTexts=Array.from(liveSvg.querySelectorAll('text'));
+
+    for(let ri=0; ri<regions.length; ri++){
+      const reg=regions[ri], tab=tabs[ri];
+      const cv=$('cv-'+tab.id); if(!cv) continue;
+      /* region rect in screen px + region->canvas scale */
+      const regL=svgRect.left+(reg.x/vbW)*svgRect.width;
+      const regT=svgRect.top +(reg.y/vbH)*svgRect.height;
+      const regW=(reg.w/vbW)*svgRect.width, regH=(reg.h/vbH)*svgRect.height;
+      const sx=canvasW/regW, sy=canvasH/regH;
+      const inReg=r=>{ const cx=r.left+r.width/2, cy=r.top+r.height/2;
+        return cx>=regL-0.5 && cx<=regL+regW+0.5 && cy>=regT-0.5 && cy<=regT+regH+0.5; };
+      const mX=l=>(l-regL)*sx, mY=t=>(t-regT)*sy;
+      let z=1;
+
+      /* 1) ARTWORK vec layer cropped to the region's viewBox */
+      const art=svg.cloneNode(true);
+      art.querySelectorAll('text,image').forEach(n=>n.remove());
+      if(!art.getAttribute('xmlns')) art.setAttribute('xmlns','http://www.w3.org/2000/svg');
+      art.setAttribute('viewBox', reg.x+' '+reg.y+' '+reg.w+' '+reg.h);
+      art.removeAttribute('width'); art.removeAttribute('height');
+      if(art.querySelector('path,rect,circle,ellipse,polygon,polyline,line')){
+        const url=svgTextToSizedBlobUrl(new XMLSerializer().serializeToString(art));
+        const vcel=addCel(cv,{type:'vec',src:url,x:0,y:0,w:canvasW,h:canvasH,preserveSize:true});
+        vcel.style.left='0px'; vcel.style.top='0px';
+        vcel.style.width=canvasW+'px'; vcel.style.height=canvasH+'px'; vcel.style.zIndex='0';
+        vcel.dataset.layerName='SVG ARTWORK';
+      }
+      /* 2) IMAGES in this region (white bg -> transparent by default) */
+      for(let i=0;i<liveImgs.length;i++){
+        const im=liveImgs[i];
+        const href=origImgs[i] && (origImgs[i].getAttribute('href')||origImgs[i].getAttributeNS(XLINK,'href'));
+        if(!href) continue;
+        const r=im.getBoundingClientRect();
+        if(!inReg(r)) continue;
+        const x=mX(r.left), y=mY(r.top), w=Math.max(8,r.width*sx), h=Math.max(8,r.height*sy);
+        const finalSrc=await _whiteToTransparent(href);
+        const cel=addCel(cv,{type:'image',src:finalSrc,x,y,w,h});
+        cel.style.left=x+'px'; cel.style.top=y+'px';
+        cel.style.width=w+'px'; cel.style.height=h+'px'; cel.style.zIndex=String(z++);
+      }
+      /* 3) TEXT in this region */
+      liveTexts.forEach(tx=>{
+        const r=tx.getBoundingClientRect();
+        if((r.width<0.5 && r.height<0.5) || !inReg(r)) return;
+        let txt='', lastY=null;
+        const spans=tx.querySelectorAll('tspan');
+        if(spans.length){
+          spans.forEach(sp=>{ const y=sp.getAttribute('y');
+            if(lastY!==null && y!==null && y!==lastY) txt+='\n';
+            txt+=sp.textContent; if(y!==null) lastY=y; });
+        } else { txt=tx.textContent||''; }
+        txt=txt.replace(/[ \t]+\n/g,'\n').trim();
+        if(!txt) return;
+        const cs=getComputedStyle(tx);
+        const fontPx=Math.max(6,(parseFloat(cs.fontSize)||12)*sx);
+        const color=(cs.fill && cs.fill!=='none' && cs.fill!=='rgb(0, 0, 0)')?cs.fill:'#111';
+        const x=mX(r.left), y=mY(r.top), w=Math.max(40, r.width*sx+10);
+        const cel=addCel(cv,{type:'text', body:txt, x, y, w, h:Math.max(18,r.height*sy+8)});
+        cel.style.left=x+'px'; cel.style.top=y+'px'; cel.style.width=w+'px'; cel.style.zIndex=String(z++);
+        const be=cel.querySelector('.cel-body-el');
+        if(be){ be.style.fontSize=fontPx.toFixed(1)+'px'; be.style.color=color; be.style.lineHeight='1.1'; }
+      });
+    }
+
+    if(regions.length>1 && tabs[0]) activateTab(tabs[0].id);
+    deselectAll();
+  }catch(e){
+    console.error('SVG import error:',e);
+    alert('SVG import hit an error: '+e.message);
+  }finally{
+    meas.remove();
+  }
 }
 $('btn-new').addEventListener('click',openModal);
 $('btn-export-all').addEventListener('click',exportAll);
+$('btn-export-odf').addEventListener('click',()=>exportEditableOdf());
 $('btn-screenshots')?.addEventListener('click',exportScreenshots);
-$('nm-close').addEventListener('click',()=>$('new-modal').classList.remove('open'));
-$('nm-cancel').addEventListener('click',()=>$('new-modal').classList.remove('open'));
-$('new-modal').addEventListener('click',e=>{ if(e.target===$('new-modal'))$('new-modal').classList.remove('open'); });
+$('nm-close').addEventListener('click',()=>{ _pendingSvgImport=null; const cb=$('nm-create'); if(cb)cb.textContent='CREATE'; $('new-modal').classList.remove('open'); });
+$('nm-cancel').addEventListener('click',()=>{ _pendingSvgImport=null; const cb=$('nm-create'); if(cb)cb.textContent='CREATE'; $('new-modal').classList.remove('open'); });
+$('new-modal').addEventListener('click',e=>{ if(e.target===$('new-modal')){ _pendingSvgImport=null; const cb=$('nm-create'); if(cb)cb.textContent='CREATE'; $('new-modal').classList.remove('open'); } });
 $('nm-size').addEventListener('change',function(){
   $('nm-cust').classList.toggle('hidden',this.value!=='custom');
   /* v0.4.0: picking a pixel-native format forces Digital (96dpi). */
@@ -8758,6 +9642,13 @@ $('nm-create').addEventListener('click',()=>{
   if(nmTemplate && TEMPLATES[nmTemplate]){
     try{ TEMPLATES[nmTemplate].apply(newTab); }
     catch(e){ console.warn('Template apply failed:',e); }
+  }
+  /* v0.4.0: if a drag-dropped SVG is pending, import it as editable objects
+     into the new tab (after a tick so cv-<id> is in the DOM). */
+  if(_pendingSvgImport){
+    const svgText=_pendingSvgImport; _pendingSvgImport=null;
+    const cb=$('nm-create'); if(cb) cb.textContent='CREATE';
+    setTimeout(()=>{ importSvgAsObjects(newTab, svgText); }, 160);
   }
   updateDevInfo();
 });
