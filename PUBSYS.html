@@ -8205,6 +8205,35 @@ async function importLayoutZip(tabId,file){
   if(btn){btn.textContent='IMPORT';btn.disabled=false;}
 }
 
+/* v0.4.0: a dropped/picked .zip may be EITHER a single .pubsys.zip pack OR a
+   BUNDLE containing several (e.g. 001.pubsys.zip, 002.pubsys.zip, …). Peek
+   inside: if nested packs are present, import each into its own tab in numeric
+   order, one by one; otherwise import the file as a single pack (unchanged).
+   A real single pack has a root manifest.json, so it's never mis-detected. */
+async function importPackOrBundle(file){
+  try{
+    if(typeof JSZip!=='undefined'){
+      const zip=await JSZip.loadAsync(file);
+      const names=Object.keys(zip.files).filter(n=>!zip.files[n].dir);
+      const hasRootManifest=names.includes('manifest.json');
+      let packs=names.filter(n=>/\.pubsys\.zip$/i.test(n));
+      if(!packs.length && !hasRootManifest) packs=names.filter(n=>/\.zip$/i.test(n));
+      if(packs.length){
+        packs.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
+        for(const name of packs){
+          const blob=await zip.files[name].async('blob');
+          const tab=addTab({name:'IMPORTING…',type:'layout',fmt:'a4',res:'digital'});
+          await importLayoutZip(tab.id, blob);   // open on tabs one by one
+        }
+        return;
+      }
+    }
+  }catch(e){ console.warn('Bundle peek failed; importing as a single pack:',e); }
+  /* single .pubsys.zip pack */
+  const tab=addTab({name:'IMPORTING…',type:'layout',fmt:'a4',res:'digital'});
+  await importLayoutZip(tab.id, file);
+}
+
 /* ══════════════════════════════════════
    TABLE TAB
 ══════════════════════════════════════ */
@@ -9179,10 +9208,7 @@ $('s1-impf').addEventListener('change',e=>{
     e.target.value='';
     return;
   }
-  for(const f of files){
-    const newTab=addTab({name:'IMPORTING…',type:'layout',fmt:'a4',res:'digital'});
-    importLayoutZip(newTab.id,f);
-  }
+  for(const f of files){ importPackOrBundle(f); }
   e.target.value='';
 });
 /* v0.3.7: IMPORT button is also a drop target. Drop one or many
@@ -9223,10 +9249,7 @@ $('s1-impf').addEventListener('change',e=>{
       alert('Drop a .svg to import as editable objects, or .pubsys.zip to load a saved layout.');
       return;
     }
-    for(const f of files){
-      const newTab=addTab({name:'IMPORTING…',type:'layout',fmt:'a4',res:'digital'});
-      importLayoutZip(newTab.id,f);
-    }
+    for(const f of files){ importPackOrBundle(f); }
   });
 })();
 $('btn-export').addEventListener('click',()=>{
