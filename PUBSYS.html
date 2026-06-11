@@ -507,6 +507,7 @@ textarea.txt-in{overflow:hidden;min-height:28px}
 .cel-tbl-inner .pub-tbl th{padding:4px 8px;font-size:10px}
 .cel-tbl-inner .pub-tbl td{padding:3px 8px;font-size:10px;white-space:nowrap}
 .cel-tbl-inner .pub-tbl .ttl-row{font-size:10px;padding:4px 8px}
+.cel-tbl-inner .pub-tbl .ttl-row-1{font-size:12px;padding:5px 8px}
 .cel-tbl-empty{padding:8px;color:var(--text3);font-size:11px;letter-spacing:.05em}
 
 /* CSV source box: textarea + render + drag handle, sits in the same shell
@@ -740,6 +741,7 @@ textarea.txt-in{overflow:hidden;min-height:28px}
    next to a column-headed one without a step in row height. */
 .pub-tbl .ttl-row{text-align:center;font-size:11px;font-weight:600;letter-spacing:.1em;
   padding:5px 10px;color:var(--th-txt,#333333)}
+.pub-tbl .ttl-row-1{font-size:13.2px;color:#FFFFFF;background:#6a6a6a}
 .pub-tbl.ttl-mode td{text-transform:none}
 
 /* MODAL */
@@ -2654,6 +2656,7 @@ function buildLayoutTC(tab){
       }
       addCel(cv,{type:'table',
         csv:        e.dataTransfer.getData('cel-csv'),
+        csvVariant: e.dataTransfer.getData('cel-csvvariant')||'csv1',
         x,y,w:480,h:200,sourceBid:sbid});
       /* New table cel inherits its source box's current scale — picks up
          whatever +/- value the user already set in that CSV box. */
@@ -2886,7 +2889,9 @@ function createBox(tabId, initMode='image', prefill={}){
         <option value="image"${initMode==='image'?' selected':''}>IMG</option>
         <option value="vec"${initMode==='vec'?' selected':''}>VEC</option>
         <option value="text"${initMode==='text'?' selected':''}>TXT</option>
-        ${allowCSV?`<option value="csv"${initMode==='csv'?' selected':''}>CSV</option>`:''}
+        ${allowCSV?`<option value="csv"${initMode==='csv'?' selected':''}>CSV1</option>
+        <option value="csv2"${initMode==='csv2'?' selected':''}>CSV2</option>
+        <option value="csv3"${initMode==='csv3'?' selected':''}>CSV3</option>`:''}
       </select>
       <div class="sb-acts">
         <button class="sbb" data-del>✕</button>
@@ -2971,7 +2976,7 @@ function createBox(tabId, initMode='image', prefill={}){
       </div>
       ${allowCSV?`
       <!-- csv zone (hybrid only) -->
-      <div id="csv-zone-${bid}" style="${initMode!=='csv'?'display:none':''}">
+      <div id="csv-zone-${bid}" style="${(initMode!=='csv'&&initMode!=='csv2'&&initMode!=='csv3')?'display:none':''}">
         <textarea class="csv-zone-ed" id="csv-${bid}" spellcheck="false" placeholder="Paste CSV or TSV…"></textarea>
         <div class="csv-zone-info" id="csvi-${bid}">No data</div>
         <div class="csv-zone-row">
@@ -3104,7 +3109,7 @@ function wireBox(bid,tabId){
       if(vecZ) vecZ.style.display=m==='vec'?'':'none';
       $('txt-zone-'+bid).style.display=m==='text'?'':'none';
       const csvZ=$('csv-zone-'+bid);
-      if(csvZ) csvZ.style.display=m==='csv'?'':'none';
+      if(csvZ) csvZ.style.display=(m==='csv'||m==='csv2'||m==='csv3')?'':'none';
     });
   }
 
@@ -3296,6 +3301,10 @@ function wireBox(bid,tabId){
       if(!csv.trim()){ e.preventDefault(); return; }
       e.dataTransfer.setData('cel-type','table');
       e.dataTransfer.setData('cel-csv', csv);
+      /* v0.4.0: CSV1 (single title) / CSV2 (two title bars) / CSV3 (main title
+         + interspersed sub-title bars). */
+      const _mode=$('sb-'+bid)?.dataset.mode;
+      e.dataTransfer.setData('cel-csvvariant', _mode==='csv2'?'csv2':(_mode==='csv3'?'csv3':'csv1'));
       e.dataTransfer.setData('cel-sourcebid', String(bid));
     });
     /* Per-box table scale: each CSV source owns a tblScale stored on its
@@ -3412,7 +3421,7 @@ function refreshTableCelsForSource(bid,newCsv){
     if(cel.dataset.sourceBid===sbid){
       cel.dataset.csv=newCsv;
       const inner=cel.querySelector('.cel-tbl-inner');
-      if(inner){ inner.innerHTML=csvToTableHTML(newCsv, cel.dataset.colAlign||''); applyTblCelStyle(cel); }
+      if(inner){ inner.innerHTML=csvToTableHTML(newCsv, cel.dataset.colAlign||'', cel.dataset.csvVariant); applyTblCelStyle(cel); }
     }
   });
   /* Re-apply this box's scale — refreshing inner.innerHTML wipes the inline
@@ -4163,6 +4172,7 @@ function serializeCel(cel){
     rec.type='table';
     rec.csv=cel.dataset.csv||'';
     rec.colAlign=cel.dataset.colAlign||'';
+    rec.csvVariant=cel.dataset.csvVariant||'csv1';
     rec.tblFont=cel.dataset.tblFont||'';
     rec.titleFS=cel.dataset.titleFS||'';
     rec.cellPad=cel.dataset.cellPad||'';
@@ -4233,7 +4243,7 @@ function pasteCelFromRecord(cv,rec){
     preserveSize:true,
   };
   if(rec.type==='image'||rec.type==='vec') opts.src=rec.src;
-  else if(rec.type==='table')              { opts.csv=rec.csv; opts.colAlign=rec.colAlign||''; opts.tblFont=rec.tblFont||''; opts.titleFS=rec.titleFS||''; opts.cellPad=rec.cellPad||''; }
+  else if(rec.type==='table')              { opts.csv=rec.csv; opts.colAlign=rec.colAlign||''; opts.csvVariant=rec.csvVariant||'csv1'; opts.tblFont=rec.tblFont||''; opts.titleFS=rec.titleFS||''; opts.cellPad=rec.cellPad||''; }
   else {
     opts.label=rec.label; opts.labelColor=rec.labelColor;
     opts.title=rec.title; opts.sub=rec.sub; opts.body=rec.body;
@@ -4690,7 +4700,9 @@ function addCel(cv,opts){
     if(opts.tblFont){ el.dataset.tblFont=opts.tblFont; }
     if(opts.titleFS){ el.dataset.titleFS=opts.titleFS; }
     if(opts.cellPad){ el.dataset.cellPad=opts.cellPad; }
-    inner.innerHTML=csvToTableHTML(opts.csv||'', el.dataset.colAlign||'');
+    /* v0.4.0: CSV1 (single title) vs CSV2 (two title bars + 3rd col centered). */
+    el.dataset.csvVariant=opts.csvVariant||'csv1';
+    inner.innerHTML=csvToTableHTML(opts.csv||'', el.dataset.colAlign||'', el.dataset.csvVariant);
     applyTblCelStyle(el);
     el.appendChild(inner);
 
@@ -4703,7 +4715,7 @@ function addCel(cv,opts){
       if(next!=null){
         el.dataset.csv=next;
         inner.dataset.csv=next;
-        inner.innerHTML=csvToTableHTML(next, el.dataset.colAlign||'');
+        inner.innerHTML=csvToTableHTML(next, el.dataset.colAlign||'', el.dataset.csvVariant);
         applyTblCelStyle(el);
         /* Table dimensions just changed — re-apply current scale so the
            outline tightens around the new content. RAF so the rebuilt
@@ -5578,7 +5590,7 @@ function setCelColAlign(cel, ci, code){
   cel.dataset.colAlign=arr.slice(0,end).join(',');
   const inner=cel.querySelector('.cel-tbl-inner');
   if(!inner) return;
-  inner.innerHTML=csvToTableHTML(cel.dataset.csv||'', cel.dataset.colAlign);
+  inner.innerHTML=csvToTableHTML(cel.dataset.csv||'', cel.dataset.colAlign, cel.dataset.csvVariant);
   applyTblCelStyle(cel);
   /* Re-apply scale exactly like the in-place CSV edit does — alignment can
      nudge column widths, so the cel outline should re-fit. */
@@ -6744,7 +6756,7 @@ async function saveLayoutHTML(tabId,opts={}){
            paint, the surrounding area stays transparent (matches preview).
            Table renders at natural width; the cel's w/h are just a
            positioning anchor, not a clip. */
-        const html=csvToTableHTML(csv);
+        const html=csvToTableHTML(csv, cel.dataset.colAlign||'', cel.dataset.csvVariant);
         body+=`<div style="position:absolute;left:${x}px;top:${y}px;${zStyle}${rotStyle}${opStyle}"><div style="${scaleStyle}display:inline-block">${html}</div></div>\n`;
       } else {
         const lbl=cel.querySelector('.cel-label-el');
@@ -7137,6 +7149,7 @@ async function buildLayoutZipBlob(tabId){
       rec.type='table';
       rec.csv=cel.dataset.csv||'';
       rec.colAlign=cel.dataset.colAlign||'';
+      rec.csvVariant=cel.dataset.csvVariant||'csv1';
       rec.tblFont=cel.dataset.tblFont||'';
       rec.titleFS=cel.dataset.titleFS||'';
       rec.cellPad=cel.dataset.cellPad||'';
@@ -7458,27 +7471,58 @@ function _fitCm(w,h,maxW,maxH){
 /* CSV → editable ODF table. Titled tables → spanned title row + data rows;
    columned tables → first row treated as a (bold) header. Per-column alignment
    honours the cel's colAlign override, else the titled col-3-right default. */
-function _csvToOdf(csv, colAlignStr, idx){
+function _csvToOdf(csv, colAlignStr, idx, variant){
   if(!csv||!csv.trim()) return '';
   const rows=parseCSV(csv);
   if(!rows.length) return '';
   const CA=parseColAlign(colAlignStr);
-  const numCols=Math.max(...rows.map(r=>r.length),1);
-  const titled=(rows[0].filter(c=>c.trim()!=='').length===1 && rows.length>1);
+  const twoTitle=(variant==='csv2' && rows.length>2);
+  const csv3=(variant==='csv3' && rows.length>1);
+  const titled=twoTitle || csv3 || (rows[0].filter(c=>c.trim()!=='').length===1 && rows.length>1);
+  const numCols=csv3
+    ? Math.max(1, ...(rows.filter(r=>r.filter(c=>c.trim()!=='').length>1).map(r=>r.length)), 1)
+    : Math.max(...rows.map(r=>r.length),1);
   const alignPara=(ci)=>{
     const a=CA[ci];
     if(a==='c') return 'AlC'; if(a==='r') return 'AlR'; if(a==='l') return 'AlL';
-    return (titled && ci===2)?'AlR':'AlL';
+    /* CSV2/CSV3 default: 3rd col centered; CSV1 titled default: 3rd col right. */
+    if(ci===2) return (twoTitle||csv3)?'AlC':(titled?'AlR':'AlL');
+    return 'AlL';
+  };
+  const titleRow=(txt,cellSty,paraSty)=>{
+    let r='<table:table-row><table:table-cell table:style-name="'+(cellSty||'CelTtl')+'" table:number-columns-spanned="'+numCols+'" '
+      +'office:value-type="string"><text:p text:style-name="'+(paraSty||'TblTtl')+'">'+escXML(txt)+'</text:p></table:table-cell>';
+    for(let k=1;k<numCols;k++) r+='<table:covered-table-cell/>';
+    return r+'</table:table-row>';
+  };
+  const dataRow=(row)=>{
+    let r='<table:table-row>';
+    for(let ci=0;ci<numCols;ci++){
+      const cell=(row[ci]||'').trim();
+      r+='<table:table-cell table:style-name="Cel" office:value-type="string">'
+        +'<text:p text:style-name="'+alignPara(ci)+'">'+escXML(cell)+'</text:p></table:table-cell>';
+    }
+    return r+'</table:table-row>';
   };
   let x='<table:table table:name="Tbl'+idx+'" table:style-name="TblS">'
        +'<table:table-column table:style-name="ColS" table:number-columns-repeated="'+numCols+'"/>';
+  /* v0.4.0 CSV3: main title + sub-title bars interspersed with data. */
+  if(csv3){
+    x+=titleRow(rows[0].find(c=>c.trim()!=='')||rows[0].join(' ').trim()||'','CelTtl1','TblTtl1');
+    for(let i=1;i<rows.length;i++){
+      const nonEmpty=rows[i].filter(c=>c.trim()!=='').length;
+      if(nonEmpty===1) x+=titleRow(rows[i].find(c=>c.trim()!=='')||'');
+      else x+=dataRow(rows[i]);
+    }
+    return x+'</table:table>';
+  }
   let dataRows=rows;
-  if(titled){
-    const title=rows[0].find(c=>c.trim()!=='')||'';
-    x+='<table:table-row><table:table-cell table:style-name="CelTtl" table:number-columns-spanned="'+numCols+'" '
-      +'office:value-type="string"><text:p text:style-name="TblTtl">'+escXML(title)+'</text:p></table:table-cell>';
-    for(let k=1;k<numCols;k++) x+='<table:covered-table-cell/>';
-    x+='</table:table-row>';
+  if(twoTitle){
+    x+=titleRow(rows[0].find(c=>c.trim()!=='')||rows[0].join(' ').trim()||'','CelTtl1','TblTtl1');
+    x+=titleRow((rows[1]||[]).find(c=>c.trim()!=='')||(rows[1]||[]).join(' ').trim()||'');
+    dataRows=rows.slice(2);
+  } else if(titled){
+    x+=titleRow(rows[0].find(c=>c.trim()!=='')||'');
     dataRows=rows.slice(1);
   }
   dataRows.forEach((row,ri)=>{
@@ -7571,7 +7615,7 @@ async function exportEditableOdf(){
                          ||((parseInt(a.style.left)||0)-(parseInt(b.style.left)||0)));
             for(const cel of cels){
               if(cel.classList.contains('cel-tbl')){
-                const t=_csvToOdf(cel.dataset.csv||'', cel.dataset.colAlign||'', tblIdx++);
+                const t=_csvToOdf(cel.dataset.csv||'', cel.dataset.colAlign||'', tblIdx++, cel.dataset.csvVariant);
                 if(t){ bodyXml+=t; emitted++; }
               } else if(cel.classList.contains('cel-img')||cel.classList.contains('cel-vec')){
                 const img=cel.querySelector('img');
@@ -7629,12 +7673,14 @@ async function exportEditableOdf(){
         +'<style:style style:name="AlR" style:family="paragraph"><style:paragraph-properties fo:text-align="end"/></style:style>'
         +'<style:style style:name="HdC" style:family="paragraph"><style:paragraph-properties fo:text-align="start"/><style:text-properties fo:font-weight="bold"/></style:style>'
         +'<style:style style:name="TblTtl" style:family="paragraph"><style:paragraph-properties fo:text-align="center"/><style:text-properties fo:font-weight="bold"/></style:style>'
+        +'<style:style style:name="TblTtl1" style:family="paragraph"><style:paragraph-properties fo:text-align="center"/><style:text-properties fo:font-weight="bold" fo:font-size="13pt" fo:color="#FFFFFF"/></style:style>'
         +'<style:style style:name="ImgP" style:family="paragraph"><style:paragraph-properties fo:text-align="center" fo:margin-top="0.3cm" fo:margin-bottom="0.3cm"/></style:style>'
         +'<style:style style:name="TblS" style:family="table"><style:table-properties style:width="17cm" table:align="left" fo:margin-top="0.35cm" fo:margin-bottom="0.45cm"/></style:style>'
         +'<style:style style:name="ColS" style:family="table-column"><style:table-column-properties style:use-optimal-column-width="true"/></style:style>'
         +'<style:style style:name="Cel" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.08cm"/></style:style>'
         +'<style:style style:name="CelHdr" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.08cm" fo:background-color="#e8e8e8"/></style:style>'
-        +'<style:style style:name="CelTtl" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.1cm" fo:background-color="#d8d8d8"/></style:style>';
+        +'<style:style style:name="CelTtl" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #cccccc" fo:padding="0.1cm" fo:background-color="#d8d8d8"/></style:style>'
+        +'<style:style style:name="CelTtl1" style:family="table-cell"><style:table-cell-properties fo:border="0.018cm solid #6a6a6a" fo:padding="0.12cm" fo:background-color="#6a6a6a"/></style:style>';
       const contentXml='<?xml version="1.0" encoding="UTF-8"?>'
         +'<office:document-content '+NS+' office:version="1.2"><office:automatic-styles>'+STYLES+'</office:automatic-styles>'
         +'<office:body><office:text>'+bodyXml+'</office:text></office:body></office:document-content>';
@@ -8074,6 +8120,7 @@ async function importLayoutZip(tabId,file){
         } else if(cel.type==='table'){
           opts.csv=cel.csv||'';
           opts.colAlign=cel.colAlign||'';  // v0.4.0
+          opts.csvVariant=cel.csvVariant||'csv1'; // v0.4.0
           opts.tblFont=cel.tblFont||'';     // v0.4.0
           opts.titleFS=cel.titleFS||'';     // v0.4.0
           opts.cellPad=cel.cellPad||'';     // v0.4.0
@@ -8438,7 +8485,7 @@ function _svgCellAnchor(td, cx, w, PAD){
   return {tx:cx+PAD, anchor:'start'};
 }
 
-function csvToTableHTML(csv, colAlign){
+function csvToTableHTML(csv, colAlign, variant){
   if(!csv||!csv.trim()) return '<div style="padding:8px;color:#999;font-size:12px;text-transform:none">Empty CSV</div>';
   const rows=parseCSV(csv);
   if(!rows.length) return '<div style="padding:8px;color:#999;font-size:12px;text-transform:none">No data</div>';
@@ -8449,6 +8496,63 @@ function csvToTableHTML(csv, colAlign){
     const a=CA[ci];
     return (a==='l'||a==='c'||a==='r')?ALIGN_CLS[a]:legacy;
   };
+
+  /* v0.4.0 CSV2: two stacked title bars (rows 0 and 1 both span all columns,
+     centered), then data. Third column (index 2) defaults to CENTER. */
+  if(variant==='csv2' && rows.length>2){
+    const title1=rows[0].find(c=>c.trim()!=='')||rows[0].join(' ').trim()||'';
+    const title2=(rows[1]||[]).find(c=>c.trim()!=='')||(rows[1]||[]).join(' ').trim()||'';
+    const bodyData=rows.slice(2);
+    const numCols=Math.max(...bodyData.map(r=>r.length), 1);
+    let html=`<table class="pub-tbl ttl-mode"><thead>`;
+    html+=`<tr><th class="ttl-row ttl-row-1" colspan="${numCols}">${escXML(title1)}</th></tr>`;
+    html+=`<tr><th class="ttl-row ttl-row-2" colspan="${numCols}">${escXML(title2)}</th></tr>`;
+    html+=`</thead><tbody>`;
+    bodyData.forEach(row=>{
+      html+=`<tr>`;
+      for(let ci=0;ci<numCols;ci++){
+        /* CSV2 default: 3rd column centered. Per-column override still wins. */
+        const c=alignCls(ci, ci===2?'alnc':'');
+        const cls=c?` class="${c}"`:'';
+        html+=`<td${cls}>${escXML((row[ci]||'').trim())}</td>`;
+      }
+      html+=`</tr>`;
+    });
+    html+=`</tbody></table>`;
+    return html;
+  }
+
+  /* v0.4.0 CSV3: one main title bar (row 0, dark like CSV2's first) then any
+     number of SUB-TITLE bars interspersed with data. A row counts as a
+     sub-title when it has exactly one non-empty cell; it's painted as a
+     full-width centered bar (rendered as a <th> so it picks up the light title
+     fill). Multi-cell rows are data; 3rd column centers by default. */
+  if(variant==='csv3' && rows.length>1){
+    const multi=rows.filter(r=>r.filter(c=>c.trim()!=='').length>1);
+    const numCols=Math.max(1, ...((multi.length?multi:rows).map(r=>r.length)));
+    const mainTitle=rows[0].find(c=>c.trim()!=='')||rows[0].join(' ').trim()||'';
+    let html=`<table class="pub-tbl ttl-mode"><thead>`;
+    html+=`<tr><th class="ttl-row ttl-row-1" colspan="${numCols}">${escXML(mainTitle)}</th></tr>`;
+    html+=`</thead><tbody>`;
+    for(let i=1;i<rows.length;i++){
+      const row=rows[i];
+      const nonEmpty=row.filter(c=>c.trim()!=='').length;
+      if(nonEmpty===1){
+        const sub=row.find(c=>c.trim()!=='')||'';
+        html+=`<tr><th class="ttl-row ttl-row-sub" colspan="${numCols}">${escXML(sub)}</th></tr>`;
+      } else {
+        html+=`<tr>`;
+        for(let ci=0;ci<numCols;ci++){
+          const c=alignCls(ci, ci===2?'alnc':'');
+          const cls=c?` class="${c}"`:'';
+          html+=`<td${cls}>${escXML((row[ci]||'').trim())}</td>`;
+        }
+        html+=`</tr>`;
+      }
+    }
+    html+=`</tbody></table>`;
+    return html;
+  }
 
   /* Titled layout */
   const firstRowNonEmpty=rows[0].filter(c=>c.trim()!=='').length;
@@ -8815,11 +8919,33 @@ function buildTitledTableSVG(tbl,sc){
   const PAD = _sTd?(Math.round(parseFloat(_cs(_sTd).paddingLeft))||10):10;
   const FK=(_cs(tbl).fontFamily)||"'Barlow Condensed','Arial Narrow',sans-serif";
 
-  const titleTh=tbl.querySelector('th.ttl-row');
-  const title=titleTh.textContent.trim();
+  const titleThs=Array.from(tbl.querySelectorAll('thead th.ttl-row'));
+  const titles=titleThs.map(t=>t.textContent.trim());
+  const numTitles=Math.max(1,titleThs.length);
+  const titleTh=titleThs[0];
+  const title=titles[0]||'';
+  /* v0.4.0: each title bar carries its own rendered style (CSV2's first bar is
+     larger / white-on-grey), so read height, font-size, colour and fill per
+     bar from the DOM — export then mirrors the on-screen CSS automatically. */
+  const _barInfo=th=>{
+    const c=_cs(th);
+    const bg=c.backgroundColor;
+    const transparent=(!bg||bg==='transparent'||/rgba?\([^)]*,\s*0\s*\)$/.test(bg));
+    return {
+      text: th.textContent.trim(),
+      h: th.offsetHeight?Math.round(th.offsetHeight):TH_H,
+      fs: Math.round(parseFloat(c.fontSize))||FS_TTL,
+      color: (c.color&&c.color!=='rgba(0, 0, 0, 0)')?c.color:null,
+      bg: transparent?null:bg
+    };
+  };
+  const titleInfo=titleThs.map(_barInfo);
   const bodyRows=Array.from(tbl.querySelectorAll('tbody tr'));
+  /* v0.4.0 CSV3: a body row whose single cell is a .ttl-row is a sub-title bar. */
+  const isSubBar=tr=>!!tr.querySelector('th.ttl-row, td.ttl-row');
+  const dataRows=bodyRows.filter(tr=>!isSubBar(tr));
   const numCols=parseInt(titleTh.getAttribute('colspan'))||
-    Math.max(1,...bodyRows.map(tr=>tr.querySelectorAll('td').length));
+    Math.max(1,...dataRows.map(tr=>tr.querySelectorAll('td').length));
 
   /* text width measurement */
   const _mc=document.createElement('canvas').getContext('2d');
@@ -8841,7 +8967,7 @@ function buildTitledTableSVG(tbl,sc){
   const colW=[];
   for(let ci=0;ci<numCols;ci++){
     let w=60;
-    bodyRows.forEach(tr=>{
+    dataRows.forEach(tr=>{
       const tds=tr.querySelectorAll('td');
       const txt=(tds[ci]?.textContent||'').trim();
       if(txt){
@@ -8861,7 +8987,14 @@ function buildTitledTableSVG(tbl,sc){
     colW.push(Math.max(40,w));
   }
   const totalW=colW.reduce((a,b)=>a+b,0);
-  const totalH=TH_H+bodyRows.length*ROW_H+1;
+  const titleYs=[]; let _ty=0;
+  titleInfo.forEach(ti=>{ titleYs.push(_ty); _ty+=ti.h; });
+  const TH_OFF=_ty||TH_H;                  /* v0.4.0: stack of title bars */
+  /* v0.4.0: per-body-row heights so CSV3 sub-title bars (which can differ in
+     height from data rows) sit correctly; data rows keep their measured height. */
+  const bodyH=bodyRows.map(tr=>tr.offsetHeight?Math.round(tr.offsetHeight):(isSubBar(tr)?TH_H:ROW_H));
+  const bodyY=[]; let _by=TH_OFF; bodyRows.forEach((_,i)=>{ bodyY.push(_by); _by+=bodyH[i]; });
+  const totalH=_by+1;
 
   /* header text colour from luminance */
   function hexLum(hex){
@@ -8871,35 +9004,61 @@ function buildTitledTableSVG(tbl,sc){
   }
   const hdrTxtCol=hexLum(sc.th)<0.4?'#ffffff':'#333333';
 
-  /* same painter's algorithm as the main builder, simplified for one banner row */
   let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">`;
   svg+=`<defs><style type="text/css"><![CDATA[${BARLOW_FONT_CSS}]]></style></defs>`;
   svg+=`<rect width="${totalW}" height="${totalH}" fill="#fff"/>`;
-  svg+=`<rect x="0" y="0" width="${totalW}" height="${TH_H}" fill="${sc.th}"/>`;
-  /* alt rows */
-  bodyRows.forEach((_,ri)=>{
-    if(ri%2===1) svg+=`<rect x="0" y="${TH_H+ri*ROW_H}" width="${totalW}" height="${ROW_H}" fill="${sc.alt}"/>`;
+  /* main title band(s) — each painted with its own height + fill */
+  titleInfo.forEach((ti,i)=>{
+    svg+=`<rect x="0" y="${titleYs[i]}" width="${totalW}" height="${ti.h}" fill="${ti.bg||sc.th}"/>`;
   });
-  /* horizontal row dividers */
-  for(let ri=0;ri<bodyRows.length;ri++){
-    const y=TH_H+(ri+1)*ROW_H;
-    svg+=`<line x1="0" y1="${y}" x2="${totalW}" y2="${y}" stroke="${sc.bd}" stroke-width="0.5"/>`;
-  }
-  /* title underline */
-  svg+=`<line x1="0" y1="${TH_H}" x2="${totalW}" y2="${TH_H}" stroke="${sc.bd}" stroke-width="1"/>`;
-  /* vertical col dividers */
+  /* alt rows — data rows only, alternating by data-row index */
+  let _di=0;
+  bodyRows.forEach((tr,ri)=>{
+    if(isSubBar(tr)) return;
+    if(_di%2===1) svg+=`<rect x="0" y="${bodyY[ri]}" width="${totalW}" height="${bodyH[ri]}" fill="${sc.alt}"/>`;
+    _di++;
+  });
+  /* vertical col dividers across the body (drawn first; sub-title bars below
+     are painted over them so spanning bars read full-width) */
   let vx=0;
   for(let i=0;i<colW.length-1;i++){
     vx+=colW[i];
-    svg+=`<line x1="${vx}" y1="${TH_H}" x2="${vx}" y2="${totalH}" stroke="${sc.bd}" stroke-width="0.5"/>`;
+    svg+=`<line x1="${vx}" y1="${TH_OFF}" x2="${vx}" y2="${totalH}" stroke="${sc.bd}" stroke-width="0.5"/>`;
   }
+  /* CSV3 sub-title bars — fill spans full width, covering the verticals */
+  const subBars=[];
+  bodyRows.forEach((tr,ri)=>{
+    if(!isSubBar(tr)) return;
+    const cell=tr.querySelector('th.ttl-row, td.ttl-row');
+    const info=_barInfo(cell); info.y=bodyY[ri]; info.h=bodyH[ri];
+    subBars.push(info);
+    svg+=`<rect x="0" y="${info.y}" width="${totalW}" height="${info.h}" fill="${info.bg||sc.th}"/>`;
+  });
+  /* horizontal row dividers (after fills/bars so they stay visible) */
+  for(let ri=0;ri<bodyRows.length;ri++){
+    const y=bodyY[ri]+bodyH[ri];
+    svg+=`<line x1="0" y1="${y}" x2="${totalW}" y2="${y}" stroke="${sc.bd}" stroke-width="0.5"/>`;
+  }
+  /* divider under each main title bar (incl. the title↔body split) */
+  titleInfo.forEach((ti,i)=>{
+    const y=titleYs[i]+ti.h;
+    svg+=`<line x1="0" y1="${y}" x2="${totalW}" y2="${y}" stroke="${sc.bd}" stroke-width="${i===titleInfo.length-1?1:0.5}"/>`;
+  });
   /* outer border */
   svg+=`<line x1="0" y1="0" x2="${totalW}" y2="0" stroke="${sc.bd}" stroke-width="1"/>`;
   svg+=`<line x1="0" y1="${totalH-1}" x2="${totalW}" y2="${totalH-1}" stroke="${sc.bd}" stroke-width="1"/>`;
   svg+=`<line x1="0" y1="0" x2="0" y2="${totalH}" stroke="${sc.bd}" stroke-width="1"/>`;
   svg+=`<line x1="${totalW-1}" y1="0" x2="${totalW-1}" y2="${totalH}" stroke="${sc.bd}" stroke-width="1"/>`;
-  /* title text — centered, uppercase */
-  svg+=`<text x="${totalW/2}" y="${TH_H/2+FS_TTL/2-1}" font-family="${FK}" font-size="${FS_TTL}" font-weight="600" fill="${hdrTxtCol}" text-anchor="middle" letter-spacing="0.7">${escXML(title.toUpperCase())}</text>`;
+  /* main title text — centered, uppercase, own size + colour per bar */
+  titleInfo.forEach((ti,i)=>{
+    const cy=titleYs[i]+ti.h/2+ti.fs/2-1;
+    svg+=`<text x="${totalW/2}" y="${cy}" font-family="${FK}" font-size="${ti.fs}" font-weight="600" fill="${ti.color||hdrTxtCol}" text-anchor="middle" letter-spacing="0.7">${escXML((ti.text||'').toUpperCase())}</text>`;
+  });
+  /* CSV3 sub-title text — centered, case preserved (often mixed-case spec text) */
+  subBars.forEach(info=>{
+    const cy=info.y+info.h/2+info.fs/2-1;
+    svg+=`<text x="${totalW/2}" y="${cy}" font-family="${FK}" font-size="${info.fs}" font-weight="600" fill="${info.color||hdrTxtCol}" text-anchor="middle" letter-spacing="0.5">${escXML(info.text||'')}</text>`;
+  });
   /* data text — preserve case. Each cell's text is wrapped in a clipPath so
      anything wider than its column gets clipped at the cell boundary (matches
      preview's overflow-clipping behaviour for narrow cels). */
@@ -8914,7 +9073,8 @@ function buildTitledTableSVG(tbl,sc){
   clips+='</defs>';
   svg+=clips;
   bodyRows.forEach((tr,ri)=>{
-    const y=TH_H+ri*ROW_H;
+    if(isSubBar(tr)) return;
+    const y=bodyY[ri];
     const tds=Array.from(tr.querySelectorAll('td'));
     let cx=0;
     tds.forEach((td,ci)=>{
@@ -8924,7 +9084,7 @@ function buildTitledTableSVG(tbl,sc){
         /* v0.4.0: read the cell's rendered alignment (per-column override or
            the legacy col-3-right default) so export matches the live preview. */
         const {tx,anchor}=_svgCellAnchor(td, cx, w, PAD);
-        svg+=`<text x="${tx}" y="${y+ROW_H/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" text-anchor="${anchor}" clip-path="url(#${clipId}-${ci})">${escXML(txt)}</text>`;
+        svg+=`<text x="${tx}" y="${y+bodyH[ri]/2+FS_TD/2-1}" font-family="${FK}" font-size="${FS_TD}" fill="#111" text-anchor="${anchor}" clip-path="url(#${clipId}-${ci})">${escXML(txt)}</text>`;
       }
       cx+=w;
     });
