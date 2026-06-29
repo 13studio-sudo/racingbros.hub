@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>LOGOMARK CREATOR</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
+<style>
+/* ══ TOKENS — inherited verbatim from PUBSYS ══ */
+:root{
+  --bg:#f0f0f0;--surface:#fff;--border:#d0d0d0;--border2:#aaa;
+  --text:#111;--text2:#555;--text3:#999;
+  --btn-bg:#111;--btn-txt:#fff;
+  --strip-bg:#e6e6e6;--panel-bg:#ebebeb;--input-bg:#fafafa;
+  --sel:#111;--sel-txt:#fff;
+  --accent:#C41E33;
+  --font:'Barlow Condensed','Arial Narrow',sans-serif;--fs:16px;
+}
+[data-theme=dark]{
+  --bg:#0c0c0c;--surface:#181818;--border:#282828;--border2:#3e3e3e;
+  --text:#e4e4e4;--text2:#888;--text3:#555;
+  --btn-bg:#e4e4e4;--btn-txt:#0c0c0c;
+  --strip-bg:#111;--panel-bg:#141414;--input-bg:#1a1a1a;
+  --sel:#e4e4e4;--sel-txt:#0c0c0c;
+}
+
+/* ══ RESET ══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border-radius:0!important}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);font-size:var(--fs);line-height:1.4;color:var(--text);
+  background:var(--bg);transition:background .15s,color .15s;text-transform:uppercase}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;
+  background:none;border:none;outline:none}
+button{cursor:pointer}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+.hidden{display:none!important}
+input[type="text"],input[type="number"]{text-transform:uppercase}
+
+/* ══ APP SHELL ══ */
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;overflow:hidden}
+
+/* S1 toolbar */
+#s1{display:flex;align-items:center;gap:6px;padding:0 12px;height:31px;flex-shrink:0;
+  background:var(--surface);border-bottom:1px solid var(--border)}
+#s1 .brandtag{font-size:12px;font-weight:700;letter-spacing:.16em;margin-right:4px}
+#s1 .brandtag .r{color:var(--accent)}
+.tbtn{height:22px;padding:0 11px;background:var(--btn-bg);color:var(--btn-txt);
+  font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--btn-bg);transition:opacity .12s;white-space:nowrap}
+.tbtn:hover{opacity:.7}
+.tbtn.g{background:none;color:var(--text);border-color:var(--border2)}
+.tbtn.g:hover{background:var(--btn-bg);color:var(--btn-txt);border-color:var(--btn-bg)}
+.vsep{width:1px;height:17px;background:var(--border);margin:0 2px;flex-shrink:0}
+#s1sp{flex:1}
+#dp-tog{width:34px;height:34px;border:1px solid var(--border2);background:var(--surface);
+  color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-left:4px;transition:all .12s}
+#dp-tog:hover{background:var(--btn-bg);color:var(--btn-txt);border-color:var(--btn-bg)}
+
+/* S2 input strip */
+#s2{display:flex;align-items:center;gap:0;height:34px;flex-shrink:0;
+  background:var(--strip-bg);border-bottom:1px solid var(--border)}
+.in-field{display:flex;align-items:center;height:100%;border-right:1px solid var(--border)}
+.in-field .lab{font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--text3);
+  padding:0 8px 0 12px;white-space:nowrap}
+.in-field input{height:100%;border:none;background:transparent;font-size:13px;
+  font-weight:500;letter-spacing:.06em;padding:0 12px 0 0}
+#in-brand{width:200px}
+#in-keys{width:300px;text-transform:none}
+#s2 .grow{flex:1}
+.s2-stat{font-size:10px;letter-spacing:.1em;color:var(--text3);padding:0 12px;white-space:nowrap}
+.s2-stat b{color:var(--text2);font-weight:600}
+
+/* MAIN / STAGE */
+#main{flex:1;overflow:auto;background:var(--bg);
+  display:flex;align-items:flex-start;justify-content:center;padding:24px}
+#stage{display:grid;gap:1px;background:var(--ink,#000);
+  box-shadow:0 0 0 1px var(--ink,#000)}
+.cell{position:relative;background:var(--canvas,#8a8a8a);overflow:hidden}
+.cell svg{display:block;width:100%;height:100%}
+.cell-cap{position:absolute;left:0;bottom:0;right:0;display:flex;justify-content:space-between;
+  gap:6px;padding:3px 6px;font-size:8.5px;font-weight:600;letter-spacing:.08em;
+  color:rgba(0,0,0,.5);pointer-events:none;font-family:'Courier New',monospace}
+.cell-cap .idx{opacity:.7}
+.cell-dl{position:absolute;top:4px;right:4px;width:18px;height:18px;display:flex;
+  align-items:center;justify-content:center;font-size:12px;color:rgba(0,0,0,.55);
+  background:rgba(255,255,255,.35);opacity:0;transition:opacity .12s;border:1px solid rgba(0,0,0,.2)}
+.cell:hover .cell-dl{opacity:1}
+.cell-dl:hover{color:#000;background:rgba(255,255,255,.7)}
+#stage.no-cap .cell-cap{display:none}
+
+/* DEV PANEL */
+#dp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;visibility:hidden;
+  transition:opacity .18s;z-index:40}
+#dp-overlay.open{opacity:1;visibility:visible}
+#dp{position:fixed;top:0;right:0;height:100%;width:340px;max-width:88vw;background:var(--panel-bg);
+  border-left:1px solid var(--border);transform:translateX(100%);transition:transform .2s;
+  z-index:50;display:flex;flex-direction:column}
+#dp.open{transform:translateX(0)}
+#dp-head{display:flex;align-items:center;justify-content:space-between;height:42px;flex-shrink:0;
+  padding:0 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+#dp-head .t{font-size:12px;font-weight:700;letter-spacing:.16em}
+#dp-head .x{font-size:15px;color:var(--text2);width:24px;height:24px}
+#dp-head .x:hover{color:var(--text)}
+#dp-body{flex:1;overflow-y:auto;padding:6px 0}
+.grp{padding:14px;border-bottom:1px solid var(--border)}
+.grp-lab{font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--text3);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.grp-lab::after{content:"";flex:1;height:1px;background:var(--border)}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.row:last-child{margin-bottom:0}
+.row .rl{font-size:11px;letter-spacing:.08em;color:var(--text2);width:60px;flex-shrink:0}
+.row input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:2px;background:var(--border2);cursor:pointer}
+.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;
+  background:var(--text);border:none;cursor:pointer}
+.row input[type=range]::-moz-range-thumb{width:13px;height:13px;background:var(--text);border:none;cursor:pointer}
+.row .rv{font-size:11px;letter-spacing:.04em;color:var(--text2);min-width:48px;text-align:right;
+  font-family:'Courier New',monospace}
+.seg{display:flex;flex:1}
+.seg button{flex:1;height:24px;font-size:11px;font-weight:600;letter-spacing:.08em;
+  border:1px solid var(--border2);color:var(--text2);transition:all .1s}
+.seg button+button{border-left:none}
+.seg button.active{background:var(--sel);color:var(--sel-txt);border-color:var(--sel)}
+.seg button:not(.active):hover{color:var(--text)}
+.cpick{display:flex;align-items:center;gap:8px}
+.cpick label{font-size:11px;letter-spacing:.08em;color:var(--text2);flex:1}
+.cpick input[type=color]{width:30px;height:24px;padding:0;border:1px solid var(--border2);background:none;cursor:pointer}
+.cpick .hex{font-family:'Courier New',monospace;font-size:10px;color:var(--text3);width:62px;text-transform:uppercase}
+.note{font-size:10px;letter-spacing:.04em;line-height:1.5;color:var(--text3);text-transform:uppercase}
+.fontpool{font-size:10px;letter-spacing:.04em;line-height:1.65;color:var(--text2);
+  max-height:120px;overflow-y:auto;border:1px solid var(--border);padding:7px 9px;background:var(--input-bg)}
+.fontpool b{color:var(--accent);font-weight:600}
+.btn-w{display:block;width:100%;height:30px;background:var(--btn-bg);color:var(--btn-txt);
+  font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--btn-bg);transition:opacity .12s;margin-top:4px}
+.btn-w:hover{opacity:.78}
+.btn-w.g{background:none;color:var(--text);border-color:var(--border2)}
+.btn-w.g:hover{background:var(--btn-bg);color:var(--btn-txt);border-color:var(--btn-bg)}
+#dp-foot{flex-shrink:0;padding:12px 14px;border-top:1px solid var(--border);background:var(--surface)}
+
+/* TOAST */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:var(--btn-bg);color:var(--btn-txt);padding:9px 18px;font-size:11px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;opacity:0;visibility:hidden;
+  transition:all .2s;z-index:80;border:1px solid var(--btn-bg)}
+#toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body data-theme="dark">
+
+<div id="app">
+
+  <!-- S1 -->
+  <div id="s1">
+    <span class="brandtag">▌ LOGOMARK <span class="r">/</span> CREATOR</span>
+    <div class="vsep"></div>
+    <button class="tbtn g" id="btn-regen" title="Reshuffle the font assignment">↻ REGENERATE</button>
+    <button class="tbtn g" id="btn-pubsys" title="Export the PUBSYS-editable file only (.pubsys.zip)">PUBSYS ↗</button>
+    <button class="tbtn g" id="btn-svgs" title="Download both SVG variants — editable + outlined (zip)">SVG ONLY</button>
+    <button class="tbtn" id="btn-pack" title="Export the full pack — SVG (editable + outlined) + HTML + .pubsys.zip">EXPORT PACK</button>
+    <div id="s1sp"></div>
+    <button id="dp-tog" title="Settings">≡</button>
+  </div>
+
+  <!-- S2 -->
+  <div id="s2">
+    <div class="in-field">
+      <span class="lab">BRAND</span>
+      <input type="text" id="in-brand" value="SCEPTER RS" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="in-field">
+      <span class="lab">STYLE KEYWORDS</span>
+      <input type="text" id="in-keys" value="motorsport, speed, industrial" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="grow"></div>
+    <div class="s2-stat" id="s2-stat"></div>
+  </div>
+
+  <!-- STAGE -->
+  <div id="main"><div id="stage"></div></div>
+</div>
+
+<!-- DEV PANEL -->
+<div id="dp-overlay"></div>
+<aside id="dp">
+  <div id="dp-head">
+    <span class="t">SETTINGS</span>
+    <button class="x" id="dp-close">✕</button>
+  </div>
+  <div id="dp-body">
+
+    <div class="grp">
+      <div class="grp-lab">GRID</div>
+      <div class="row">
+        <span class="rl">COLUMNS</span>
+        <input type="range" id="sl-cols" min="1" max="10" step="1" value="4">
+        <span class="rv" id="rv-cols">4</span>
+      </div>
+      <div class="row">
+        <span class="rl">ROWS</span>
+        <input type="range" id="sl-rows" min="1" max="10" step="1" value="4">
+        <span class="rv" id="rv-rows">4</span>
+      </div>
+      <div class="row" style="margin-top:2px">
+        <span class="rl">LABELS</span>
+        <div class="seg" id="seg-cap">
+          <button data-cap="1" class="active">SHOW</button>
+          <button data-cap="0">HIDE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-lab">SHEAR</div>
+      <div class="row">
+        <span class="rl">AXIS</span>
+        <div class="seg" id="seg-axis">
+          <button data-axis="H" class="active">HORIZONTAL</button>
+          <button data-axis="V">VERTICAL</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="rl">ANGLE</span>
+        <input type="range" id="sl-shear" min="-45" max="45" step="1" value="10">
+        <span class="rv" id="rv-shear">10°</span>
+      </div>
+      <div class="note">+ leans forward · − leans back · 0 upright</div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-lab">COLOUR</div>
+      <div class="row cpick">
+        <input type="color" id="c-ink" value="#000000">
+        <label>LOGOMARK</label>
+        <span class="hex" id="hex-ink">#000000</span>
+      </div>
+      <div class="row cpick">
+        <input type="color" id="c-canvas" value="#8a8a8a">
+        <label>CANVAS</label>
+        <span class="hex" id="hex-canvas">#8A8A8A</span>
+      </div>
+      <button class="btn-w g" id="btn-color-reset">↺ RESET — BLACK ON GREY</button>
+    </div>
+
+    <div class="grp">
+      <div class="grp-lab">FONT POOL</div>
+      <div class="note" id="pool-stat" style="margin-bottom:9px"></div>
+      <div class="fontpool" id="pool-list"></div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-lab">APP THEME</div>
+      <div class="row">
+        <span class="rl">MODE</span>
+        <div class="seg" id="seg-theme">
+          <button data-theme="dark" class="active">DARK</button>
+          <button data-theme="light">LIGHT</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div id="dp-foot">
+    <button class="btn-w" id="btn-pack-2">EXPORT PACK — SVG · HTML · MANIFEST</button>
+  </div>
+</aside>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   LOGOMARK CREATOR
+   Single-file tool for the RACINGBROS toolkit hub.
+   Generates a contact-sheet of SVG wordmarks, one per font,
+   driven by free-text style keywords. Exports a self-contained
+   pack (SVG + HTML + manifest), packaged in the PUBSYS manner.
+   ════════════════════════════════════════════════════════════ */
+
+const CELL_W = 520, CELL_H = 320, PAD = 0.12;   // mark cell geometry
+
+/* ── FONT LIBRARY ──
+   Curated free Google fonts, each tagged with a controlled
+   style vocabulary. Keyword input is scored against these tags. */
+const FONTS = [
+  ['Orbitron',['futuristic','technical','geometric','speed']],
+  ['Rajdhani',['technical','condensed','modern','motorsport']],
+  ['Teko',['condensed','bold','technical','modern']],
+  ['Saira Condensed',['condensed','technical','modern']],
+  ['Saira Stencil One',['stencil','industrial','bold']],
+  ['Aldrich',['technical','geometric','futuristic']],
+  ['Michroma',['futuristic','geometric','technical']],
+  ['Audiowide',['futuristic','display','speed']],
+  ['Wallpoet',['technical','futuristic','mono','stencil']],
+  ['Quantico',['technical','geometric','modern']],
+  ['Chakra Petch',['technical','futuristic','condensed']],
+  ['Bai Jamjuree',['technical','modern','condensed']],
+  ['Genos',['technical','modern']],
+  ['Iceland',['futuristic','technical','condensed']],
+  ['Syncopate',['geometric','modern','futuristic']],
+  ['Oswald',['condensed','bold','industrial','display']],
+  ['Bebas Neue',['condensed','bold','display','industrial']],
+  ['Anton',['heavy','bold','display','industrial']],
+  ['Archivo Black',['heavy','bold','geometric','modern']],
+  ['Archivo Narrow',['condensed','modern','geometric']],
+  ['Khand',['condensed','modern','technical']],
+  ['Pathway Gothic One',['condensed','industrial','display']],
+  ['Fjalla One',['condensed','bold','display']],
+  ['Staatliches',['condensed','display','industrial','retro']],
+  ['Big Shoulders Display',['industrial','display','condensed','bold']],
+  ['Squada One',['bold','display','retro']],
+  ['Black Ops One',['stencil','bold','retro','industrial']],
+  ['Russo One',['bold','geometric','futuristic']],
+  ['Bungee',['display','bold']],
+  ['Bungee Inline',['display','bold','retro']],
+  ['Titan One',['heavy','display','bold']],
+  ['Paytone One',['bold','display','geometric']],
+  ['Bowlby One',['heavy','display','bold']],
+  ['Alfa Slab One',['heavy','display','retro']],
+  ['Ultra',['heavy','retro','display']],
+  ['Passion One',['heavy','bold','display']],
+  ['Barlow Condensed',['condensed','modern','technical']],
+  ['Roboto Condensed',['condensed','modern','technical']],
+  ['Montserrat',['geometric','modern','elegant']],
+  ['Poppins',['geometric','modern']],
+  ['Sora',['geometric','modern','technical']],
+  ['Outfit',['geometric','modern']],
+  ['Manrope',['geometric','modern']],
+  ['Inter',['modern','technical']],
+  ['Lexend',['modern','geometric']],
+  ['Space Grotesk',['geometric','modern','technical']],
+  ['Chivo',['modern','geometric','industrial']],
+  ['Red Hat Display',['modern','geometric']],
+  ['Space Mono',['mono','technical','retro']],
+  ['JetBrains Mono',['mono','technical']],
+  ['IBM Plex Mono',['mono','technical','modern']],
+  ['Share Tech Mono',['mono','technical','futuristic']],
+  ['Share Tech',['technical','modern','futuristic']],
+  ['Major Mono Display',['mono','futuristic','display']],
+  ['Red Hat Mono',['mono','technical','modern']],
+  ['Nova Square',['futuristic','geometric','technical']],
+  ['Zen Dots',['futuristic','geometric','display']],
+  ['Tomorrow',['modern','technical','futuristic']],
+  ['Exo 2',['futuristic','technical','modern','speed']],
+  ['Electrolize',['technical','futuristic','modern']],
+  ['Stalinist One',['heavy','industrial','display','retro']],
+  ['Kanit',['condensed','modern','bold']],
+  ['Goldman',['bold','technical','futuristic','heavy']],
+  ['Gugi',['futuristic','bold','display']],
+  ['Faster One',['speed','display','retro','motorsport']],
+  ['Racing Sans One',['motorsport','speed','display','retro']],
+];
+
+/* keyword token → canonical tag(s) */
+const SYN = {
+  motorsport:'motorsport',racing:'motorsport',race:'motorsport',motor:'motorsport',
+  automotive:'motorsport',rally:'motorsport',track:'motorsport',gp:'motorsport',f1:'motorsport',
+  speed:'speed',fast:'speed',velocity:'speed',dynamic:'speed',swift:'speed',quick:'speed',aero:'speed',
+  industrial:'industrial',factory:'industrial',mechanical:'industrial',machine:'industrial',
+  utility:'industrial',rugged:'industrial',
+  technical:'technical',tech:'technical',engineering:'technical',precision:'technical',
+  data:'technical',spec:'technical',hud:'technical',instrument:'technical',
+  mono:'mono',monospace:'mono',code:'mono',terminal:'mono',console:'mono',
+  bold:'bold',strong:'bold',powerful:'bold',aggressive:'bold',muscular:'bold',
+  heavy:'heavy',black:'heavy',fat:'heavy',thick:'heavy',ultra:'heavy',impact:'heavy',
+  condensed:'condensed',narrow:'condensed',tall:'condensed',compressed:'condensed',tight:'condensed',
+  geometric:'geometric',clean:'geometric',minimal:'geometric',simple:'geometric',neat:'geometric',
+  modern:'modern',contemporary:'modern',sleek:'modern',slick:'modern',fresh:'modern',
+  futuristic:'futuristic',future:'futuristic',scifi:'futuristic','sci-fi':'futuristic',
+  cyber:'futuristic',space:'futuristic',digital:'futuristic',neon:'futuristic',
+  retro:'retro',vintage:'retro',classic:'retro',old:'retro',
+  elegant:'elegant',refined:'elegant',luxury:'elegant',premium:'elegant',
+  stencil:'stencil',military:'stencil',army:'stencil',tactical:'stencil',
+  display:'display',headline:'display',poster:'display',big:'display',
+};
+
+/* ── STATE ── */
+const state = {
+  brand:'SCEPTER RS',
+  keywords:'motorsport, speed, industrial',
+  cols:4, rows:4,
+  shear:10, axis:'H',
+  ink:'#000000', canvas:'#8a8a8a',
+  showCap:true, theme:'dark',
+  seed:1,
+};
+
+/* ── PRNG (mulberry32) for stable, reproducible ordering ── */
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ── parse keywords into canonical tag set ── */
+function parseTags(str){
+  const set = new Set();
+  str.toLowerCase().split(/[,\s/]+/).forEach(tok=>{
+    tok = tok.trim().replace(/[^a-z0-9-]/g,'');
+    if(!tok) return;
+    if(SYN[tok]) set.add(SYN[tok]);
+  });
+  return set;
+}
+
+/* ── rank fonts by tag overlap, return the N selected (cycling if needed) ── */
+function selectFonts(){
+  const tags = parseTags(state.keywords);
+  const rnd  = mulberry32(hashStr(state.brand + '|' + state.seed));
+  const scored = FONTS.map(([name,ftags])=>{
+    let score = 0;
+    if(tags.size){ ftags.forEach(t=>{ if(tags.has(t)) score++; }); }
+    return { name, tags:ftags, score, j:rnd() };
+  });
+  // matched first (by score), then the rest; ties + no-keyword case broken by seeded jitter
+  scored.sort((a,b)=> b.score - a.score || a.j - b.j );
+  const total = state.cols * state.rows;
+  const out = [];
+  for(let i=0;i<total;i++) out.push(scored[i % scored.length]);
+  return { list: out, matched: scored.filter(f=>f.score>0).length, pool: scored.length };
+}
+
+/* ── google fonts loading ── */
+let gfLink = null;
+function ensureFonts(families){
+  const uniq = [...new Set(families)];
+  const href = 'https://fonts.googleapis.com/css2?' +
+    uniq.map(f=>'family='+f.replace(/ /g,'+')).join('&') + '&display=swap';
+  if(!gfLink){ gfLink = document.createElement('link'); gfLink.rel='stylesheet'; document.head.appendChild(gfLink); }
+  if(gfLink.href !== href) gfLink.href = href;
+  return Promise.all(uniq.map(f=>document.fonts.load(`24px "${f}"`).catch(()=>{})));
+}
+
+/* ── build one mark SVG element (live, in-DOM) ── */
+function buildMarkSVG(fontName){
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox',`0 0 ${CELL_W} ${CELL_H}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+
+  const rect=document.createElementNS(NS,'rect');
+  rect.setAttribute('width',CELL_W); rect.setAttribute('height',CELL_H);
+  rect.setAttribute('fill',state.canvas);
+  svg.appendChild(rect);
+
+  const fit=document.createElementNS(NS,'g'); fit.setAttribute('class','fit');
+  const skew=document.createElementNS(NS,'g'); skew.setAttribute('class','skew');
+  skew.setAttribute('transform', shearTransform());
+  const text=document.createElementNS(NS,'text');
+  text.setAttribute('x',0); text.setAttribute('y',0);
+  text.setAttribute('font-size',100);
+  text.setAttribute('font-family',`'${fontName}'`);
+  text.setAttribute('fill',state.ink);
+  text.setAttribute('text-anchor','start');
+  text.textContent = state.brand;
+  skew.appendChild(text); fit.appendChild(skew); svg.appendChild(fit);
+  return svg;
+}
+function shearTransform(){
+  const a = -state.shear;                  // + slider → forward lean
+  return state.axis==='H' ? `skewX(${a})` : `skewY(${a})`;
+}
+
+/* ── fit a mark into its cell via bbox math ── */
+function fitMark(svg){
+  const fit = svg.querySelector('.fit');
+  if(!fit) return;
+  fit.removeAttribute('transform');
+  let bb;
+  try{ bb = fit.getBBox(); }catch(e){ return; }
+  if(!bb.width || !bb.height) return;
+  const pad = CELL_W*PAD;
+  const s = Math.min((CELL_W-2*pad)/bb.width, (CELL_H-2*pad)/bb.height);
+  const bx = bb.x + bb.width/2, by = bb.y + bb.height/2;
+  fit.setAttribute('transform',
+    `translate(${(CELL_W/2).toFixed(2)} ${(CELL_H/2).toFixed(2)}) scale(${s.toFixed(4)}) translate(${(-bx).toFixed(2)} ${(-by).toFixed(2)})`);
+}
+
+/* ── render the full grid ── */
+let currentSel = null;
+async function render(){
+  const stage = document.getElementById('stage');
+  const sel = selectFonts();
+  currentSel = sel;
+
+  stage.style.setProperty('--ink', state.ink);
+  stage.style.setProperty('--canvas', state.canvas);
+  stage.style.gridTemplateColumns = `repeat(${state.cols},1fr)`;
+  stage.classList.toggle('no-cap', !state.showCap);
+
+  // size the page so cells keep aspect and fit the viewport
+  const main = document.getElementById('main');
+  const availW = main.clientWidth - 48, availH = main.clientHeight - 48;
+  const cellAR = CELL_W/CELL_H;
+  let cw = (availW - (state.cols-1)) / state.cols;
+  let ch = cw / cellAR;
+  if((ch*state.rows + (state.rows-1)) > availH){
+    ch = (availH - (state.rows-1)) / state.rows; cw = ch*cellAR;
+  }
+  stage.style.width = (cw*state.cols + (state.cols-1)) + 'px';
+
+  stage.innerHTML='';
+  sel.list.forEach((f,i)=>{
+    const cell=document.createElement('div'); cell.className='cell';
+    cell.style.aspectRatio = `${CELL_W}/${CELL_H}`;
+    const svg=buildMarkSVG(f.name);
+    cell.appendChild(svg);
+    const cap=document.createElement('div'); cap.className='cell-cap';
+    cap.innerHTML=`<span class="idx">${String(i+1).padStart(2,'0')}</span><span class="fn">${f.name}</span>`;
+    cell.appendChild(cap);
+    const dl=document.createElement('div'); dl.className='cell-dl'; dl.textContent='⤓';
+    dl.title='Download this mark as SVG';
+    dl.onclick=(e)=>{ e.stopPropagation(); downloadOne(i,f.name); };
+    cell.appendChild(dl);
+    stage.appendChild(cell);
+  });
+
+  updateStats(sel);
+  updatePool(sel);
+
+  await ensureFonts(sel.list.map(f=>f.name));
+  await document.fonts.ready;
+  stage.querySelectorAll('svg').forEach(fitMark);
+}
+
+function updateStats(sel){
+  const total = state.cols*state.rows;
+  const kw = parseTags(state.keywords).size;
+  document.getElementById('s2-stat').innerHTML =
+    `<b>${state.cols}×${state.rows}</b> = ${total} MARKS · <b>${kw||'NO'}</b> KEYWORD${kw===1?'':'S'} MATCHED`;
+}
+function updatePool(sel){
+  const total = state.cols*state.rows;
+  const ps = document.getElementById('pool-stat');
+  const matchTxt = sel.matched ? `${sel.matched} OF ${sel.pool} FONTS MATCH` : `NO MATCH — USING FULL POOL (${sel.pool})`;
+  const cycleTxt = total > sel.pool ? ` · ${total-sel.pool} CELLS REPEAT` : '';
+  ps.textContent = matchTxt + cycleTxt;
+  const list = document.getElementById('pool-list');
+  list.innerHTML = sel.list.map((f,i)=>
+    `${String(i+1).padStart(2,'0')} &nbsp; ${f.score?'<b>●</b> ':'<span style="opacity:.4">○</span> '}${f.name}`
+  ).join('<br>');
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXPORT
+   ════════════════════════════════════════════════════════════ */
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'mark';
+const ab2b64 = buf => { let bin=''; const b=new Uint8Array(buf); for(let i=0;i<b.length;i++) bin+=String.fromCharCode(b[i]); return btoa(bin); };
+
+/* fetch the latin woff2 for a family and return an @font-face block (base64) */
+async function embedFace(family){
+  const url='https://fonts.googleapis.com/css2?family='+family.replace(/ /g,'+')+'&display=swap';
+  const css=await (await fetch(url)).text();
+  // prefer the block following a /* latin */ comment; else first woff2
+  let m = css.match(/\/\*\s*latin\s*\*\/[^}]*?url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)[^}]*?\}/i);
+  let face = m ? m[0].replace(/\/\*\s*latin\s*\*\/\s*/i,'') : null;
+  let src;
+  if(face){ src = face.match(/url\((https:[^)]+\.woff2)\)/i)[1]; }
+  else { const f=css.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/i); if(!f) throw 0; src=f[1]; }
+  const buf = await (await fetch(src)).arrayBuffer();
+  const b64 = ab2b64(buf);
+  return `@font-face{font-family:'${family}';font-style:normal;font-weight:400;font-display:swap;`+
+         `src:url(data:font/woff2;base64,${b64}) format('woff2');}`;
+}
+
+const escX = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ── EDITABLE SVG — live <text>, geometry read from the rendered cell ── */
+function markEditableSVG(idx, fontName, faceCSS){
+  const cell = document.querySelectorAll('#stage .cell')[idx];
+  const fit = cell.querySelector('.fit');
+  const fitT = fit.getAttribute('transform') || '';
+  const skewT = shearTransform();
+  const style = faceCSS ? `\n  <defs><style>${faceCSS}</style></defs>` : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CELL_W} ${CELL_H}" width="${CELL_W}" height="${CELL_H}">${style}
+  <rect width="${CELL_W}" height="${CELL_H}" fill="${state.canvas}"/>
+  <g transform="${fitT}"><g transform="${skewT}"><text x="0" y="0" font-size="100" font-family="'${fontName}'" fill="${state.ink}" text-anchor="start">${escX(state.brand)}</text></g></g>
+</svg>`;
+}
+
+/* ── OUTLINED SVG — text converted to vector <path> via opentype.js.
+   Fonts come from fontsource (.woff, which opentype.js can parse — it
+   cannot read Google's .woff2). fontsource ships the same upstream
+   glyphs as the live Google-Fonts preview, so outlines match the sheet. */
+const fsURL = fam => `https://cdn.jsdelivr.net/npm/@fontsource/${slug(fam)}/files/${slug(fam)}-latin-400-normal.woff`;
+const _otCache = {};   // family → opentype.Font | 'FAIL'
+async function loadOutlineFont(fam){
+  if(_otCache[fam]) return _otCache[fam]==='FAIL' ? null : _otCache[fam];
+  try{
+    if(typeof opentype==='undefined') throw 0;
+    const buf = await (await fetch(fsURL(fam))).arrayBuffer();
+    const font = opentype.parse(buf);
+    _otCache[fam]=font; return font;
+  }catch(e){ _otCache[fam]='FAIL'; return null; }
+}
+/* analytic fit: skew the glyph bbox, then scale+centre into the cell */
+function skewBBox(x1,y1,x2,y2){
+  const t = Math.tan(-state.shear*Math.PI/180);
+  if(state.axis==='H'){
+    const xs=[x1+t*y1, x1+t*y2, x2+t*y1, x2+t*y2];
+    return [Math.min(...xs), y1, Math.max(...xs), y2];
+  }
+  const ys=[y1+t*x1, y1+t*x2, y2+t*x1, y2+t*x2];
+  return [x1, Math.min(...ys), x2, Math.max(...ys)];
+}
+function fitFromBBox(x1,y1,x2,y2){
+  const w=x2-x1, h=y2-y1, pad=CELL_W*PAD;
+  const s=Math.min((CELL_W-2*pad)/w, (CELL_H-2*pad)/h);
+  const cx=(x1+x2)/2, cy=(y1+y2)/2;
+  return `translate(${(CELL_W/2).toFixed(2)} ${(CELL_H/2).toFixed(2)}) scale(${s.toFixed(4)}) translate(${(-cx).toFixed(2)} ${(-cy).toFixed(2)})`;
+}
+async function markOutlinedSVG(fontName){
+  const font = await loadOutlineFont(fontName);
+  if(!font) return null;
+  const p = font.getPath(state.brand, 0, 0, 100);
+  const d = p.toPathData(2);
+  const bb = p.getBoundingBox();
+  if(!isFinite(bb.x1) || bb.x2<=bb.x1) return null;
+  const [sx1,sy1,sx2,sy2] = skewBBox(bb.x1,bb.y1,bb.x2,bb.y2);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CELL_W} ${CELL_H}" width="${CELL_W}" height="${CELL_H}">
+  <rect width="${CELL_W}" height="${CELL_H}" fill="${state.canvas}"/>
+  <g transform="${fitFromBBox(sx1,sy1,sx2,sy2)}"><g transform="${shearTransform()}"><path d="${d}" fill="${state.ink}"/></g></g>
+</svg>`;
+}
+
+/* ── PUBSYS-editable file: layout tab + one "vec" cel per mark ──
+   Built to the importer's schema (pubsysFormat:1). A custom/px/digital
+   tab gives a 1:1 pixel canvas; outlined SVGs go in images/ so PUBSYS
+   renders them without needing any font installed. */
+const PUB_W = 520, PUB_H = 320;   // px per cell in the PUBSYS canvas
+function buildPubsysManifest(sel, imgNames){
+  const cels = sel.list.map((f,i)=>({
+    x:(i%state.cols)*PUB_W, y:Math.floor(i/state.cols)*PUB_H,
+    w:PUB_W, h:PUB_H, z:100+i, rotation:0, sourceIdx:null,
+    hidden:0, opacity:1, locked:0, type:'vec', image:imgNames[i]
+  }));
+  return {
+    pubsysFormat:1, version:'0.4.0',
+    tab:{ name:(state.brand+' LOGOMARKS').slice(0,40), type:'layout',
+          fmt:'custom', res:'digital', cw:PUB_W*state.cols, ch:PUB_H*state.rows, cunit:'px' },
+    sources:[], cels
+  };
+}
+async function buildPubsysBlob(sel, outlined){
+  const z = new JSZip();
+  const imgNames = sel.list.map((f,i)=>`${String(i+1).padStart(2,'0')}_${slug(f.name)}.svg`);
+  sel.list.forEach((f,i)=> z.file('images/'+imgNames[i], outlined[i]));
+  z.file('manifest.json', JSON.stringify(buildPubsysManifest(sel, imgNames), null, 2));
+  return await z.generateAsync({ type:'blob' });
+}
+
+function downloadBlob(blob, name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function downloadOne(idx, fontName){
+  const svg = markEditableSVG(idx, fontName, null);
+  downloadBlob(new Blob([svg],{type:'image/svg+xml'}), `${String(idx+1).padStart(2,'0')}_${slug(fontName)}.svg`);
+  toast('EDITABLE SVG SAVED');
+}
+
+/* resolve outlined strings for every cell once (fallback → editable text) */
+async function resolveOutlines(sel){
+  let fails=0;
+  const out = await Promise.all(sel.list.map(async (f,i)=>{
+    const o = await markOutlinedSVG(f.name);
+    if(o) return o;
+    fails++; return markEditableSVG(i, f.name, null);   // graceful fallback
+  }));
+  return { out, fails };
+}
+
+const ALL_BTNS = ()=>['btn-pack','btn-pack-2','btn-svgs','btn-pubsys'].map(id=>document.getElementById(id)).filter(Boolean);
+
+async function exportPack(opts={}){
+  if(typeof JSZip==='undefined'){ toast('ZIP LIBRARY FAILED TO LOAD'); return; }
+  const sel = currentSel || selectFonts();
+  const btns = ALL_BTNS(); btns.forEach(b=>b.disabled=true);
+  toast(opts.svgOnly ? 'BUILDING SVGS…' : 'BUILDING PACK…');
+
+  // embed each unique font once for the editable SVGs / gallery (best-effort)
+  const uniq=[...new Set(sel.list.map(f=>f.name))];
+  const faces={}; let embedFail=0;
+  await Promise.all(uniq.map(async fam=>{ try{ faces[fam]=await embedFace(fam); }catch(e){ embedFail++; } }));
+
+  // outline every mark (text → path)
+  const { out:outlined, fails:outlineFail } = await resolveOutlines(sel);
+
+  const zip=new JSZip();
+  const brandSlug = slug(state.brand);
+
+  // two SVG variants per mark
+  sel.list.forEach((f,i)=>{
+    const fname=`${String(i+1).padStart(2,'0')}_${slug(f.name)}.svg`;
+    zip.file(`svg/editable/${fname}`, markEditableSVG(i, f.name, faces[f.name]||null));
+    zip.file(`svg/outlined/${fname}`, outlined[i]);
+  });
+
+  if(!opts.svgOnly){
+    zip.file('index.html', buildGalleryHTML(sel, faces));
+    zip.file(`${brandSlug}.pubsys.zip`, await buildPubsysBlob(sel, outlined));
+    zip.file('manifest.json', JSON.stringify({
+      tool:'logomark-creator', version:'1.1.0', generated:new Date().toISOString(),
+      brand:state.brand, keywords:state.keywords,
+      grid:{cols:state.cols,rows:state.rows,cells:sel.list.length},
+      shear:{angle:state.shear,axis:state.axis},
+      colour:{ink:state.ink,canvas:state.canvas},
+      fonts: sel.list.map((f,i)=>({index:i+1,family:f.name,matched:f.score>0,embedded:!!faces[f.name],outlined:_otCache[f.name] && _otCache[f.name]!=='FAIL'})),
+    },null,2));
+    zip.file('README.txt',
+`RACINGBROS — LOGOMARK PACK
+==========================
+BRAND     : ${state.brand}
+KEYWORDS  : ${state.keywords}
+GRID      : ${state.cols} x ${state.rows}  (${sel.list.length} marks)
+SHEAR     : ${state.shear} deg, ${state.axis==='H'?'horizontal':'vertical'} axis
+COLOUR    : mark ${state.ink} on ${state.canvas}
+GENERATED : ${new Date().toString()}
+
+CONTENTS
+  index.html             Self-contained contact sheet. Open in any browser.
+  svg/editable/*.svg     Wordmarks as live <text>. Stays editable; fonts
+                         are embedded where reachable, else referenced by name.
+  svg/outlined/*.svg     The same marks with text converted to vector <path>.
+                         No font needed — renders identically anywhere.
+  ${brandSlug}.pubsys.zip   PUBSYS-editable file. Import via the PUBSYS tool
+                         (IMPORT button) to reposition / restyle every mark
+                         on a layout canvas. Uses the outlined SVGs.
+  manifest.json          Machine-readable record of every setting + font.
+
+Packaged in the PUBSYS manner. Black-on-grey by default.`);
+  }
+
+  const blob=await zip.generateAsync({type:'blob'});
+  downloadBlob(blob, opts.svgOnly ? `${brandSlug}_SVG.zip` : `${brandSlug}_LOGOMARKS.zip`);
+  btns.forEach(b=>b.disabled=false);
+  const notes=[]; if(embedFail) notes.push(`${embedFail} NOT EMBEDDED`); if(outlineFail) notes.push(`${outlineFail} NOT OUTLINED`);
+  toast(notes.length ? `READY — ${notes.join(' · ')}` : (opts.svgOnly?'SVGS READY':'PACK READY'));
+}
+
+/* export only the PUBSYS-editable .pubsys.zip */
+async function exportPubsys(){
+  if(typeof JSZip==='undefined'){ toast('ZIP LIBRARY FAILED TO LOAD'); return; }
+  const sel = currentSel || selectFonts();
+  const btns = ALL_BTNS(); btns.forEach(b=>b.disabled=true);
+  toast('BUILDING PUBSYS FILE…');
+  const { out:outlined, fails } = await resolveOutlines(sel);
+  const blob = await buildPubsysBlob(sel, outlined);
+  downloadBlob(blob, `${slug(state.brand)}.pubsys.zip`);
+  btns.forEach(b=>b.disabled=false);
+  toast(fails ? `PUBSYS FILE READY — ${fails} NOT OUTLINED` : 'PUBSYS FILE READY — IMPORT IN PUBSYS');
+}
+
+/* self-contained gallery HTML — no scripts, fonts embedded or linked */
+function buildGalleryHTML(sel, faces){
+  const facesCSS = Object.values(faces).join('\n');
+  const linkFams = sel.list.filter(f=>!faces[f.name]).map(f=>f.name);
+  const link = linkFams.length
+    ? `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${[...new Set(linkFams)].map(f=>'family='+f.replace(/ /g,'+')).join('&')}&display=swap">` : '';
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const cells = sel.list.map((f,i)=>{
+    const svg = markEditableSVG(i, f.name, null);   // gallery shares one font sheet, no per-svg face
+    return `<a class="c" href="svg/${String(i+1).padStart(2,'0')}_${slug(f.name)}.svg">
+  ${svg}
+  <span class="cap"><span>${String(i+1).padStart(2,'0')}</span><span>${esc(f.name)}</span></span>
+</a>`;
+  }).join('\n');
+  const HEAD = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>'+esc(state.brand)+' — LOGOMARKS</title>'+link+
+    '<style>'+
+    facesCSS+
+    `*{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+body{background:#0c0c0c;color:#e4e4e4;font-family:'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.06em;padding:24px}
+header{border-bottom:1px solid #282828;padding-bottom:14px;margin-bottom:20px}
+header h1{font-size:22px;font-weight:700;letter-spacing:.14em}
+header h1 .r{color:#C41E33}
+header .m{font-size:11px;color:#888;letter-spacing:.1em;margin-top:6px}
+header .m b{color:#bbb;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(${state.cols},1fr);gap:1px;background:${state.ink};box-shadow:0 0 0 1px ${state.ink};max-width:1400px}
+.c{position:relative;background:${state.canvas};display:block;overflow:hidden;text-decoration:none}
+.c svg{display:block;width:100%;height:auto}
+.cap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:3px 6px;font-family:'Courier New',monospace;font-size:9px;font-weight:600;letter-spacing:.06em;color:rgba(0,0,0,.5)}
+footer{margin-top:18px;font-size:10px;color:#555;letter-spacing:.1em}
+</style></head>`;
+  const kw = parseTags(state.keywords).size;
+  return HEAD + `<body>
+<header>
+  <h1>▌ ${esc(state.brand)} <span class="r">/</span> LOGOMARKS</h1>
+  <div class="m">KEYWORDS <b>${esc(state.keywords)||'—'}</b> &nbsp;·&nbsp; GRID <b>${state.cols}×${state.rows}</b> &nbsp;·&nbsp; SHEAR <b>${state.shear}° ${state.axis}</b> &nbsp;·&nbsp; <b>${kw}</b> KW MATCHED &nbsp;·&nbsp; ${new Date().toISOString().slice(0,10)}</div>
+</header>
+<div class="grid">
+${cells}
+</div>
+<footer>RACINGBROS LOGOMARK CREATOR · CLICK ANY MARK TO OPEN ITS VECTOR FILE</footer>
+</body></html>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   UI WIRING
+   ════════════════════════════════════════════════════════════ */
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+let rt=null;
+function debounceRender(){ clearTimeout(rt); rt=setTimeout(render,180); }
+
+const $=id=>document.getElementById(id);
+
+$('in-brand').addEventListener('input',e=>{ state.brand=e.target.value.toUpperCase()||'BRAND'; debounceRender(); });
+$('in-keys').addEventListener('input',e=>{ state.keywords=e.target.value; debounceRender(); });
+
+$('sl-cols').addEventListener('input',e=>{ state.cols=+e.target.value; $('rv-cols').textContent=state.cols; render(); });
+$('sl-rows').addEventListener('input',e=>{ state.rows=+e.target.value; $('rv-rows').textContent=state.rows; render(); });
+
+$('sl-shear').addEventListener('input',e=>{ state.shear=+e.target.value;
+  $('rv-shear').textContent=state.shear+'°';
+  document.querySelectorAll('#stage .skew').forEach(g=>g.setAttribute('transform',shearTransform()));
+  document.querySelectorAll('#stage svg').forEach(fitMark);
+});
+$('seg-axis').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+  state.axis=b.dataset.axis;
+  $('seg-axis').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+  document.querySelectorAll('#stage .skew').forEach(g=>g.setAttribute('transform',shearTransform()));
+  document.querySelectorAll('#stage svg').forEach(fitMark);
+});
+
+$('seg-cap').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+  state.showCap=b.dataset.cap==='1';
+  $('seg-cap').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+  $('stage').classList.toggle('no-cap',!state.showCap);
+});
+
+function setInk(v){ state.ink=v; $('hex-ink').textContent=v.toUpperCase(); $('c-ink').value=v;
+  $('stage').style.setProperty('--ink',v); document.querySelectorAll('#stage rect').forEach(r=>r.setAttribute('fill',state.canvas));
+  document.querySelectorAll('#stage text').forEach(t=>t.setAttribute('fill',v)); }
+function setCanvas(v){ state.canvas=v; $('hex-canvas').textContent=v.toUpperCase(); $('c-canvas').value=v;
+  $('stage').style.setProperty('--canvas',v); document.querySelectorAll('#stage rect').forEach(r=>r.setAttribute('fill',v)); }
+$('c-ink').addEventListener('input',e=>setInk(e.target.value));
+$('c-canvas').addEventListener('input',e=>setCanvas(e.target.value));
+$('btn-color-reset').addEventListener('click',()=>{ setInk('#000000'); setCanvas('#8a8a8a'); });
+
+$('seg-theme').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+  state.theme=b.dataset.theme; document.body.dataset.theme=state.theme;
+  $('seg-theme').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b)); });
+
+$('btn-regen').addEventListener('click',()=>{ state.seed++; render(); toast('FONTS RESHUFFLED'); });
+$('btn-pack').addEventListener('click',()=>exportPack());
+$('btn-pack-2').addEventListener('click',()=>exportPack());
+$('btn-svgs').addEventListener('click',()=>exportPack({svgOnly:true}));
+$('btn-pubsys').addEventListener('click',()=>exportPubsys());
+
+/* dev panel open/close */
+function openDP(o){ $('dp').classList.toggle('open',o); $('dp-overlay').classList.toggle('open',o); }
+$('dp-tog').addEventListener('click',()=>openDP(!$('dp').classList.contains('open')));
+$('dp-close').addEventListener('click',()=>openDP(false));
+$('dp-overlay').addEventListener('click',()=>openDP(false));
+
+let rsz=null;
+window.addEventListener('resize',()=>{ clearTimeout(rsz); rsz=setTimeout(render,150); });
+
+/* boot */
+openDP(true);
+render();
+</script>
+</body>
+</html>
