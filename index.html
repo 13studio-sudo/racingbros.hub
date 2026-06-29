@@ -1047,6 +1047,8 @@ const DEFAULT_TOOLS = [
   { id:'t_taiwan', name:'DISTRIBUTOR — TAIWAN', source:'path', path:'DISTRIBUTORS_TAIWAN.html' },
   { id:'t_pubsys', name:'PUBSYS',                source:'path', path:'PUBSYS.html' },
   { id:'t_post',   name:'POST CREATOR',          source:'path', path:'POST_CREATOR.html' },
+  { id:'t_logo',   name:'LOGOMARK CREATOR',      source:'path', path:'LOGOMARK_CREATOR.html' },
+  { id:'t_rdpm',   name:'RDPM',                  source:'path', path:'RDPM.html' },
 ];
 
 const COLOR_KEYS = [
@@ -1122,6 +1124,7 @@ let state = {
   font: FONTS[0].value,
   fontSize: 14,
   tracking: 8,
+  seededDefaults: DEFAULT_TOOLS.map(d=>d.id),  // bundled tools already merged into state
 };
 
 /* ════════════════════════════════════════
@@ -1183,6 +1186,7 @@ function saveState(){
     font: state.font,
     fontSize: state.fontSize,
     tracking: state.tracking,
+    seededDefaults: state.seededDefaults,
   };
   try { localStorage.setItem(LS_KEY, JSON.stringify(safe)); } catch(e){}
 }
@@ -1199,6 +1203,25 @@ function loadState(){
     if(p.font)      state.font      = p.font;
     if(typeof p.fontSize === 'number') state.fontSize = p.fontSize;
     if(typeof p.tracking === 'number') state.tracking = p.tracking;
+
+    /* Reconcile bundled tools that shipped after this state was saved.
+       Without this, a returning user's cached tool list permanently
+       hides any newly-added default tool. Legacy states (no
+       seededDefaults) treat the defaults they already hold as "seen",
+       so only genuinely-new defaults get appended — as the last tab. */
+    const savedIds = new Set(state.tools.map(t=>t.id));
+    const seeded = new Set(
+      Array.isArray(p.seededDefaults)
+        ? p.seededDefaults
+        : DEFAULT_TOOLS.map(d=>d.id).filter(id=>savedIds.has(id))
+    );
+    DEFAULT_TOOLS.forEach(d=>{
+      if(!savedIds.has(d.id) && !seeded.has(d.id)){
+        state.tools.push(structuredClone(d));
+      }
+      seeded.add(d.id);   // mark every current default seen → user removals persist
+    });
+    state.seededDefaults = [...seeded];
   }catch(e){}
 }
 
@@ -1816,8 +1839,14 @@ function normalizeHex(v){
    INIT
    ════════════════════════════════════════ */
 loadState();
+saveState();   // persist the reconciled tool list + seededDefaults right away
 applyAllTheme();
 renderTabsAndPanels();
+
+/* Logo → first tab (MENU). Acts as the global home button from any tool. */
+const logoEl = document.getElementById('logo');
+if(logoEl) logoEl.addEventListener('click', e=>{ e.preventDefault(); setActive('menu'); });
+
 renderToolsList();
 renderSchemePresets();
 renderColorPickers();
