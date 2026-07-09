@@ -4822,6 +4822,23 @@ function addCel(cv,opts){
     el.appendChild(inner);
 
     const setEdit=v=>[lbl,t,s,b].forEach(e=>e.setAttribute('contenteditable',v?'true':'false'));
+    /* Focus a row that can actually take focus. The label is display:none
+       whenever it's empty (.cel-label-el:empty), so lbl.focus() silently
+       fails on title/body-only cels — and the blur handler below then flips
+       edit mode straight back off because document.activeElement never landed
+       inside the cel. Pick the first VISIBLE row, preferring one with text,
+       and drop the caret into it so typing works immediately. */
+    function focusEditable(){
+      const rows=[lbl,t,s,b].filter(e=>e.offsetParent!==null);
+      const target=rows.find(e=>e.textContent.trim())||rows[0]||t;
+      target.focus();
+      const sel=window.getSelection&&window.getSelection();
+      if(sel&&target.firstChild){
+        const r=document.createRange();
+        r.selectNodeContents(target); r.collapse(false);
+        sel.removeAllRanges(); sel.addRange(r);
+      }
+    }
     // Auto-resize element on content change
     function autoResizeCel(){
       const inner=el.querySelector('.cel-text-inner');
@@ -4831,7 +4848,7 @@ function addCel(cv,opts){
       }
     }
     [lbl,t,s,b].forEach(e=>e.addEventListener('input',autoResizeCel));
-    el.addEventListener('dblclick',()=>{ setEdit(true); lbl.focus(); });
+    el.addEventListener('dblclick',()=>{ setEdit(true); focusEditable(); });
     [lbl,t,s,b].forEach(e=>e.addEventListener('blur',()=>{
       setTimeout(()=>{
         if(!el.contains(document.activeElement)){
@@ -4853,7 +4870,7 @@ function addCel(cv,opts){
       fsIn.value=opts.fontSize;
       fsIn.dispatchEvent(new Event('input'));
     }
-    etb.querySelector('[data-edit]')?.addEventListener('click',()=>{ setEdit(true); lbl.focus(); });
+    etb.querySelector('[data-edit]')?.addEventListener('click',()=>{ setEdit(true); focusEditable(); });
   }
 
   /* resize handles — four corners. Table cels have their box auto-sized
@@ -4877,7 +4894,12 @@ function addCel(cv,opts){
      a plain click on a non-selected cel deselects everything else first. */
   el.addEventListener('mousedown',e=>{
     if(e.target.closest('.etb')||e.target.closest('.rc')||e.target.closest('.rot-h')) return;
-    if(e.target.getAttribute('contenteditable')==='true') return;
+    /* Don't start a drag / preventDefault when the pointer is inside an
+       editable region. closest() (not a direct getAttribute) so clicks that
+       land on a nested node still match, and calling preventDefault here would
+       otherwise suppress the browser's native text selection — including the
+       double-click word-select and click-drag range-select gestures. */
+    if(e.target.closest('[contenteditable="true"]')||(el.querySelector('[contenteditable="true"]')&&e.target.closest('.cel-text-inner'))) return;
     e.preventDefault();
     /* v0.3.9: group-aware selection. Done synchronously here (not via
        capture-phase microtask) because the selCels capture below runs
